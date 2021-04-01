@@ -21,31 +21,31 @@ public class BusinessCategoryEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long businessCategoryId;
 
-    public Long getId() {
-        return id;
+    public Long getBusinessCategoryId() {
+        return businessCategoryId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setBusinessCategoryId(Long businessCategoryId) {
+        this.businessCategoryId = businessCategoryId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (businessCategoryId != null ? businessCategoryId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the businessCategoryId fields are not set
         if (!(object instanceof BusinessCategoryEntity)) {
             return false;
         }
         BusinessCategoryEntity other = (BusinessCategoryEntity) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.businessCategoryId == null && other.businessCategoryId != null) || (this.businessCategoryId != null && !this.businessCategoryId.equals(other.businessCategoryId))) {
             return false;
         }
         return true;
@@ -53,7 +53,7 @@ public class BusinessCategoryEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.BusinessCategoryEntity[ id=" + id + " ]";
+        return "entity.BusinessCategoryEntity[ id=" + businessCategoryId + " ]";
     }
     
 }
