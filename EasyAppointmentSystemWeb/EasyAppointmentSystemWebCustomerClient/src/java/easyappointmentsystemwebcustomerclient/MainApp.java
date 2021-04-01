@@ -34,6 +34,8 @@ public class MainApp {
     private Queue queueCheckoutNotification;
     private ConnectionFactory queueCheckoutNotificationFactory;
     
+    private CustomerEntity currentCustomer;
+    
     public MainApp()
     {
     }
@@ -119,7 +121,7 @@ public class MainApp {
         
         if(username.length() > 0 && password.length() > 0)
         {
-            //do something     
+            //currentCustomer = customerEntitySessionBeanRemote.doLogin(username, password);
         }
         else
         {
