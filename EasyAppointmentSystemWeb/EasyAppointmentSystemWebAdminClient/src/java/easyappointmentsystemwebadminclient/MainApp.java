@@ -1,5 +1,15 @@
 package easyappointmentsystemwebadminclient;
 
+import ejb.session.stateless.AdminEntitySessionBeanRemote;
+import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
+import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
+import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
+import ejb.session.stateless.EmailSessionBeanRemote;
+import java.util.Scanner;
+import javax.jms.ConnectionFactory;
+import javax.jms.Queue;
+import util.exception.InvalidLoginCredentialException;
 
 public class MainApp 
 {
@@ -99,6 +109,10 @@ public class MainApp
         {
             throw new InvalidLoginCredentialException("Missing login credential!");
         }
+    }
+
+    private void menuMain() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
