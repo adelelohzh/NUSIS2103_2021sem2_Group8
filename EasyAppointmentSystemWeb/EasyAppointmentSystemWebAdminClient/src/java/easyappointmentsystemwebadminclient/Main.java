@@ -1,21 +1,30 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package easyappointmentsystemwebadminclient;
 
-/**
- *
- * @author adele
- */
-public class Main {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
+public class Main 
+{
+    @EJB
+    private static AdminEntitySessionBeanRemote adminEntitySessionBeanRemote;
+    @EJB
+    private static AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
+    @EJB
+    private static BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote;
+    @EJB
+    private static CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
+    @EJB
+    private static ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
+    @EJB
+    private static EmailSessionBeanRemote emailSessionBeanRemote;
     
+    @Resource(mappedName = "jms/queueCheckoutNotification")
+    private static Queue queueCheckoutNotification;
+    @Resource(mappedName = "jms/queueCheckoutNotificationFactory")
+    private static ConnectionFactory queueCheckoutNotificationFactory;
+
+
+    public static void main(String[] args) 
+    {
+        MainApp mainApp = new MainApp(adminEntitySessionBeanRemote, appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, emailSessionBeanRemote, queueCheckoutNotification, queueCheckoutNotificationFactory);
+        mainApp.runApp();
+    }
 }
