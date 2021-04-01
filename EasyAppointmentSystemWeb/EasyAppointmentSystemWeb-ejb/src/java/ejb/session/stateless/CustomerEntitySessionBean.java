@@ -3,12 +3,17 @@ package ejb.session.stateless;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Stateless
 @Local(CustomerEntitySessionBeanLocal.class)
 @Remote(CustomerEntitySessionBeanRemote.class)
-public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemote, CustomerEntitySessionBeanLocal {
+public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemote, CustomerEntitySessionBeanLocal 
+{
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext(unitName = "EasyAppointmentSystemWeb-ejbPU")
+    private EntityManager em;
+
+    
 }
