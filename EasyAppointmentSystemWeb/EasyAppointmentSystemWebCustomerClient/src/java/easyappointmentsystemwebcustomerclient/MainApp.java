@@ -1,9 +1,24 @@
 package easyappointmentsystemwebcustomerclient;
 
+import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import entity.CustomerEntity;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 public class MainApp {
+    
+    
     
     public MainApp()
     {
@@ -141,6 +156,16 @@ public class MainApp {
             {
                 break;
             }
+        }
+    }
+
+    private CustomerEntitySessionBeanRemote lookupCustomerEntitySessionBeanRemote() {
+        try {
+            Context c = new InitialContext();
+            return (CustomerEntitySessionBeanRemote) c.lookup("java:comp/env/CustomerEntitySessionBean");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
         }
     }
 }
