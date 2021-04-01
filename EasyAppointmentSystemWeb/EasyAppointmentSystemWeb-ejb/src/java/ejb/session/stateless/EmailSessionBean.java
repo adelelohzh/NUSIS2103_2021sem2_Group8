@@ -5,6 +5,8 @@
  */
 package ejb.session.stateless;
 
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 
 /**
@@ -12,6 +14,8 @@ import javax.ejb.Stateless;
  * @author jieyingma
  */
 @Stateless
+@Local(EmailSessionBeanLocal.class)
+@Remote(EmailSessionBeanRemote.class)
 public class EmailSessionBean implements EmailSessionBeanRemote, EmailSessionBeanLocal {
 
     // Add business logic below. (Right-click in editor and choose
