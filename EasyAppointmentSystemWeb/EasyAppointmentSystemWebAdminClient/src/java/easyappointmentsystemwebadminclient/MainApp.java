@@ -103,7 +103,7 @@ public class MainApp
         
         if(username.length() > 0 && password.length() > 0)
         {
-            currentAdminEntity = adminEntitySessionBeanRemote.adminLogin(username, password);      
+            // currentAdminEntity = adminEntitySessionBeanRemote.adminLogin(username, password);      
         }
         else
         {
