@@ -1,4 +1,4 @@
-package easyappointmentsystemwebcustomerclient;
+package easyappointmentsystemwebserviceproviderclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
 import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
@@ -82,8 +82,6 @@ public class MainApp {
                     {
                         doLogin();
                         System.out.println("Login successful!\n");
-                        
-                        menuMain();
                     }
                     catch(InvalidLoginCredentialException ex) 
                     {
@@ -126,66 +124,6 @@ public class MainApp {
         else
         {
             throw new InvalidLoginCredentialException("Missing login credential!");
-        }
-    }
-    
-    private void menuMain()
-    {
-        Scanner scanner = new Scanner(System.in);
-        Integer response = 0;
-        
-        while(true)
-        {
-            System.out.println("*** Customer terminal :: Main ***\n");
-            System.out.println("You are login as");
-            System.out.println("1: Search Operation");
-            System.out.println("2: Add Appointment");
-            System.out.println("3: View Appointment");
-            System.out.println("4: Cancel Appointment");
-            System.out.println("5: Rate Service Provider");
-            System.out.println("6: Logout\n");
-            response = 0;
-            
-            while(response < 1 || response > 6)
-            {
-                System.out.print("> ");
-
-                response = scanner.nextInt();
-
-                if(response == 1)
-                {
-                    // search operation
-                }
-                else if(response == 2)
-                {
-                    // add appt
-                }
-                else if (response == 3)
-                {
-                   // view appt
-                }
-                else if (response == 4)
-                {
-                    // cancel appt
-                }
-                else if (response == 5)
-                {
-                    // rate service provider
-                }
-                else if (response == 6)
-                {
-                    break;
-                }
-                else
-                {
-                    System.out.println("Invalid option, please try again!\n");                
-                }
-            }
-            
-            if(response == 6)
-            {
-                break;
-            }
         }
     }
 }
