@@ -1,7 +1,11 @@
 package easyappointmentsystemwebcustomerclient;
 
+import ejb.session.stateless.AdminEntitySessionBeanRemote;
+import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
+import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
-import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import ejb.session.stateless.EmailSessionBeanRemote;
+import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
 import java.util.logging.Level;
@@ -12,16 +16,40 @@ import javax.naming.NamingException;
 import entity.CustomerEntity;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.jms.ConnectionFactory;
+import javax.jms.Queue;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 public class MainApp {
     
+    private AdminEntitySessionBeanRemote adminEntitySessionBeanRemote;
+    private AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
+    private BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote;
+    private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
+    private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
+    private EmailSessionBeanRemote emailSessionBeanRemote;
     
+    private Queue queueCheckoutNotification;
+    private ConnectionFactory queueCheckoutNotificationFactory;
     
     public MainApp()
     {
+    }
+    
+    public MainApp(AdminEntitySessionBeanRemote adminEntitySessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, EmailSessionBeanRemote emailSessionBeanRemote, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) 
+    {
+        this();
+        this.adminEntitySessionBeanRemote = adminEntitySessionBeanRemote;
+        this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
+        this.businessCategoryEntitySessionBeanRemote = businessCategoryEntitySessionBeanRemote;
+        this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
+        this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
+        this.emailSessionBeanRemote = emailSessionBeanRemote;
+        
+        this.queueCheckoutNotification = queueCheckoutNotification;
+        this.queueCheckoutNotificationFactory = queueCheckoutNotificationFactory;
     }
     
     public void runApp()
@@ -156,16 +184,6 @@ public class MainApp {
             {
                 break;
             }
-        }
-    }
-
-    private CustomerEntitySessionBeanRemote lookupCustomerEntitySessionBeanRemote() {
-        try {
-            Context c = new InitialContext();
-            return (CustomerEntitySessionBeanRemote) c.lookup("java:comp/env/CustomerEntitySessionBean");
-        } catch (NamingException ne) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
-            throw new RuntimeException(ne);
         }
     }
 }
