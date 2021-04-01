@@ -1,11 +1,14 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 
 @Entity
@@ -45,9 +48,14 @@ public class CustomerEntity implements Serializable {
     
     @Column(nullable = false, length = 32)
     private String emailAddress;
+    
+    @OneToMany(mappedBy = "customerEntity")
+    private List<AppointmentEntity> appointmentEntities;
+
 
     public CustomerEntity() 
     {
+        appointmentEntities = new ArrayList<>();
     }
 
     public CustomerEntity(String identityNumber, String password, String firstName, String lastName, Character gender, Integer age, String phoneNumber, String address, String city, String emailAddress) 
@@ -63,6 +71,7 @@ public class CustomerEntity implements Serializable {
         this.address = address;
         this.city = city;
         this.emailAddress = emailAddress;
+        appointmentEntities = new ArrayList<>();
     }
     
     
@@ -214,6 +223,15 @@ public class CustomerEntity implements Serializable {
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
+
+    public List<AppointmentEntity> getAppointmentEntities() {
+        return appointmentEntities;
+    }
+
+    public void setAppointmentEntities(List<AppointmentEntity> appointmentEntities) {
+        this.appointmentEntities = appointmentEntities;
+    }
+    
 
     @Override
     public int hashCode() {

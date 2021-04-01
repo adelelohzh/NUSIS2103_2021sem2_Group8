@@ -1,11 +1,14 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 
 @Entity
@@ -39,9 +42,13 @@ public class ServiceProviderEntity implements Serializable {
     
     @Column(nullable = false, length = 32)
     private String password;
+    
+    @OneToMany(mappedBy = "serviceProviderEntity")
+    private List<AppointmentEntity> appointmentEntities;
 
     public ServiceProviderEntity() 
     {
+        appointmentEntities = new ArrayList<>();
     }
 
     public ServiceProviderEntity(String name, String businessCategory, String businessRegistrationNumber, String city, String businessAddress, String emailAddress, String phoneNumber, String password) 
@@ -55,6 +62,7 @@ public class ServiceProviderEntity implements Serializable {
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
         this.password = password;
+        appointmentEntities = new ArrayList<>();
     }
 
     public Long getServiceProviderId() {
@@ -176,6 +184,15 @@ public class ServiceProviderEntity implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public List<AppointmentEntity> getAppointmentEntities() {
+        return appointmentEntities;
+    }
+
+    public void setAppointmentEntities(List<AppointmentEntity> appointmentEntities) {
+        this.appointmentEntities = appointmentEntities;
+    }
+
     
         @Override
     public int hashCode() {
