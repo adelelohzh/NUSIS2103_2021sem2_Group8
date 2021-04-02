@@ -78,7 +78,7 @@ public class MainApp {
 
                 if(response == 1)
                 {
-                    //register
+                    registerServiceProvider();
                 }
                 else if (response == 2)
                 {
