@@ -172,7 +172,7 @@ public class MainApp
                 }
                 else if(response == 8)
                 {
-                    systemAdministrationModule.sendReminderEmail();
+                    systemAdministrationModule.sendReminderEmail(); 
                 }
                 else if (response == 9)
                 {
