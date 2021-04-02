@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,6 +24,17 @@ public class BusinessCategoryEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long businessCategoryId;
 
+    @Column(nullable = false, length = 32)
+    private String category;
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    
     public Long getBusinessCategoryId() {
         return businessCategoryId;
     }
