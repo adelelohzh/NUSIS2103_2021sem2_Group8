@@ -6,11 +6,13 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -26,6 +28,9 @@ public class BusinessCategoryEntity implements Serializable {
 
     @Column(nullable = false, length = 32)
     private String category;
+    
+    @OneToMany(mappedBy = "businessCategoryEntity")
+    private List<ServiceProviderEntity> serviceProviderEntities;
 
     public String getCategory() {
         return category;
@@ -34,15 +39,15 @@ public class BusinessCategoryEntity implements Serializable {
     public void setCategory(String category) {
         this.category = category;
     }
+
+    public List<ServiceProviderEntity> getServiceProviderEntities() {
+        return serviceProviderEntities;
+    }
+
+    public void setServiceProviderEntities(List<ServiceProviderEntity> serviceProviderEntities) {
+        this.serviceProviderEntities = serviceProviderEntities;
+    }
     
-    public Long getBusinessCategoryId() {
-        return businessCategoryId;
-    }
-
-    public void setBusinessCategoryId(Long businessCategoryId) {
-        this.businessCategoryId = businessCategoryId;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
