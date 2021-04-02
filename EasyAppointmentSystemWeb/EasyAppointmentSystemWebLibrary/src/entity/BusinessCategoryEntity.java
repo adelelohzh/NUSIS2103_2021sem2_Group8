@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -35,6 +37,10 @@ public class BusinessCategoryEntity implements Serializable {
     @OneToMany(mappedBy = "businessCategoryEntity")
     private List<AppointmentEntity> appointmentEntities;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private AdminEntity adminEntity;
+    
     public Long getBusinessCategoryId() {
         return businessCategoryId;
     }
@@ -90,6 +96,20 @@ public class BusinessCategoryEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.BusinessCategoryEntity[ id=" + businessCategoryId + " ]";
+    }
+
+    /**
+     * @return the adminEntity
+     */
+    public AdminEntity getAdminEntity() {
+        return adminEntity;
+    }
+
+    /**
+     * @param adminEntity the adminEntity to set
+     */
+    public void setAdminEntity(AdminEntity adminEntity) {
+        this.adminEntity = adminEntity;
     }
     
 }
