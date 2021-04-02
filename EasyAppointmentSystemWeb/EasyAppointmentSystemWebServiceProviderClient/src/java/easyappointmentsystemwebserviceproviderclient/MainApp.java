@@ -64,7 +64,7 @@ public class MainApp {
         Integer response = 0;
         while(true)
         {
-            System.out.println("*** Welcome to Customer terminal ***\n");
+            System.out.println("*** Welcome to Service Provider terminal ***\n");
             System.out.println("1: Registration");
             System.out.println("2: Login");
             System.out.println("3: Exit\n");
