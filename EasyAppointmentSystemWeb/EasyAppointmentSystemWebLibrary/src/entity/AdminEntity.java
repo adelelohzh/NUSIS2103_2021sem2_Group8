@@ -17,9 +17,6 @@ public class AdminEntity implements Serializable {
     private Long adminId;
     
     @Column(unique = true, nullable = false)
-    private String userName;
-    
-    @Column(unique = true, nullable = false)
     private String email;
     
     @Column(nullable = false)
@@ -29,11 +26,10 @@ public class AdminEntity implements Serializable {
     {
     }
 
-    public AdminEntity(String userName, String email, String password) 
+    public AdminEntity(String email, String password) 
     { 
         this();
         
-        this.userName = userName;
         this.email = email;
         this.password = password;
     }
@@ -41,18 +37,6 @@ public class AdminEntity implements Serializable {
 
     public Long getAdminId() {
         return adminId;
-    }
-
-    public void setAdminId(Long adminId) {
-        this.adminId = adminId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public String getEmail() {

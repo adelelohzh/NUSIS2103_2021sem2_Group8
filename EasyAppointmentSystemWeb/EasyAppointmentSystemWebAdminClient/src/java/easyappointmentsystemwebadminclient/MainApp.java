@@ -6,6 +6,7 @@ import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import ejb.session.stateless.EmailSessionBeanRemote;
+import entity.AdminEntity;
 import java.util.Scanner;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
@@ -22,6 +23,8 @@ public class MainApp
     
     private Queue queueCheckoutNotification;
     private ConnectionFactory queueCheckoutNotificationFactory;
+    
+    private AdminEntity currentAdminEntity;
 
     public MainApp() 
     {
@@ -47,9 +50,9 @@ public class MainApp
         
         while(true)
         {
-            System.out.println("*** Welcome to Easy-Appointment (EA) System Web ***\n");
+            System.out.println("*** Welcome to Admin terminal ***\n");
             System.out.println("1: Login");
-            System.out.println("2: Logout\n");
+            System.out.println("2: Exit\n");
             response = 0;
             
             while(response < 1 || response > 2)
@@ -95,15 +98,15 @@ public class MainApp
         String username = "";
         String password = "";
         
-        System.out.println("*** EA System Web :: Login ***\n");
-        System.out.print("Enter username> ");
+        System.out.println("*** Admin terminal :: Login ***\n");
+        System.out.print("Enter Email Address> ");
         username = scanner.nextLine().trim();
-        System.out.print("Enter password> ");
+        System.out.print("Enter Password> ");
         password = scanner.nextLine().trim();
         
         if(username.length() > 0 && password.length() > 0)
         {
-            // currentAdminEntity = adminEntitySessionBeanRemote.adminLogin(username, password);      
+            currentAdminEntity = adminEntitySessionBeanRemote.adminLogin(username, password);      
         }
         else
         {
@@ -112,7 +115,83 @@ public class MainApp
     }
 
     private void menuMain() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+        
+        while(true)
+        {
+            System.out.println("*** Admin terminal :: Main ***\n");
+            System.out.println("You are login as " + currentAdminEntity.getAdminId()+ "\n");
+            System.out.println("1: View Appointments for customers");
+            System.out.println("2: View Appointments for service providers");
+            System.out.println("3: View service providers");
+            System.out.println("4: Approve service providers");
+            System.out.println("5: Block service provider");
+            System.out.println("6: Add Business category");
+            System.out.println("7: Remove Business category");
+            System.out.println("8: Send reminder email");
+            System.out.println("9: Logout\n");
+            response = 0;
+            
+            while(response < 1 || response > 9)
+            {
+                System.out.print("> ");
+
+                response = scanner.nextInt();
+
+                if(response == 1)
+                {
+                    //customerAdministrationModule.viewCustomerAppointments();
+                    //systemAdministrationModule.viewCustomerAppointments();
+                }
+                else if(response == 2)
+                {
+                    //serviceProviderAdministrationModule.viewServiceProviderAppointments();
+                    //systemAdministrationModule.viewServiceProviderAppointments();
+                }
+                else if(response == 3)
+                {
+                    //serviceProviderAdministrationModule.viewServiceProviders();
+                    //systemAdministrationModule.viewServiceProviders();
+                }
+                else if(response == 4)
+                {
+                    //serviceProviderAdministrationModule.approveServiceProvider();
+                    //systemAdministrationModule.approveServiceProviders();
+                }
+                else if(response == 5)
+                {
+                    //serviceProviderAdministrationModule.blockServiceProvider();
+                    //systemAdministrationModule.blockServiceProviders();
+                }
+                else if(response == 6)
+                {
+                    //systemAdministrationModule.addBusinessCategory();
+                }
+                else if(response == 7)
+                {
+                    //systemAdministrationModule.removeBusinessCategory();
+                }
+                else if(response == 8)
+                {
+                    //systemAdministrationModule.sendReminderEmail();
+                }
+                else if (response == 9)
+                {
+                    break;
+                }
+                else
+                {
+                    System.out.println("Invalid option, please try again!\n");                
+                }
+            }
+            
+            if(response == 9)
+            {
+                break;
+            }
+        }
     }
 
 }
