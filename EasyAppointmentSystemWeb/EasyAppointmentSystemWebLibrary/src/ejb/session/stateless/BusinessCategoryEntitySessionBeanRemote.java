@@ -7,7 +7,7 @@ import util.exception.CreateNewBusinessCategoryException;
 
 public interface BusinessCategoryEntitySessionBeanRemote {
     
-     public List<BusinessCategoryEntity> retrieveAllBusinessCategories();
+    public List<BusinessCategoryEntity> retrieveAllBusinessCategories();
 
     public BusinessCategoryEntity createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws CreateNewBusinessCategoryException;
 }
