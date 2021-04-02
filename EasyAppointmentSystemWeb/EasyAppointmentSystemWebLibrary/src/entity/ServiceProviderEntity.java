@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 
@@ -45,6 +47,10 @@ public class ServiceProviderEntity implements Serializable {
     
     @OneToMany(mappedBy = "serviceProviderEntity")
     private List<AppointmentEntity> appointmentEntities;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private BusinessCategoryEntity businessCategoryEntity;
 
     public ServiceProviderEntity() 
     {
@@ -71,6 +77,27 @@ public class ServiceProviderEntity implements Serializable {
 
     public void setServiceProviderId(Long serviceProviderId) {
         this.serviceProviderId = serviceProviderId;
+    }
+
+    public BusinessCategoryEntity getBusinessCategoryEntity() {
+        return businessCategoryEntity;
+    }
+
+    public void setBusinessCategoryEntity(BusinessCategoryEntity businessCategoryEntity) {
+        if(this.businessCategoryEntity != null)
+        {
+            this.businessCategoryEntity.getAppointmentEntities().remove(this);
+        }
+        
+        this.businessCategoryEntity = businessCategoryEntity;
+        
+        if(this.businessCategoryEntity != null)
+        {
+            if(!this.businessCategoryEntity.getAppointmentEntities().contains(this))
+            {
+                this.businessCategoryEntity.getAppointmentEntities().add(this);
+            }
+        }
     }
     
     /**
