@@ -85,13 +85,33 @@ public class SystemAdministrationModule {
                 //incomplete: scheduled time + appointment no. code
                 //System.out.printf("%15s%2s%18s%2s%11s%2s%6s%2s%15s", serviceProviderEntity.getName(), "|", "category", "|" +  appointmentEntity.getScheduledTime(),  "|");
             }
-
-            System.out.println("Enter 0 to go back to the previous menu.");
-
-            System.out.print("Enter service provider Id> ");
-            Long input = sc.nextLong();
         } catch (ServiceProviderNotFoundException ex) {
             System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
+        }
+        
+        System.out.println("Enter 0 to go back to the previous menu.");
+        System.out.print("Enter service provider Id> ");
+        Long input = sc.nextLong();
+
+        while (input != 0) {
+            try {
+                ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
+                List<AppointmentEntity> appointmentEntities = serviceProviderEntity.getAppointmentEntities();
+                System.out.println("Appointments:");
+                System.out.printf("%15s%2s%18s%2s%11s%2s%6s%2s%15s", "Name", "|", "Business Category", "|", "Date", "|", "Time", "|", "Appointment No.");
+
+                for (AppointmentEntity appointmentEntity : appointmentEntities) {
+                    //incomplete: scheduled time + appointment no. code
+                    //System.out.printf("%15s%2s%18s%2s%11s%2s%6s%2s%15s", serviceProviderEntity.getName(), "|", "category", "|" +  appointmentEntity.getScheduledTime(),  "|");
+                }
+
+                System.out.println("Enter 0 to go back to the previous menu.");
+                System.out.print("Enter service provider Id> ");
+                input = sc.nextLong();
+
+            } catch (ServiceProviderNotFoundException ex) {
+                System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
+            }
         }
     }
 
@@ -124,9 +144,28 @@ public class SystemAdministrationModule {
         for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
             if (serviceProviderEntity.getStatusEnum() == StatusEnum.Pending) {
                 System.out.printf("%4s%7s%20s%20s%7s%10s%8s%6s\n", serviceProviderEntity.getServiceProviderId() + " |", serviceProviderEntity.getName() + " |", serviceProviderEntity.getBusinessCategory() + " |", serviceProviderEntity.getBusinessRegistrationNumber() + " |", serviceProviderEntity.getCity() + " |", serviceProviderEntity.getBusinessAddress() + " |", serviceProviderEntity.getEmailAddress() + " |", serviceProviderEntity.getPhoneNumber());
-                serviceProviderEntity.setStatusEnum(StatusEnum.Approved);
+                System.out.println();
             }
         }
+
+        System.out.println("Enter 0 to go back to the previous menu.");
+        System.out.print("Enter service provider Id> ");
+        Long serviceProviderId = sc.nextLong();
+
+        while (serviceProviderId != 0) {
+            try {
+                ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
+                serviceProvider.setStatusEnum(StatusEnum.Approved);
+                System.out.println(serviceProvider.getName() + "'s registration is approved.");
+
+                System.out.println("Enter 0 to go back to the previous menu.");
+                System.out.print("Enter service provider Id> ");
+                serviceProviderId = sc.nextLong();
+            } catch (ServiceProviderNotFoundException ex) {
+                System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
+            }
+        }
+
     }
 
     public void blockServiceProviders() {
@@ -143,14 +182,22 @@ public class SystemAdministrationModule {
             //print each serviceProvider, to be formatted
         }
 
-        System.out.println("Enter service provider Id");
+        System.out.println("Enter 0 to go back to the previous menu.");
+        System.out.print("Enter service provider Id");
         Long serviceProviderId = sc.nextLong();
 
-        try {
-            ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
-            serviceProviderEntity.setStatusEnum(StatusEnum.Blocked);
-        } catch (ServiceProviderNotFoundException ex) {
-            System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
+        while (serviceProviderId != 0) {
+            try {
+                ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
+                serviceProviderEntity.setStatusEnum(StatusEnum.Blocked);
+
+                System.out.println(serviceProviderEntity.getName() + " has been blocked.");
+                System.out.println("Enter 0 to go back to the previous menu.");
+                System.out.print("Enter service provider Id");
+                serviceProviderId = sc.nextLong();
+            } catch (ServiceProviderNotFoundException ex) {
+                System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
+            }
         }
     }
 
