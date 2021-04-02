@@ -3,6 +3,7 @@ package easyappointmentsystemwebadminclient;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AdminEntity;
+import entity.AppointmentEntity;
 import entity.CustomerEntity;
 import entity.ServiceProviderEntity;
 import java.util.List;
@@ -52,7 +53,12 @@ public class SystemAdministrationModule {
         try {
             CustomerEntity customerEntity = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(customerId);
             //retrieve appointments
+            List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
             //print appointments
+            System.out.println("Appointments:");
+            System.out.println("Name           | Business category | Date       | Time  | Appointment No.");
+            System.out.println(customerEntity.
+                    
             System.out.println("Enter 0 to go back to the previous menu.");
             
             System.out.print("Enter customer Id> ");
