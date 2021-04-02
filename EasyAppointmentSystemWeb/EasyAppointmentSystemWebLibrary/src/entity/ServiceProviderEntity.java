@@ -86,16 +86,16 @@ public class ServiceProviderEntity implements Serializable {
     public void setBusinessCategoryEntity(BusinessCategoryEntity businessCategoryEntity) {
         if(this.businessCategoryEntity != null)
         {
-            this.businessCategoryEntity.getAppointmentEntities().remove(this);
+            this.businessCategoryEntity.getServiceProviderEntities().remove(this);
         }
         
         this.businessCategoryEntity = businessCategoryEntity;
         
         if(this.businessCategoryEntity != null)
         {
-            if(!this.businessCategoryEntity.getAppointmentEntities().contains(this))
+            if(!this.businessCategoryEntity.getServiceProviderEntities().contains(this))
             {
-                this.businessCategoryEntity.getAppointmentEntities().add(this);
+                this.businessCategoryEntity.getServiceProviderEntities().add(this);
             }
         }
     }
