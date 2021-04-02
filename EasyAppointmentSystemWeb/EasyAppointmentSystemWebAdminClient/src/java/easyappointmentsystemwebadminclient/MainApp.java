@@ -26,6 +26,8 @@ public class MainApp
     
     private AdminEntity currentAdminEntity;
 
+    private SystemAdministrationModule systemAdministrationModule;
+    
     public MainApp() 
     {
     }
@@ -142,40 +144,35 @@ public class MainApp
 
                 if(response == 1)
                 {
-                    //customerAdministrationModule.viewCustomerAppointments();
-                    //systemAdministrationModule.viewCustomerAppointments();
+                    systemAdministrationModule.viewCustomerAppointments();
                 }
                 else if(response == 2)
                 {
-                    //serviceProviderAdministrationModule.viewServiceProviderAppointments();
-                    //systemAdministrationModule.viewServiceProviderAppointments();
+                    systemAdministrationModule.viewServiceProviderAppointments();
                 }
                 else if(response == 3)
                 {
-                    //serviceProviderAdministrationModule.viewServiceProviders();
-                    //systemAdministrationModule.viewServiceProviders();
+                    systemAdministrationModule.viewServiceProviders();
                 }
                 else if(response == 4)
                 {
-                    //serviceProviderAdministrationModule.approveServiceProvider();
-                    //systemAdministrationModule.approveServiceProviders();
+                    systemAdministrationModule.approveServiceProviders();
                 }
                 else if(response == 5)
                 {
-                    //serviceProviderAdministrationModule.blockServiceProvider();
-                    //systemAdministrationModule.blockServiceProviders();
+                    systemAdministrationModule.blockServiceProviders();
                 }
                 else if(response == 6)
                 {
-                    //systemAdministrationModule.addBusinessCategory();
+                    systemAdministrationModule.addBusinessCategory();
                 }
                 else if(response == 7)
                 {
-                    //systemAdministrationModule.removeBusinessCategory();
+                    systemAdministrationModule.removeBusinessCategory();
                 }
                 else if(response == 8)
                 {
-                    //systemAdministrationModule.sendReminderEmail();
+                    systemAdministrationModule.sendReminderEmail();
                 }
                 else if (response == 9)
                 {
