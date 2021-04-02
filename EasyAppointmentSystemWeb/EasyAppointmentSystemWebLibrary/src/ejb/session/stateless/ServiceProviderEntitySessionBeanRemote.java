@@ -1,5 +1,31 @@
 package ejb.session.stateless;
 
-public interface ServiceProviderEntitySessionBeanRemote {
+import entity.ServiceProviderEntity;
+import java.util.List;
+import util.exception.InputDataValidationException;
+import util.exception.InvalidLoginCredentialException;
+import util.exception.ServiceProviderEmailExistException;
+import util.exception.ServiceProviderNotFoundException;
+import util.exception.UnknownPersistenceException;
+import util.exception.UpdateServiceProviderException;
+
+public interface ServiceProviderEntitySessionBeanRemote 
+{
+    public Long createNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException;
+
+    public ServiceProviderEntity doServiceProviderLogin(String email, String password) throws InvalidLoginCredentialException;
+
+    public List<ServiceProviderEntity> retrieveAllServiceProviderEntity();
+
+    public ServiceProviderEntity retrieveServiceProviderEntityByEmail(String email) throws ServiceProviderNotFoundException;
+
+    public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException;
+
+    public void updateServiceProvider(ServiceProviderEntity serviceProviderEntity) throws UpdateServiceProviderException, ServiceProviderNotFoundException, InputDataValidationException;
+     
+    public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException;
+
+    public void registerServiceProvider(String name, int category, String businessRegNumber, String city, String phone, String addr, String email, String password) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException;
+    
     
 }
