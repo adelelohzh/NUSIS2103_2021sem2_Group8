@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import util.enumeration.StatusEnum;
 
 
 @Entity
@@ -47,6 +48,9 @@ public class ServiceProviderEntity implements Serializable {
     
     @Column(nullable = false)
     private Long rating;
+    
+    @Column(nullable = false)
+    private StatusEnum statusEnum;
     
     @OneToMany(mappedBy = "serviceProviderEntity")
     private List<AppointmentEntity> appointmentEntities;
@@ -230,6 +234,14 @@ public class ServiceProviderEntity implements Serializable {
 
     public void setAppointmentEntities(List<AppointmentEntity> appointmentEntities) {
         this.appointmentEntities = appointmentEntities;
+    }
+
+    public StatusEnum getStatusEnum() {
+        return statusEnum;
+    }
+
+    public void setStatusEnum(StatusEnum statusEnum) {
+        this.statusEnum = statusEnum;
     }
 
     
