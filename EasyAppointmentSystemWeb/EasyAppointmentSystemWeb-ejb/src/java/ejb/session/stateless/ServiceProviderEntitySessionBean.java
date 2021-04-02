@@ -16,6 +16,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.exception.DeleteServiceProviderException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.ServiceProviderEmailExistException;
@@ -88,7 +89,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
             
             if(serviceProviderEntity.getPassword().equals(password))
             {
-               // serviceProviderEntity.getSaleTransactionEntities().size();                
+                serviceProviderEntity.getAppointmentEntities().size();                
                 return serviceProviderEntity;
             }
             else
@@ -184,13 +185,20 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException
+    public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException, DeleteServiceProviderException
     {
         try
         {
             ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serivceProviderId);
-            em.remove(serviceProvider);
-            em.flush();
+            if (serviceProvider.getAppointmentEntities().isEmpty())
+            {
+                em.remove(serviceProvider);
+                em.flush();
+            }
+            else 
+            {
+                throw new DeleteServiceProviderException("Service Provider ID " + serivceProviderId + " is associated with existing Appointment record(s) and cannot be deleted!");
+            }
         }
         catch (ServiceProviderNotFoundException ex)
         {

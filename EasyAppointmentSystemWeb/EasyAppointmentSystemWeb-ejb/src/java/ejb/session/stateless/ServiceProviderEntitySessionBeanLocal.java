@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.ServiceProviderEntity;
 import java.util.List;
+import util.exception.DeleteServiceProviderException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.ServiceProviderEmailExistException;
@@ -24,7 +25,7 @@ public interface ServiceProviderEntitySessionBeanLocal
 
     public void updateServiceProvider(ServiceProviderEntity serviceProviderEntity) throws UpdateServiceProviderException, ServiceProviderNotFoundException, InputDataValidationException;
      
-    public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException;
+    public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException, DeleteServiceProviderException;
     
     public void registerServiceProvider(String name, int category, String businessRegNumber, String city, String phone, String addr, String email, String password) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException;
 
