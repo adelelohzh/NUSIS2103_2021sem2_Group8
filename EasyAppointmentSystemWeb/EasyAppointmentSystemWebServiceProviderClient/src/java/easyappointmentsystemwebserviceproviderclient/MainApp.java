@@ -13,7 +13,8 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import entity.CustomerEntity;
+import entity.ServiceProviderEntity;
+import java.util.InputMismatchException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jms.ConnectionFactory;
@@ -21,6 +22,9 @@ import javax.jms.Queue;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import util.exception.InputDataValidationException;
+import util.exception.ServiceProviderEmailExistException;
+import util.exception.UnknownPersistenceException;
 
 public class MainApp {
     
@@ -34,7 +38,7 @@ public class MainApp {
     private Queue queueCheckoutNotification;
     private ConnectionFactory queueCheckoutNotificationFactory;
     
-    private CustomerEntity currentCustomer;
+    private ServiceProviderEntity currentServiceProvider;
     
     public MainApp()
     {
@@ -107,23 +111,79 @@ public class MainApp {
     
     private void doLogin() throws InvalidLoginCredentialException
     {
-        Scanner scanner = new Scanner(System.in);
-        String username = "";
+        Scanner sc = new Scanner(System.in);
+        String email = "";
         String password = "";
         
-        System.out.println("*** Customer terminal :: Login ***\n");
-        System.out.print("Enter username> ");
-        username = scanner.nextLine().trim();
-        System.out.print("Enter password> ");
-        password = scanner.nextLine().trim();
+        System.out.println("*** Service Provider terminal :: Login ***\n");
+        System.out.print("Enter Email Address> ");
+        email = sc.nextLine().trim();
+        System.out.print("Enter Password> ");
+        password = sc.nextLine().trim();
         
-        if(username.length() > 0 && password.length() > 0)
+        if(email.length() > 0 && password.length() > 0)
         {
-            //currentCustomer = customerEntitySessionBeanRemote.doLogin(username, password);
+            currentServiceProvider = serviceProviderEntitySessionBeanRemote.doServiceProviderLogin(email, password);
         }
         else
         {
             throw new InvalidLoginCredentialException("Missing login credential!");
         }
+    }
+    
+    private void registerServiceProvider()
+    {
+        Scanner sc = new Scanner(System.in);
+        
+        ServiceProviderEntity newServiceProviderEntity = new ServiceProviderEntity();
+        
+        System.out.println("*** Service Provider terminal :: Registration Operation ***\n");
+        
+        try  // is this how to catch?
+        {
+            System.out.print("Enter Name> ");
+            String name = sc.nextLine().trim();
+        
+            System.out.print("1 Health | 2 Fashion | 3 Education");
+            System.out.print("Enter Business Category> ");
+        
+            int number = sc.nextInt();
+            if (number < 1 || number > 3)
+            {
+                System.out.println("Invalid option!");
+            }
+            else 
+            {
+                System.out.print("Enter Business Registration Number> ");
+                String businessRegNumber = sc.nextLine().trim();
+                System.out.print("Enter City> ");
+                String city = sc.nextLine().trim();
+                System.out.print("Enter Phone> ");
+                String phone = sc.nextLine().trim();
+                System.out.print("Enter Business Address> ");
+                String address = sc.nextLine().trim();
+                System.out.print("Enter Email> ");
+                String email = sc.nextLine().trim();
+                System.out.print("Enter Password> ");
+                String password = sc.nextLine().trim();
+                
+                serviceProviderEntitySessionBeanRemote.registerServiceProvider(name, number, businessRegNumber, city, phone, address, email, password);
+                        
+                System.out.println("You have been registered successfully!\n");
+                
+                System.out.println("Enter 0 to go back to the previous menu!\n");
+                String input = "";
+                while (input != "0") {
+                    input = sc.nextLine().trim();
+                }       
+            }
+        }
+        catch (InputMismatchException | ServiceProviderEmailExistException | UnknownPersistenceException | InputDataValidationException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+        
+        
+        
     }
 }
