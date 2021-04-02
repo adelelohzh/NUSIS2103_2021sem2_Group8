@@ -11,6 +11,7 @@ import java.util.Scanner;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.StatusEnum;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderNotFoundException;
@@ -56,8 +57,12 @@ public class SystemAdministrationModule {
             List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
             //print appointments
             System.out.println("Appointments:");
-            System.out.println("Name           | Business category | Date       | Time  | Appointment No.");
-            System.out.println(customerEntity.
+            System.out.printf("%15s%2s%18s%2s%11s%2s%6s%2s%15s", "Name", "|", "Business Category", "|", "Date", "|", "Time", "|", "Appointment No.");
+            for(AppointmentEntity appointmentEntity:appointmentEntities)
+            {
+                //incomplete: scheduled time + appointment no. code
+                //System.out.printf("%15s%2s%18s%2s%11s%2s%6s%2s%15s", customerEntity.getFullName(), "|", "category", "|" +  appointmentEntity.getScheduledTime(),  "|");
+            }
                     
             System.out.println("Enter 0 to go back to the previous menu.");
             
@@ -96,7 +101,6 @@ public class SystemAdministrationModule {
         
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Admin terminal :: View service providers ***\n");
-        System.out.println("*** POS System :: System Administration :: View All Service Providers ***\n");
         
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
         //System.out.printf("%8s%20s%20s%15s%20s%20s\n", "Id | ", "Name | ", "Business Category | ", "Business Reg. No. | ", "City | ", " Address | ", " Email | ", "Phone");
@@ -113,7 +117,22 @@ public class SystemAdministrationModule {
     }
 
     public void approveServiceProviders() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** Admin terminal :: Approve service provider ***\n");
+        
+        List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
+        System.out.println("List of service providers with pending approval:");
+        System.out.printf("%4s%7s%20s%20s%7s%10s%8s%6s\n", "Id |", "Name |", "Business category |", "Business Reg. No. |", "City |", "Address |", "Email |", "Phone");
+
+        for(ServiceProviderEntity serviceProviderEntity:serviceProviderEntities)
+        {
+            if (serviceProviderEntity.getStatusEnum() == StatusEnum.Pending)
+            {
+                System.out.printf("%4s%7s%20s%20s%7s%10s%8s%6s\n", serviceProviderEntity.getServiceProviderId() + " |", serviceProviderEntity.getName() + " |", serviceProviderEntity.getBusinessCategory() + " |", serviceProviderEntity.getBusinessRegistrationNumber() + " |", serviceProviderEntity.getCity() + " |", serviceProviderEntity.getBusinessAddress() + " |", serviceProviderEntity.getEmailAddress() + " |", serviceProviderEntity.getPhoneNumber());
+                serviceProviderEntity.setStatusEnum(StatusEnum.Approved);
+            }
+        }
     }
 
     public void blockServiceProviders() {
