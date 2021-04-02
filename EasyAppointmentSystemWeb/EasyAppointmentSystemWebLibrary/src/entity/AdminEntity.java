@@ -23,9 +23,7 @@ public class AdminEntity implements Serializable {
     
     @Column(nullable = false)
     private String password;
-
-    @OneToMany(mappedBy = "adminEntity")
-    private List<BusinessCategoryEntity> businessCategoryEntities;
+    
     
     public AdminEntity() 
     {
@@ -58,15 +56,7 @@ public class AdminEntity implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public List<BusinessCategoryEntity> getBusinessCategoryEntities() {
-        return businessCategoryEntities;
-    }
-
-    public void setBusinessCategoryEntities(List<BusinessCategoryEntity> businessCategoryEntities) {
-        this.businessCategoryEntities = businessCategoryEntities;
-    }
+    }   
     
     @Override
     public int hashCode() {
