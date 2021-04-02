@@ -45,6 +45,9 @@ public class ServiceProviderEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String password;
     
+    @Column(nullable = false)
+    private Long rating;
+    
     @OneToMany(mappedBy = "serviceProviderEntity")
     private List<AppointmentEntity> appointmentEntities;
     
@@ -68,6 +71,7 @@ public class ServiceProviderEntity implements Serializable {
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
         this.password = password;
+        this.rating = Long.valueOf(0);
         appointmentEntities = new ArrayList<>();
     }
 
@@ -210,6 +214,14 @@ public class ServiceProviderEntity implements Serializable {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Long getRating() {
+        return rating;
+    }
+
+    public void setRating(Long rating) {
+        this.rating = rating;
     }
 
     public List<AppointmentEntity> getAppointmentEntities() {
