@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -30,6 +31,9 @@ public class CustomerEntity implements Serializable {
     
     @Column(nullable = false, length = 32)
     private String lastName;
+    
+    @Transient
+    private String fullName;
     
     @Column(nullable = false, length = 32)
     private Character gender;
@@ -138,6 +142,13 @@ public class CustomerEntity implements Serializable {
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+    
+     /**
+     * @return the full name
+     */
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 
     /**
