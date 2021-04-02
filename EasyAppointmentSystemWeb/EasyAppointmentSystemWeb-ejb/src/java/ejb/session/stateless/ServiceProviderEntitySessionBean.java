@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.ServiceProviderEntity;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -9,8 +10,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import util.exception.InputDataValidationException;
+import util.exception.InvalidLoginCredentialException;
+import util.exception.ServiceProviderEmailExistException;
 import util.exception.ServiceProviderNotFoundException;
+import util.exception.UnknownPersistenceException;
 import util.exception.UpdateServiceProviderException;
 
 @Stateless
@@ -21,19 +31,78 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     @PersistenceContext(unitName = "EasyAppointmentSystemWeb-ejbPU")
     private EntityManager em;
     
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
     public ServiceProviderEntitySessionBean()
     {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
     
-    public Long createNewServiceProvider(ServiceProviderEntity newServiceProviderEntity)
+    @Override
+    public Long createNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException
     {
-        em.persist(newServiceProviderEntity);
-        em.flush();
+       try
+        {
+            Set<ConstraintViolation<ServiceProviderEntity>>constraintViolations = validator.validate(newServiceProviderEntity);
         
-        return newServiceProviderEntity.getServiceProviderId();
+            if(constraintViolations.isEmpty())
+            {
+                em.persist(newServiceProviderEntity);
+                em.flush();
+
+                return newServiceProviderEntity.getServiceProviderId();
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }            
+        }
+        catch(PersistenceException ex)
+        {
+            if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+            {
+                if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                {
+                    throw new ServiceProviderEmailExistException(); // or isit biz reg number
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+            else
+            {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
+        }
+    }
+    
+    @Override
+    public ServiceProviderEntity doServiceProviderLogin(String email, String password) throws InvalidLoginCredentialException
+    {
+        try
+        {
+            ServiceProviderEntity serviceProviderEntity = retrieveServiceProviderEntityByEmail(email);
+            
+            if(serviceProviderEntity.getPassword().equals(password))
+            {
+               // serviceProviderEntity.getSaleTransactionEntities().size();                
+                return serviceProviderEntity;
+            }
+            else
+            {
+                throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
+            }
+        }
+        catch(ServiceProviderNotFoundException ex)
+        {
+            throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
+        }
     }
                
-    
+    @Override
     public List<ServiceProviderEntity> retrieveAllServiceProviderEntity()
     {
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s");
@@ -41,6 +110,22 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         return query.getResultList();
     }
     
+    @Override
+    public ServiceProviderEntity retrieveServiceProviderEntityByEmail(String email) throws ServiceProviderNotFoundException
+    {   
+        ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, email);
+
+        if (serviceProvider != null)
+        {
+            return serviceProvider;
+        }
+        else
+        {
+            throw new ServiceProviderNotFoundException("Serivce Provider email: " + email + " does not exist!");
+        }
+    }
+    
+    @Override
     public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException
     {   
         ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, serviceProviderId);
@@ -51,19 +136,23 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         }
         else
         {
-            throw new ServiceProviderNotFoundException("Serivce Provider ID" + serviceProviderId + " does not exist!");
+            throw new ServiceProviderNotFoundException("Serivce Provider ID: " + serviceProviderId + " does not exist!");
         }
     }
     
-    public void updateServiceProvider(ServiceProviderEntity serviceProviderEntity) throws UpdateServiceProviderException
+    @Override
+    public void updateServiceProvider(ServiceProviderEntity serviceProviderEntity) throws UpdateServiceProviderException, ServiceProviderNotFoundException, InputDataValidationException
     {
-        Long serviceProviderId = serviceProviderEntity.getServiceProviderId();
+        String serviceProviderEmail = serviceProviderEntity.getEmailAddress();
         
-        if (serviceProviderEntity != null && serviceProviderId != null)
+        if (serviceProviderEntity != null && serviceProviderEmail != null)
         {
-            try 
+            
+            Set<ConstraintViolation<ServiceProviderEntity>>constraintViolations = validator.validate(serviceProviderEntity);
+            
+            if (constraintViolations.isEmpty())
             {
-                ServiceProviderEntity serviceProviderToUpdate = retrieveServiceProviderEntityById(serviceProviderId);
+                ServiceProviderEntity serviceProviderToUpdate = retrieveServiceProviderEntityByEmail(serviceProviderEmail);
                 
                 if (serviceProviderToUpdate.getServiceProviderId() != serviceProviderEntity.getServiceProviderId())
                 {
@@ -82,13 +171,19 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
                     throw new UpdateServiceProviderException("Service Provider ID does not match records!");
                 }
             }
-            catch (ServiceProviderNotFoundException ex)
-            { 
-                 System.out.println("Service Provider Record cannot be found!");
+            else 
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
+        else    
+        { 
+            throw new ServiceProviderNotFoundException("Staff ID not provided for staff to be updated");
+        }
+     
     }
     
+    @Override
     public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException
     {
         try
@@ -101,8 +196,48 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         {
             System.out.println("Service Provider Record cannot be found!");
         }
-              
+    }
+    
+    public void registerServiceProvider(String name, int category, String businessRegNumber, String city, String phone, String addr, String email, String password) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException
+    {
+        String businessCategory = "";
         
+        if (category == 1)
+        {
+            businessCategory = "Health";
+        }
+        else if (category == 2)
+        {
+            businessCategory = "Fashion";
+        }
+        else 
+        {
+            businessCategory = "Education";
+        }
+        
+        ServiceProviderEntity newServiceProvider = new ServiceProviderEntity();
+        newServiceProvider.setName(name);
+        newServiceProvider.setBusinessAddress(addr);
+        newServiceProvider.setBusinessCategory(businessCategory);
+        newServiceProvider.setBusinessRegistrationNumber(businessRegNumber);
+        newServiceProvider.setCity(city);
+        newServiceProvider.setPhoneNumber(phone);
+        newServiceProvider.setEmailAddress(email);
+        newServiceProvider.setPassword(password);
+        
+        createNewServiceProvider(newServiceProvider);
+    }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<ServiceProviderEntity>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
     }
     
     
