@@ -1,6 +1,7 @@
 package easyappointmentsystemwebadminclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
+import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AdminEntity;
@@ -15,6 +16,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.StatusEnum;
 import util.exception.BusinessCategoryExistException;
+import util.exception.CreateNewBusinessCategoryException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderNotFoundException;
@@ -27,6 +29,7 @@ public class SystemAdministrationModule {
 
     private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
     private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
+    private BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote;
 
     private AdminEntity currentAdminEntity;
 
@@ -192,7 +195,7 @@ public class SystemAdministrationModule {
         }
     }
 
-    public void addBusinessCategory() throws BusinessCategoryExistException {
+    public void addBusinessCategory() throws BusinessCategoryExistException, CreateNewBusinessCategoryException {
         
         Scanner sc = new Scanner(System.in);
 
@@ -205,12 +208,53 @@ public class SystemAdministrationModule {
         
         while (input != 0) {
         
-            List<BusinessCategoryEntity> businessCategoryEntities = currentAdminEntity.getBusinessCategoryEntities();
+            List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
 
-            if (!businessCategoryEntities.contains(category)) {
+            boolean contains = false;
+            
+            for (BusinessCategoryEntity businessCategory: businessCategoryEntities) { 
+                
+                if (businessCategory.getCategory().equals(category)) {
+                    contains = true;
+                }
+            }
+            
+            if (contains != true) {
+                
                 BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
                 newBusinessCategory.setCategory(category);
                 businessCategoryEntities.add(newBusinessCategory);
+                businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
+
+                System.out.println();
+
+                System.out.println("The business category \"\"" + category + "\" is added.");
+                System.out.print("Enter 0 to go back to the previous menu.");
+                System.out.print("Enter a new business category: ");
+                input = sc.nextLong();
+
+            } else {
+                throw new BusinessCategoryExistException("Business Category " + category + " already exists!");
+            }
+        }
+    }
+
+    public void removeBusinessCategory() {
+        
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("*** Admin terminal :: Remote a Business category ***\n");
+        System.out.print("Enter 0 to go back to the previous menu.");
+        Long input = sc.nextLong();
+        
+        System.out.print("Enter a business category to remove: ");
+        String category = sc.nextLine().trim();
+        
+        /*while (input != 0) {
+        
+            List<BusinessCategoryEntity> businessCategoryEntities = currentAdminEntity.getBusinessCategoryEntities();
+
+            if (businessCategoryEntities.contains(category)) {
                 currentAdminEntity.setBusinessCategoryEntities(businessCategoryEntities);
 
                 System.out.println();
@@ -220,13 +264,9 @@ public class SystemAdministrationModule {
                 System.out.print("Enter a new business category: ");
                 input = sc.nextLong();
             } else {
-                throw new BusinessCategoryExistException("Business Category " + category + " already exists!");
+                //throw new BusinessCategoryNotFoundException("Business Category " + category + " does not exist!");
             }
-        }
-    }
-
-    public void removeBusinessCategory() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }*/
     }
 
     public void sendReminderEmail() {
