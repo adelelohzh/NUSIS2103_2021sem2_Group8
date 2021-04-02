@@ -29,11 +29,10 @@ public class AdminEntity implements Serializable {
     {
     }
 
-    public AdminEntity(String username, String email, String password) 
+    public AdminEntity(String email, String password) 
     { 
         this();
         
-        this.username = username;
         this.email = email;
         this.password = password;
     }
@@ -41,18 +40,6 @@ public class AdminEntity implements Serializable {
 
     public Long getAdminId() {
         return adminId;
-    }
-
-    public void setAdminId(Long adminId) {
-        this.adminId = adminId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getEmail() {
