@@ -1,9 +1,11 @@
 package easyappointmentsystemwebadminclient;
 
+import ejb.session.stateless.AdminEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AdminEntity;
 import entity.AppointmentEntity;
+import entity.BusinessCategoryEntity;
 import entity.CustomerEntity;
 import entity.ServiceProviderEntity;
 import java.util.List;
@@ -12,6 +14,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.StatusEnum;
+import util.exception.BusinessCategoryExistException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderNotFoundException;
@@ -189,7 +192,7 @@ public class SystemAdministrationModule {
         }
     }
 
-    public void addBusinessCategory() {
+    public void addBusinessCategory() throws BusinessCategoryExistException {
         
         Scanner sc = new Scanner(System.in);
 
@@ -200,9 +203,26 @@ public class SystemAdministrationModule {
         System.out.print("Enter a new business category: ");
         String category = sc.nextLine().trim();
         
-        // if category exists, cannot
-        //if not create new category
+        while (input != 0) {
         
+            List<BusinessCategoryEntity> businessCategoryEntities = currentAdminEntity.getBusinessCategoryEntities();
+
+            if (!businessCategoryEntities.contains(category)) {
+                BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
+                newBusinessCategory.setCategory(category);
+                businessCategoryEntities.add(newBusinessCategory);
+                currentAdminEntity.setBusinessCategoryEntities(businessCategoryEntities);
+
+                System.out.println();
+
+                System.out.println("The business category \"\"" + category + "\" is added.");
+                System.out.print("Enter 0 to go back to the previous menu.");
+                System.out.print("Enter a new business category: ");
+                input = sc.nextLong();
+            } else {
+                throw new BusinessCategoryExistException("Business Category " + category + " already exists!");
+            }
+        }
     }
 
     public void removeBusinessCategory() {
