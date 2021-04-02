@@ -40,6 +40,10 @@ public class AppointmentEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private ServiceProviderEntity serviceProviderEntity;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private BusinessCategoryEntity businessCategoryEntity;
 
     public AppointmentEntity() 
     {
