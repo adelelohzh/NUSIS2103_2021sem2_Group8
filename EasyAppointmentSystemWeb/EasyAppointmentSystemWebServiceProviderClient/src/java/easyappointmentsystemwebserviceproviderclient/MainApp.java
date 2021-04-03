@@ -86,7 +86,7 @@ public class MainApp {
                     {
                         doLogin();
                         System.out.println("Login successful!\n");
-                        MainMenu mainMenu = new MainMenu(serviceProviderEntitySessionBeanRemote);
+                        MainMenu mainMenu = new MainMenu(serviceProviderEntitySessionBeanRemote, currentServiceProvider);
                         mainMenu.menu();
                     }
                     catch(InvalidLoginCredentialException ex) 

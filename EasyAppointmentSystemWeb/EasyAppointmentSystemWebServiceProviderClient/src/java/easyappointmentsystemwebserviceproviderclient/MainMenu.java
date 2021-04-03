@@ -3,9 +3,14 @@ package easyappointmentsystemwebserviceproviderclient;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.ServiceProviderEntity;
 import java.util.Scanner;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.exception.InputDataValidationException;
+import util.exception.ServiceProviderNotFoundException;
+import util.exception.UpdateServiceProviderException;
 
 
 public class MainMenu 
@@ -14,7 +19,7 @@ public class MainMenu
     private final Validator validator;
     
     private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
-    
+     
     private ServiceProviderEntity currentServiceProviderEntity;
     
     public MainMenu()
@@ -23,16 +28,17 @@ public class MainMenu
         validator = validatorFactory.getValidator();
     }
     
-    public MainMenu(ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote)
+    public MainMenu(ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, ServiceProviderEntity serviceProviderEntity)
     {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
+        this.currentServiceProviderEntity = serviceProviderEntity;
     }
     
     public void menu()
     {
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         Integer response = 0;
         
         while(true)
@@ -50,7 +56,7 @@ public class MainMenu
             {
                 System.out.print("> ");
 
-                response = scanner.nextInt();
+                response = sc.nextInt();
 
                 if(response == 1)
                 {
@@ -58,7 +64,7 @@ public class MainMenu
                 }
                 else if(response == 2)
                 {
-                    editProfile();
+                    editProfile(currentServiceProviderEntity);
                 }
                 else if (response == 3)
                 {
@@ -83,12 +89,80 @@ public class MainMenu
     
     public void viewProfile()
     {
-        
+        System.out.println("*** Service provider terminal :: View Profile ***\n");
+        System.out.println("Name: " + currentServiceProviderEntity.getName());
+        System.out.println("Business Category: " + currentServiceProviderEntity.getBusinessCategory());
+        System.out.println("Business Registration Number: " + currentServiceProviderEntity.getBusinessRegistrationNumber());
+        System.out.println("Business Address: " + currentServiceProviderEntity.getBusinessAddress());
+        System.out.println("City: " + currentServiceProviderEntity.getCity());
+        System.out.println("Email Address: " + currentServiceProviderEntity.getEmailAddress());
+        System.out.println("Phone Number: " + currentServiceProviderEntity.getPhoneNumber());
+        //System.out.println("Overall Rating: " + currentServiceProviderEntity.getBusinessCategory());
     }
     
-    public void editProfile()
+    public void editProfile(ServiceProviderEntity serviceProviderEntity)
     {
+        Scanner sc = new Scanner(System.in);
         
+        System.out.println("*** Service provider terminal :: Edit Profile ***\n");
+        System.out.print("Enter City (blank if no change)> ");
+        String city = sc.nextLine().trim();
+        if (city.length() > 0) 
+        {
+            serviceProviderEntity.setCity(city);
+
+        }
+        System.out.print("Enter Business address (blank if no change)> ");
+        String businessAddr = sc.nextLine().trim();
+        if (businessAddr.length() > 0) 
+        {
+            serviceProviderEntity.setBusinessAddress(businessAddr);
+
+        }
+        System.out.print("Enter Email address (blank if no change)> ");
+        String emailAddr = sc.nextLine().trim();
+        if (emailAddr.length() > 0) 
+        {
+            serviceProviderEntity.setEmailAddress(emailAddr);
+
+        }
+        System.out.print("Enter Phone number (blank if no change)> ");
+        String phoneNumber = sc.nextLine().trim();
+        if (phoneNumber.length() > 0) 
+        {
+            serviceProviderEntity.setPhoneNumber(phoneNumber);
+
+        }
+        System.out.print("Enter Password (blank if no change)> ");
+        String password = sc.nextLine().trim();
+        if (password.length() > 0) 
+        {
+            serviceProviderEntity.setPassword(password);
+
+        }
+        
+        Set<ConstraintViolation<ServiceProviderEntity>>constraintViolations = validator.validate(serviceProviderEntity);
+        
+        if(constraintViolations.isEmpty())
+        {
+            try
+            {
+                serviceProviderEntitySessionBeanRemote.updateServiceProvider(serviceProviderEntity);
+                currentServiceProviderEntity = serviceProviderEntity; //update the current service provider if it can be updated in database
+            }
+            catch (UpdateServiceProviderException | ServiceProviderNotFoundException ex)
+            {
+                System.out.println("Profile has NOT been updated!\n");
+            }
+            catch (InputDataValidationException ex)
+            {
+                System.out.println(ex.getMessage() + "\n");
+            }
+        }
+        else
+        {
+            showInputDataValidationErrorsForServiceProviderEntity(constraintViolations);
+        }
     }
     
     public void viewAppointment()
@@ -100,5 +174,18 @@ public class MainMenu
     {
         
     }
+    
+    private void showInputDataValidationErrorsForServiceProviderEntity(Set<ConstraintViolation<ServiceProviderEntity>>constraintViolations)
+    {
+        System.out.println("\nInput data validation error!:");
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            System.out.println("\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage());
+        }
+
+        System.out.println("\nPlease try again......\n");
+    }    
+    
     
 }
