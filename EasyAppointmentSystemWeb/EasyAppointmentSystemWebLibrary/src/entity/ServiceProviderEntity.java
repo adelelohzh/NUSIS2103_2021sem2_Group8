@@ -8,7 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import util.enumeration.StatusEnum;
 
 
 @Entity
@@ -43,8 +46,18 @@ public class ServiceProviderEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String password;
     
+    @Column(nullable = false)
+    private Long rating;
+    
+    @Column(nullable = false)
+    private StatusEnum statusEnum;
+    
     @OneToMany(mappedBy = "serviceProviderEntity")
     private List<AppointmentEntity> appointmentEntities;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private BusinessCategoryEntity businessCategoryEntity;
 
     public ServiceProviderEntity() 
     {
@@ -62,6 +75,7 @@ public class ServiceProviderEntity implements Serializable {
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
         this.password = password;
+        this.rating = Long.valueOf(0);
         appointmentEntities = new ArrayList<>();
     }
 
@@ -71,6 +85,27 @@ public class ServiceProviderEntity implements Serializable {
 
     public void setServiceProviderId(Long serviceProviderId) {
         this.serviceProviderId = serviceProviderId;
+    }
+
+    public BusinessCategoryEntity getBusinessCategoryEntity() {
+        return businessCategoryEntity;
+    }
+
+    public void setBusinessCategoryEntity(BusinessCategoryEntity businessCategoryEntity) {
+        if(this.businessCategoryEntity != null)
+        {
+            this.businessCategoryEntity.getServiceProviderEntities().remove(this);
+        }
+        
+        this.businessCategoryEntity = businessCategoryEntity;
+        
+        if(this.businessCategoryEntity != null)
+        {
+            if(!this.businessCategoryEntity.getServiceProviderEntities().contains(this))
+            {
+                this.businessCategoryEntity.getServiceProviderEntities().add(this);
+            }
+        }
     }
     
     /**
@@ -185,12 +220,28 @@ public class ServiceProviderEntity implements Serializable {
         this.password = password;
     }
 
+    public Long getRating() {
+        return rating;
+    }
+
+    public void setRating(Long rating) {
+        this.rating = rating;
+    }
+
     public List<AppointmentEntity> getAppointmentEntities() {
         return appointmentEntities;
     }
 
     public void setAppointmentEntities(List<AppointmentEntity> appointmentEntities) {
         this.appointmentEntities = appointmentEntities;
+    }
+
+    public StatusEnum getStatusEnum() {
+        return statusEnum;
+    }
+
+    public void setStatusEnum(StatusEnum statusEnum) {
+        this.statusEnum = statusEnum;
     }
 
     

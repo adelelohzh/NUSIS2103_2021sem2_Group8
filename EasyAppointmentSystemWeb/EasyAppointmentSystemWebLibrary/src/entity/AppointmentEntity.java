@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package entity;
 
 import java.io.Serializable;
@@ -17,10 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/**
- *
- * @author adele
- */
 @Entity
 public class AppointmentEntity implements Serializable {
 
@@ -40,6 +31,10 @@ public class AppointmentEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private ServiceProviderEntity serviceProviderEntity;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private BusinessCategoryEntity businessCategoryEntity;
 
     public AppointmentEntity() 
     {

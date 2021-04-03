@@ -1,10 +1,15 @@
 package ejb.session.stateless;
 
+import entity.BusinessCategoryEntity;
+import java.util.List;
+import javax.ejb.EJBContext;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import util.exception.CreateNewBusinessCategoryException;
 
 @Stateless
 @Local(BusinessCategoryEntitySessionBeanLocal.class)
@@ -13,5 +18,26 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
 
     @PersistenceContext(unitName = "EasyAppointmentSystemWeb-ejbPU")
     private EntityManager em;
+    
+    public List<BusinessCategoryEntity> retrieveAllBusinessCategories()
+    {
+        Query query = em.createQuery("SELECT b FROM BusinessCategoryEntity s");
+        
+        return query.getResultList();
+    }
+    
+    public BusinessCategoryEntity createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws CreateNewBusinessCategoryException
+    {
+        if(newBusinessCategoryEntity != null)
+        {
+            em.persist(newBusinessCategoryEntity);
+            em.flush();
+            return newBusinessCategoryEntity;
+        }
+        else
+        {
+            throw new CreateNewBusinessCategoryException("Business Category not created!");
+        }
+    }
     
 }

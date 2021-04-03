@@ -6,10 +6,15 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -23,6 +28,15 @@ public class BusinessCategoryEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long businessCategoryId;
 
+    @Column(nullable = false, length = 32)
+    private String category;
+    
+    @OneToMany(mappedBy = "businessCategoryEntity")
+    private List<ServiceProviderEntity> serviceProviderEntities;
+    
+    @OneToMany(mappedBy = "businessCategoryEntity")
+    private List<AppointmentEntity> appointmentEntities;
+    
     public Long getBusinessCategoryId() {
         return businessCategoryId;
     }
@@ -31,6 +45,30 @@ public class BusinessCategoryEntity implements Serializable {
         this.businessCategoryId = businessCategoryId;
     }
 
+    public List<AppointmentEntity> getAppointmentEntities() {
+        return appointmentEntities;
+    }
+
+    public void setAppointmentEntities(List<AppointmentEntity> appointmentEntities) {
+        this.appointmentEntities = appointmentEntities;
+    }
+    
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public List<ServiceProviderEntity> getServiceProviderEntities() {
+        return serviceProviderEntities;
+    }
+
+    public void setServiceProviderEntities(List<ServiceProviderEntity> serviceProviderEntities) {
+        this.serviceProviderEntities = serviceProviderEntities;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
