@@ -49,74 +49,62 @@ public class SystemAdministrationModule {
 
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Admin terminal :: View Appointments for customers ***\n");
-        System.out.print("Enter customer Id> ");
-
-        Long customerId = sc.nextLong();
+        Long customerId;
         
-        while (customerId != 0) {
+        do {
+            System.out.print("Enter customer Id> ");
+            customerId = sc.nextLong();
+            
             try {
                 CustomerEntity customerEntity = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(customerId);
                 //retrieve appointments
                 List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
                 //print appointments
                 System.out.println("Appointments:");
-                System.out.printf("%4s%30s%7s%13s%19s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
+                System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
                 for (AppointmentEntity appointmentEntity : appointmentEntities) {
-                    //incomplete: scheduled time + appointment no. code
-                    //System.out.printf("%15s%2s%18s%2s%11s%2s%6s%2s%15s", customerEntity.getFullName(), "|", "category", "|" +  appointmentEntity.getScheduledTime(),  "|");
+                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", customerEntity.getFullName(), "| " + appointmentEntity.getBusinessCategoryEntity(), "| " +  appointmentEntity.getScheduledDate(), "| " + appointmentEntity.getScheduledTime(), "| " + appointmentEntity.getAppointmentNo());
                 }
-                
-                System.out.println("Enter 0 to go back to the previous menu.");
-                System.out.print("Enter customer Id> ");
-                customerId = sc.nextLong();
-                
-            } 
-            catch (CustomerNotFoundException ex) {
+            } catch (CustomerNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving customer: " + ex.getMessage() + "\n");
             }
-        }
-
-    }
+            
+            System.out.println("Enter 0 to go back to the previous menu.");
+        } while (customerId != 0);
+    } 
 
     public void viewServiceProviderAppointments() {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Admin terminal :: View Appointments for service providers ***\n");
-        System.out.print("Enter service provider Id> ");
-
-        Long serviceProviderId = sc.nextLong();
-
-        while (serviceProviderId != 0) {
+        Long serviceProviderId;
+        
+        do {
+            System.out.print("Enter service provider Id> ");
+            serviceProviderId = sc.nextLong();
             try {
                 ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
                 List<AppointmentEntity> appointmentEntities = serviceProviderEntity.getAppointmentEntities();
                 System.out.println("Appointments:");
-                System.out.printf("%15s%2s%18s%2s%11s%2s%6s%2s%15s", "Name", "|", "Business Category", "|", "Date", "|", "Time", "|", "Appointment No.");
-
+                System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
+                
                 for (AppointmentEntity appointmentEntity : appointmentEntities) {
-                    //incomplete: scheduled time + appointment no. code
-                    //System.out.printf("%15s%2s%18s%2s%11s%2s%6s%2s%15s", serviceProviderEntity.getName(), "|", "category", "|" +  appointmentEntity.getScheduledTime(),  "|");
+                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", serviceProviderEntity.getName(), "| " + appointmentEntity.getBusinessCategoryEntity(), "| " +  appointmentEntity.getScheduledDate(), "| " + appointmentEntity.getScheduledTime(), "| " + appointmentEntity.getAppointmentNo());
                 }
-
-                System.out.println("Enter 0 to go back to the previous menu.");
-                System.out.print("Enter service provider Id> ");
-                serviceProviderId = sc.nextLong();
-
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             }
-        }
+        } while (serviceProviderId != 0);
     }
 
     public void viewServiceProviders() {
 
-        Scanner sc = new Scanner(System.in);
         System.out.println("*** Admin terminal :: View service providers ***\n");
 
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
-        System.out.printf("%4s%7s%20s%10s%8s%6s\n", "Id | ", "Name | ", "Business category | ", "City |", "Overall Rating | ", "Status | ");
+        System.out.printf("%-15s%-20s%-15s%-20s%-15s\n", "Name", "| Business category", "| City", "| Overall Rating", "| Status");
 
         for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
-            System.out.printf("%4s%7s%20s%10s%8s%6s\n", "Id | ", "Name | ", "Business category | ", "City |", "Overall Rating | ", "Status | ");
+            System.out.printf("%-15s%-20s%-15s%-20s%-15s\n", serviceProviderEntity.getName(), "| " + serviceProviderEntity.getBusinessCategory(), "| " + serviceProviderEntity.getCity(), "| " + serviceProviderEntity.getRating(), "| " + serviceProviderEntity.getStatusEnum());
         }
 
         System.out.print("Press any key to continue...> ");
@@ -131,33 +119,31 @@ public class SystemAdministrationModule {
 
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
         System.out.println("List of service providers with pending approval:");
-        System.out.printf("%4s%7s%20s%20s%7s%10s%8s%6s\n", "Id |", "Name |", "Business category |", "Business Reg. No. |", "City |", "Address |", "Email |", "Phone");
+        System.out.printf("%-3s%-7s%-20s%-20s%-7s%-10s%-8s%-7s\n", "Id", "| Name", "| Business category", "| Business Reg. No.", "| City", "| Address", "| Email", "| Phone");
 
         for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
             if (serviceProviderEntity.getStatusEnum() == StatusEnum.Pending) {
-                System.out.printf("%4s%7s%20s%20s%7s%10s%8s%6s\n", serviceProviderEntity.getServiceProviderId() + " |", serviceProviderEntity.getName() + " |", serviceProviderEntity.getBusinessCategory() + " |", serviceProviderEntity.getBusinessRegistrationNumber() + " |", serviceProviderEntity.getCity() + " |", serviceProviderEntity.getBusinessAddress() + " |", serviceProviderEntity.getEmailAddress() + " |", serviceProviderEntity.getPhoneNumber());
+                System.out.printf("%-3s%-7s%-20s%-20s%-7s%-10s%-8s%-7s\n", serviceProviderEntity.getServiceProviderId(), "| " + serviceProviderEntity.getName(), "| " + serviceProviderEntity.getBusinessCategory(), "| " + serviceProviderEntity.getBusinessRegistrationNumber(), "| " + serviceProviderEntity.getCity(), "| " + serviceProviderEntity.getBusinessAddress(),"| " + serviceProviderEntity.getEmailAddress(), "| " + serviceProviderEntity.getPhoneNumber());
                 System.out.println();
             }
         }
-
-        System.out.println("Enter 0 to go back to the previous menu.");
-        System.out.print("Enter service provider Id> ");
-        Long serviceProviderId = sc.nextLong();
-
-        while (serviceProviderId != 0) {
+        
+        do {
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            Long serviceProviderId = sc.nextLong();
+            if (serviceProviderId == 0) {
+                break;
+            }
+           
             try {
                 ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
                 serviceProvider.setStatusEnum(StatusEnum.Approved);
                 System.out.println(serviceProvider.getName() + "'s registration is approved.");
-
-                System.out.println("Enter 0 to go back to the previous menu.");
-                System.out.print("Enter service provider Id> ");
-                serviceProviderId = sc.nextLong();
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             }
-        }
-
+        } while (serviceProviderId != 0); 
     }
 
     public void blockServiceProviders() {
@@ -166,33 +152,25 @@ public class SystemAdministrationModule {
 
         System.out.println("*** Admin terminal :: Block service provider ***\n");
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
-
-        System.out.printf("%4s%7s%20s%10s%8s%6s\n", "Id | ", "Name | ", "Business category | ", "City |", "Overall Rating | ", "Status | ");
-
-        for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
-            System.out.printf("%4s%7s%20s%10s%8s%6s\n", "Id | ", "Name | ", "Business category | ", "City |", "Overall Rating | ", "Status | ");
-            //print each serviceProvider, to be formatted
-        }
-
-        System.out.println("Enter 0 to go back to the previous menu.");
-        System.out.print("Enter service provider Id");
-        Long serviceProviderId = sc.nextLong();
-
-        while (serviceProviderId != 0) {
+        viewServiceProviders();
+      
+        do {
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            Long serviceProviderId = sc.nextLong();
+            if (serviceProviderId == 0) {
+                break;
+            }
+            
             try {
                 ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
                 serviceProviderEntity.setStatusEnum(StatusEnum.Blocked);
-
                 System.out.println(serviceProviderEntity.getName() + " has been blocked.");
-                
-                System.out.println("Enter 0 to go back to the previous menu.");
-                System.out.print("Enter service provider Id");
-                serviceProviderId = sc.nextLong();
             } 
             catch (ServiceProviderNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             }
-        }
+        } while (serviceProviderId != 0);
     }
 
     public void addBusinessCategory() throws BusinessCategoryExistException, CreateNewBusinessCategoryException {
@@ -203,39 +181,29 @@ public class SystemAdministrationModule {
         System.out.print("Enter 0 to go back to the previous menu.");
         Long input = sc.nextLong();
         
-        System.out.print("Enter a new business category: ");
-        String category = sc.nextLine().trim();
-        
         while (input != 0) {
+            System.out.print("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter a new business category> ");
+            String category = sc.nextLine().trim();
+            System.out.println();
         
             List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
-
-            boolean contains = false;
             
             for (BusinessCategoryEntity businessCategory: businessCategoryEntities) { 
                 
                 if (businessCategory.getCategory().equals(category)) {
-                    contains = true;
+                    throw new BusinessCategoryExistException("Business Category " + category + " already exists!");
+                } else {
+                    BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
+                    newBusinessCategory.setCategory(category);
+                    businessCategoryEntities.add(newBusinessCategory);
+                    businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
+                    
+                    System.out.println("The business category \"\"" + category + "\" is added.");
+                    System.out.print("Enter 0 to go back to the previous menu.");
+                    input = sc.nextLong();
                 }
-            }
-            
-            if (contains != true) {
-                
-                BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
-                newBusinessCategory.setCategory(category);
-                businessCategoryEntities.add(newBusinessCategory);
-                businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
 
-                System.out.println();
-
-                System.out.println("The business category \"\"" + category + "\" is added.");
-                System.out.print("Enter 0 to go back to the previous menu.");
-                System.out.print("Enter a new business category: ");
-                input = sc.nextLong();
-
-            } else {
-                throw new BusinessCategoryExistException("Business Category " + category + " already exists!");
-            }
         }
     }
 
