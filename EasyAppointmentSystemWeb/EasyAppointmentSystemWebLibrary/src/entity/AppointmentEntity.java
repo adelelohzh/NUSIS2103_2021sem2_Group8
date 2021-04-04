@@ -20,6 +20,9 @@ public class AppointmentEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long appointmentId;
     
+    @Column(nullable = false, length = 32)
+    private String appointmentNo;
+    
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date scheduledTime;
@@ -134,6 +137,14 @@ public class AppointmentEntity implements Serializable {
                 this.businessCategoryEntity.getAppointmentEntities().add(this);
             }
         }
+    }
+
+    public String getAppointmentNo() {
+        return appointmentNo;
+    }
+
+    public void setAppointmentNo(String appointmentNo) {
+        this.appointmentNo = appointmentNo;
     }
     
 
