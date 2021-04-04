@@ -103,6 +103,28 @@ public class AppointmentEntity implements Serializable {
         }
     }
 
+    public BusinessCategoryEntity getBusinessCategoryEntity() {
+        return businessCategoryEntity;
+    }
+
+    public void setBusinessCategoryEntity(BusinessCategoryEntity businessCategoryEntity) {
+        if(this.businessCategoryEntity != null)
+        {
+            this.businessCategoryEntity.getAppointmentEntities().remove(this);
+        }
+        
+        this.businessCategoryEntity = businessCategoryEntity;
+        
+        if(this.businessCategoryEntity != null)
+        {
+            if(!this.businessCategoryEntity.getAppointmentEntities().contains(this))
+            {
+                this.businessCategoryEntity.getAppointmentEntities().add(this);
+            }
+        }
+    }
+    
+
     @Override
     public int hashCode() {
         int hash = 0;
