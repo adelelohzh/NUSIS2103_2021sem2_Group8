@@ -60,7 +60,7 @@ public class SystemAdministrationModule {
                 List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
                 //print appointments
                 System.out.println("Appointments:");
-                System.out.printf("%15s%2s%18s%2s%11s%2s%6s%2s%15s", "Name", "|", "Business Category", "|", "Date", "|", "Time", "|", "Appointment No.");
+                System.out.printf("%4s%30s%7s%13s%19s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
                 for (AppointmentEntity appointmentEntity : appointmentEntities) {
                     //incomplete: scheduled time + appointment no. code
                     //System.out.printf("%15s%2s%18s%2s%11s%2s%6s%2s%15s", customerEntity.getFullName(), "|", "category", "|" +  appointmentEntity.getScheduledTime(),  "|");
