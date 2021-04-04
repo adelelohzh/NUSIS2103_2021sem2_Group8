@@ -116,6 +116,7 @@ public class SystemAdministrationModule {
 
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Admin terminal :: Approve service provider ***\n");
+        Long serviceProviderId;
 
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
         System.out.println("List of service providers with pending approval:");
@@ -131,7 +132,7 @@ public class SystemAdministrationModule {
         do {
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter service provider Id> ");
-            Long serviceProviderId = sc.nextLong();
+            serviceProviderId = sc.nextLong();
             if (serviceProviderId == 0) {
                 break;
             }
@@ -153,11 +154,12 @@ public class SystemAdministrationModule {
         System.out.println("*** Admin terminal :: Block service provider ***\n");
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
         viewServiceProviders();
+        Long serviceProviderId;
       
         do {
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter service provider Id> ");
-            Long serviceProviderId = sc.nextLong();
+            serviceProviderId = sc.nextLong();
             if (serviceProviderId == 0) {
                 break;
             }
@@ -176,15 +178,17 @@ public class SystemAdministrationModule {
     public void addBusinessCategory() throws BusinessCategoryExistException, CreateNewBusinessCategoryException {
         
         Scanner sc = new Scanner(System.in);
+        boolean contains = false;
 
         System.out.println("*** Admin terminal :: Add a Business category ***\n");
-        System.out.print("Enter 0 to go back to the previous menu.");
-        Long input = sc.nextLong();
         
-        while (input != 0) {
+        do {
             System.out.print("Enter 0 to go back to the previous menu.");
             System.out.print("Enter a new business category> ");
             String category = sc.nextLine().trim();
+            if (category.equals(0)) {
+                break;
+            }
             System.out.println();
         
             List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
@@ -192,53 +196,75 @@ public class SystemAdministrationModule {
             for (BusinessCategoryEntity businessCategory: businessCategoryEntities) { 
                 
                 if (businessCategory.getCategory().equals(category)) {
+                    contains = true;
                     throw new BusinessCategoryExistException("Business Category " + category + " already exists!");
-                } else {
-                    BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
-                    newBusinessCategory.setCategory(category);
-                    businessCategoryEntities.add(newBusinessCategory);
-                    businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
-                    
-                    System.out.println("The business category \"\"" + category + "\" is added.");
-                    System.out.print("Enter 0 to go back to the previous menu.");
-                    input = sc.nextLong();
+                    break;
                 }
-
-        }
+            }
+            if (!contains) {
+                BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
+                newBusinessCategory.setCategory(category);
+                businessCategoryEntities.add(newBusinessCategory);
+                businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
+                System.out.println("The business category \"\"" + category + "\" is added.");
+            }
+        } while (input != 0);
     }
+  
 
     public void removeBusinessCategory() {
         
         Scanner sc = new Scanner(System.in);
-
         System.out.println("*** Admin terminal :: Remote a Business category ***\n");
-        System.out.print("Enter 0 to go back to the previous menu.");
-        Long input = sc.nextLong();
+        String category;
         
-        System.out.print("Enter a business category to remove: ");
-        String category = sc.nextLine().trim();
-        
-        /*while (input != 0) {
-        
-            List<BusinessCategoryEntity> businessCategoryEntities = currentAdminEntity.getBusinessCategoryEntities();
-
-            if (businessCategoryEntities.contains(category)) {
-                currentAdminEntity.setBusinessCategoryEntities(businessCategoryEntities);
-
-                System.out.println();
-
-                System.out.println("The business category \"\"" + category + "\" is added.");
-                System.out.print("Enter 0 to go back to the previous menu.");
-                System.out.print("Enter a new business category: ");
-                input = sc.nextLong();
-            } else {
-                //throw new BusinessCategoryNotFoundException("Business Category " + category + " does not exist!");
+        do {
+            System.out.print("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter a business category to remove> ");
+            category = sc.nextLine().trim();
+            if (category.equals(0)) {
+                break;
             }
-        }*/
+            System.out.println();
+            
+            // method to be added into SessionBean
+            //List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.removeBusinessCategory(category);
+            //throw new BusinessCategoryNotFoundException("Business Category " + category + " does not exist!");
+        } while (category != 0);
     }
 
     public void sendReminderEmail() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** Admin terminal :: Send reminder email ***\n");
+        Long customerId;
+        
+        do {
+            System.out.print("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter customer Id> ");
+            customerId = sc.nextLong();
+            
+            try { 
+                customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(customerId);
+                List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
+                if (appointmentEntities.length() == 0) {
+                    
+                }
+                            // 01 - Synchronous Session Bean Invocation
+                            //emailSessionBeanRemote.emailCheckoutNotificationSync(newSaleTransactionEntity, "Shalinda Adikari <shalinda@comp.nus.edu.sg>", toEmailAddress);
+                            
+                            // 02 - Asynchronous Session Bean Invocation
+                            //Future<Boolean> asyncResult = emailSessionBeanRemote.emailCheckoutNotificationAsync(newSaleTransactionEntity, "Shalinda Adikari <shalinda@comp.nus.edu.sg>", toEmailAddress);
+                            //RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
+                            //runnableNotification.start();
+                            
+                            // 03 - JMS Messaging with Message Driven Bean
+                            //sendJMSMessageToQueueCheckoutNotification(newSaleTransactionEntity.getSaleTransactionId(), "Shalinda Adikari <shalinda@comp.nus.edu.sg>", toEmailAddress);
+                            
+                            System.out.println("Checkout notification email sent successfully!\n");
+                        }
+                        catch(Exception ex)
+                        {
+                            System.out.println("An error has occurred while sending the checkout notification email: " + ex.getMessage() + "\n");
+                        }
+                    }
 }
