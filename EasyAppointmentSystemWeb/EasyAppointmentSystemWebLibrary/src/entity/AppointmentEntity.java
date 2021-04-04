@@ -24,6 +24,10 @@ public class AppointmentEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date scheduledTime;
     
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date scheduledDate;
+    
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private CustomerEntity customerEntity;
@@ -59,6 +63,14 @@ public class AppointmentEntity implements Serializable {
 
     public void setScheduledTime(Date scheduledTime) {
         this.scheduledTime = scheduledTime;
+    }
+
+    public Date getScheduledDate() {
+        return scheduledDate;
+    }
+
+    public void setScheduledDate(Date scheduledDate) {
+        this.scheduledDate = scheduledDate;
     }
 
     public CustomerEntity getCustomerEntity() {
