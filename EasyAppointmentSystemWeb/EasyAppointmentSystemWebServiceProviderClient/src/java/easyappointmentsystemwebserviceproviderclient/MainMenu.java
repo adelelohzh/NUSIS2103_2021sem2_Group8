@@ -1,5 +1,6 @@
 package easyappointmentsystemwebserviceproviderclient;
 
+import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AppointmentEntity;
 import entity.ServiceProviderEntity;
@@ -11,6 +12,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.exception.AppointmentNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UpdateServiceProviderException;
@@ -25,18 +27,21 @@ public class MainMenu
      
     private ServiceProviderEntity currentServiceProviderEntity;
     
+    private AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
+            
     public MainMenu()
     {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
     }
     
-    public MainMenu(ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, ServiceProviderEntity serviceProviderEntity)
+    public MainMenu(ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, ServiceProviderEntity serviceProviderEntity, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote)
     {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
         this.currentServiceProviderEntity = serviceProviderEntity;
+        this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
     }
     
     public void menu()
@@ -171,7 +176,7 @@ public class MainMenu
     public void viewAppointment()
     {  
         Scanner sc = new Scanner(System.in);
-        Integer response = 0;
+        String response = "";
         
         List<AppointmentEntity> appointments = currentServiceProviderEntity.getAppointmentEntities();
         
@@ -181,14 +186,50 @@ public class MainMenu
         
         for(AppointmentEntity appointment:appointments)
         {
-            System.out.printf("%16s%10s%7s%9s\n", appointment.getCustomerName(), appointment.getDate(), appointment.getTime(), appointment.getAppointmentNumber());
+            System.out.printf("%16s%10s%7s%9s\n", appointment.getCustomerEntity().getFullName(), appointment.getScheduledDate(), appointment.getScheduledTime(), appointment.getAppointmentNo());
         }
-        
+
+        while (response != "0")
+        {
+            System.out.println("Enter 0 to go back to the previous menu.");  
+            response = sc.nextLine().trim();
+        }
     }
     
     public void cancelAppointment()
     {
+        Scanner sc = new Scanner(System.in);
+        String response = "";
         
+        List<AppointmentEntity> appointments = currentServiceProviderEntity.getAppointmentEntities();
+        
+        System.out.println("*** Service provider terminal :: Delete Appointments ***\n");
+        System.out.print("Appointments: ");
+        System.out.printf("%16s%10s%7s%9s\n", "Name", "Date", "Time", "Appointment No.");
+        
+        for(AppointmentEntity appointment:appointments)
+        {
+            System.out.printf("%16s%10s%7s%9s\n", appointment.getCustomerEntity().getFullName(), appointment.getScheduledDate(), appointment.getScheduledTime(), appointment.getAppointmentNo());
+        }
+        
+        System.out.println("Enter Appointment Id> ");
+        String appointmentId = sc.nextLine().trim();
+        
+        try 
+        {
+            appointmentEntitySessionBeanRemote.deleteAppointment(appointmentId);
+        }
+        catch (AppointmentNotFoundException ex)
+        {
+            System.out.println("Appointment Number " + appointmentId + " cannot be found!");
+        }
+        
+        while (response != "0")
+        {
+            System.out.println("Enter 0 to go back to the previous menu.");  
+            response = sc.nextLine().trim();
+        }
+
     }
     
     private void showInputDataValidationErrorsForServiceProviderEntity(Set<ConstraintViolation<ServiceProviderEntity>>constraintViolations)
