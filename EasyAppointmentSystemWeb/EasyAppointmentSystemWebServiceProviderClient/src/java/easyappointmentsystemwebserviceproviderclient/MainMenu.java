@@ -1,7 +1,10 @@
 package easyappointmentsystemwebserviceproviderclient;
 
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
+import entity.AppointmentEntity;
 import entity.ServiceProviderEntity;
+import java.text.NumberFormat;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -166,7 +169,20 @@ public class MainMenu
     }
     
     public void viewAppointment()
-    {
+    {  
+        Scanner sc = new Scanner(System.in);
+        Integer response = 0;
+        
+        List<AppointmentEntity> appointments = currentServiceProviderEntity.getAppointmentEntities();
+        
+        System.out.println("*** Service provider terminal :: View Appointments ***\n");
+        System.out.print("Appointments: ");
+        System.out.printf("%16s%10s%7s%9s\n", "Name", "Date", "Time", "Appointment No.");
+        
+        for(AppointmentEntity appointment:appointments)
+        {
+            System.out.printf("%16s%10s%7s%9s\n", appointment.getCustomerName(), appointment.getDate(), appointment.getTime(), appointment.getAppointmentNumber());
+        }
         
     }
     
