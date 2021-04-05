@@ -35,4 +35,31 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
             throw new AppointmentNotFoundException("Appointment of customer " + customerID + " does not exist!");
         }
     }
+    
+    public AppointmentEntity retrieveAppointmentByAppointmentNumber(String appointmentNo) throws AppointmentNotFoundException {
+   
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.appointmentNo = :inAppointmentNo");
+        query.setParameter("inAppointmentNo", appointmentNo);
+        
+        try
+        {
+            return (AppointmentEntity)query.getSingleResult();
+        }
+        catch(NoResultException | NonUniqueResultException ex)
+        {
+            throw new AppointmentNotFoundException("Appointment number: " + appointmentNo + " does not exist!");
+        }
+    }
+    
+    @Override
+    public void deleteAppointment(String appointmentNo) throws AppointmentNotFoundException
+    {
+
+        AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
+
+        em.remove(appointmentEntity);
+        em.flush();
+        
+        // are there any exception cases?
+    }
 }
