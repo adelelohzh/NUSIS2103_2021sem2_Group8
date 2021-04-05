@@ -69,7 +69,7 @@ public class MainApp
                     {
                         doLogin();
                         System.out.println("Login successful!\n");
-                        systemAdministrationModule = new SystemAdministrationModule(customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentAdminEntity);
+                        systemAdministrationModule = new SystemAdministrationModule(customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentAdminEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
                         menuMain();
                     }
                     catch(InvalidLoginCredentialException ex) 
