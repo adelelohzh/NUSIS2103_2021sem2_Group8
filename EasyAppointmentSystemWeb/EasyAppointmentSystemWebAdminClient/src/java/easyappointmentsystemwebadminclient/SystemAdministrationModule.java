@@ -12,6 +12,8 @@ import entity.ServiceProviderEntity;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -24,6 +26,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.StatusEnum;
 import util.exception.BusinessCategoryExistException;
+import util.exception.BusinessCategoryNotFoundException;
 import util.exception.CreateNewBusinessCategoryException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
@@ -229,7 +232,7 @@ public class SystemAdministrationModule {
     public void removeBusinessCategory() {
 
         Scanner sc = new Scanner(System.in);
-        System.out.println("*** Admin terminal :: Remote a Business category ***\n");
+        System.out.println("*** Admin terminal :: Remove a Business category ***\n");
         String category;
 
         do {
@@ -239,11 +242,17 @@ public class SystemAdministrationModule {
             if (category.equals(0)) {
                 break;
             }
+            
+            try {
+                businessCategoryEntitySessionBeanRemote.deleteBusinessCategory(category);
+            } catch (BusinessCategoryNotFoundException ex) {
+                System.out.println("Business Category " + category + " does not exist!");
+            }
+            //throw new BusinessCategoryNotFoundException("Business Category " + category + " does not exist!");
             System.out.println();
 
             // method to be added into SessionBean
-            //List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.removeBusinessCategory(category);
-            //throw new BusinessCategoryNotFoundException("Business Category " + category + " does not exist!");
+            
         } while (!category.equals(0));
     }
 
@@ -308,7 +317,7 @@ public class SystemAdministrationModule {
                     sendJMSMessageToQueueCheckoutNotification(customerAppointmentEntities.get(0).getCustomerEntity().getCustomerId(), "Name <name@comp.nus.edu.sg>", toEmailAddress);
                     System.out.println("Reminder email sent successfully!\n");
                 }
-            } catch (Exception ex) {
+            } catch (InterruptedException | JMSException | CustomerNotFoundException ex) {
                 System.out.println("An error has occurred while sending the reminder email: " + ex.getMessage() + "\n");
             }
 
