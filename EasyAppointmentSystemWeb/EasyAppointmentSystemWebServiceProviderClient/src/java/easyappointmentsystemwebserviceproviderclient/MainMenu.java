@@ -212,23 +212,28 @@ public class MainMenu
             System.out.printf("%16s%10s%7s%9s\n", appointment.getCustomerEntity().getFullName(), appointment.getScheduledDate(), appointment.getScheduledTime(), appointment.getAppointmentNo());
         }
         
-        System.out.println("Enter Appointment Id> ");
-        String appointmentId = sc.nextLine().trim();
-        
-        try 
-        {
-            appointmentEntitySessionBeanRemote.deleteAppointment(appointmentId);
-            System.out.println("Appointment " +  appointmentId + " has been canceled successfully!");
-        }
-        catch (AppointmentNotFoundException ex)
-        {
-            System.out.println("Appointment Number " + appointmentId + " cannot be found!");
-        }
-        
-        while (response != "0")
+        while (response != "0") 
         {
             System.out.println("Enter 0 to go back to the previous menu.");  
+            System.out.println("Enter Appointment Id> ");
             response = sc.nextLine().trim();
+            
+            if (response != "0")
+            {
+                try 
+                {
+                    appointmentEntitySessionBeanRemote.deleteAppointment(response);
+                    System.out.println("Appointment " +  response + " has been canceled successfully!");
+                }
+                catch (AppointmentNotFoundException ex)
+                {
+                    System.out.println("Appointment Number " + response + " cannot be found!");
+                }
+            } 
+            else
+            {
+                break;
+            }
         }
 
     }
