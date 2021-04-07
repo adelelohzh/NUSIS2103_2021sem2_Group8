@@ -1,6 +1,7 @@
 package ejb.session.stateless;
 
 import entity.ServiceProviderEntity;
+import java.util.Date;
 import java.util.List;
 import util.exception.DeleteServiceProviderException;
 import util.exception.InputDataValidationException;
@@ -28,5 +29,7 @@ public interface ServiceProviderEntitySessionBeanRemote
 
     public void registerServiceProvider(String name, int category, String businessRegNumber, String city, String phone, String addr, String email, String password) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException;
     
+    public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(String businessCategory, Date date, String city) throws ServiceProviderNotFoundException;
+
     
 }
