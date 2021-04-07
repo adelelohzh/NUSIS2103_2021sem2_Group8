@@ -10,10 +10,14 @@ public interface AppointmentEntitySessionBeanLocal {
 
     public AppointmentEntity retrieveAppointmentByCustomerID(Long customerID) throws AppointmentNotFoundException;
 
-    public AppointmentEntity retrieveAppointmentByAppointmentNumber(String appointmentNo) throws AppointmentNotFoundException;
+    public AppointmentEntity retrieveAppointmentByAppointmentId(Long appointmentId) throws AppointmentNotFoundException;
 
-    public void deleteAppointment(String appointmentNo) throws AppointmentNotFoundException;
+    public void deleteAppointment(Long appointmentId) throws AppointmentNotFoundException;
 
     public List<AppointmentEntity> retrieveAppointmentsByDate(Date date, String serviceProviderName);
+    
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(Date date, Long serviceProviderId);
+    
+    public AppointmentEntity retrieveAppointmentByAppointmentNumber(String appointmentNo) throws AppointmentNotFoundException;
     
 }
