@@ -1,6 +1,8 @@
 package ejb.session.stateless;
 
 import entity.AppointmentEntity;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -51,6 +53,20 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         }
     }
     
+    public List<AppointmentEntity> retrieveAppointmentsByDate(Date date, String serviceProviderName)
+    {
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.date = :inDate and a.serviceProviderEntity.name. := inServiceProviderName");
+        query.setParameter("inDate", date);
+        query.setParameter("inServiceProviderName", serviceProviderName);
+        
+        return query.getResultList();
+    }
+    
+    public String retrieveEarliestAppointmentsByDate(Date date, String serviceProviderName)
+    {
+        List<AppointmentEntity> appointments = retrieveAppointmentsByDate(date, serviceProviderName);
+    }
+
     @Override
     public void deleteAppointment(String appointmentNo) throws AppointmentNotFoundException
     {
@@ -62,4 +78,6 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         
         // are there any exception cases?
     }
+    
+    
 }

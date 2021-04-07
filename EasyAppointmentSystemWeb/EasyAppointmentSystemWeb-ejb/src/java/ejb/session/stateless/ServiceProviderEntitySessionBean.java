@@ -135,10 +135,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         query.setParameter("inCity", city);
         query.setParameter("inDate", date);
         
-        List<ServiceProviderEntity> serviceProviders = query.getResultList();
-        
-        return serviceProviders;
-        
+        return query.getResultList();    
     }
     
     @Override
