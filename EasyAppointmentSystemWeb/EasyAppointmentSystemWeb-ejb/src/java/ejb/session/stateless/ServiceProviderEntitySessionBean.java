@@ -1,6 +1,7 @@
 package ejb.session.stateless;
 
 import entity.ServiceProviderEntity;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Local;
@@ -124,6 +125,20 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         {
             throw new ServiceProviderNotFoundException("Serivce Provider email: " + email + " does not exist!");
         }
+    }
+    
+    @Override
+    public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(String businessCategory, Date date, String city) throws ServiceProviderNotFoundException
+    {   
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.businessCategory := inBusinessCategory and s.city := inCity and s.date := inDate");
+        query.setParameter("inBusinessCategory", businessCategory);
+        query.setParameter("inCity", city);
+        query.setParameter("inDate", date);
+        
+        List<ServiceProviderEntity> serviceProviders = query.getResultList();
+        
+        return serviceProviders;
+        
     }
     
     @Override
