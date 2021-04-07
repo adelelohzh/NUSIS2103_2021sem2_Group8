@@ -78,11 +78,10 @@ public class MainApp {
 
                 } else if (response == 2) {
                     try {
-                        doLogin();
+                        CustomerEntity currentCustomerEntity = doLogin();
                         System.out.println("Login successful!\n");
-                        systemAdministrationModule = new SystemAdministrationModule(customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentCustomerEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
-
-                        menuMain();
+                        systemAdministrationModule = new SystemAdministrationModule(currentCustomerEntity, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentCustomerEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
+                        menuMain(currentCustomerEntity);
                     } catch (InvalidLoginCredentialException ex) {
                         System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
                     }
@@ -99,7 +98,7 @@ public class MainApp {
         }
     }
 
-    private void doLogin() throws InvalidLoginCredentialException {
+    private CustomerEntity doLogin() throws InvalidLoginCredentialException {
         Scanner scanner = new Scanner(System.in);
         String username = "";
         String password = "";
@@ -112,18 +111,20 @@ public class MainApp {
 
         if (username.length() > 0 && password.length() > 0) {
             currentCustomerEntity = customerEntitySessionBeanRemote.customerLogin(username, password);
+            return currentCustomerEntity;
         } else {
             throw new InvalidLoginCredentialException("Missing login credential!");
         }
     }
 
-    private void menuMain() {
+    private void menuMain(CustomerEntity customerEntity) {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
         while (true) {
             System.out.println("*** Customer terminal :: Main ***\n");
-            System.out.println("You are login as");
+            System.out.print("You are login as ");
+            System.out.println(customerEntity.getFirstName() + " " + customerEntity.getLastName());
             System.out.println("1: Search Operation");
             System.out.println("2: Add Appointment");
             System.out.println("3: View Appointment");
