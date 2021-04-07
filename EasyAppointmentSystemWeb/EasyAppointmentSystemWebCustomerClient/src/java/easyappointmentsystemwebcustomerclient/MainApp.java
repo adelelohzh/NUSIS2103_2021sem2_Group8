@@ -32,10 +32,13 @@ public class MainApp {
     private Queue queueCheckoutNotification;
     private ConnectionFactory queueCheckoutNotificationFactory;
 
-    private CustomerEntity currentCustomer;
+    private CustomerEntity currentCustomerEntity;
     
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
+    
+    private SystemAdministrationModule systemAdministrationModule;
+
 
     public MainApp() {
         validatorFactory = Validation.buildDefaultValidatorFactory();
@@ -77,6 +80,7 @@ public class MainApp {
                     try {
                         doLogin();
                         System.out.println("Login successful!\n");
+                        systemAdministrationModule = new SystemAdministrationModule(customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentCustomerEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
 
                         menuMain();
                     } catch (InvalidLoginCredentialException ex) {
@@ -107,7 +111,7 @@ public class MainApp {
         password = scanner.nextLine().trim();
 
         if (username.length() > 0 && password.length() > 0) {
-            currentCustomer = customerEntitySessionBeanRemote.customerLogin(username, password);
+            currentCustomerEntity = customerEntitySessionBeanRemote.customerLogin(username, password);
         } else {
             throw new InvalidLoginCredentialException("Missing login credential!");
         }
