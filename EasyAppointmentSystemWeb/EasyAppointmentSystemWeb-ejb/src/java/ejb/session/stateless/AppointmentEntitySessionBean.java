@@ -93,10 +93,10 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
 
 
     @Override
-    public void deleteAppointment(Long appointmentId) throws AppointmentNotFoundException
+    public void deleteAppointment(String appointmentNo) throws AppointmentNotFoundException
     {
 
-        AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentId(appointmentId);
+        AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
 
         em.remove(appointmentEntity);
         em.flush();
