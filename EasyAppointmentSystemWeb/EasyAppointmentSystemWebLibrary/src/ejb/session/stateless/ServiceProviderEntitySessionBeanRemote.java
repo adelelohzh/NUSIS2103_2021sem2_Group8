@@ -29,7 +29,6 @@ public interface ServiceProviderEntitySessionBeanRemote
 
     public void registerServiceProvider(String name, int category, String businessRegNumber, String city, String phone, String addr, String email, String password) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException;
     
-    public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(String businessCategory, Date date, String city) throws ServiceProviderNotFoundException;
-
+    public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(String businessCategory, String city) throws ServiceProviderNotFoundException;
     
 }
