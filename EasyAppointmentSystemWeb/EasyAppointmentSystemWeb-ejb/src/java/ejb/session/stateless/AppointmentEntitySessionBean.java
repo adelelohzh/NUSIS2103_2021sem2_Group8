@@ -1,6 +1,7 @@
 package ejb.session.stateless;
 
 import entity.AppointmentEntity;
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -23,6 +24,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     @PersistenceContext(unitName = "EasyAppointmentSystemWeb-ejbPU")
     private EntityManager em;
     
+    @Override
     public AppointmentEntity retrieveAppointmentByCustomerID(Long customerID) throws AppointmentNotFoundException {
    
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.customerID = :inCustomerID");
@@ -38,6 +40,23 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         }
     }
     
+    @Override
+    public AppointmentEntity retrieveAppointmentByAppointmentId(Long appointmentId) throws AppointmentNotFoundException {
+   
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.appointmentId = :inAppointmentId");
+        query.setParameter("inAppointmentId", appointmentId);
+        
+        try
+        {
+            return (AppointmentEntity)query.getSingleResult();
+        }
+        catch(NoResultException | NonUniqueResultException ex)
+        {
+            throw new AppointmentNotFoundException("Appointment Id: " + appointmentId + " does not exist!");
+        }
+    }
+    
+    @Override
     public AppointmentEntity retrieveAppointmentByAppointmentNumber(String appointmentNo) throws AppointmentNotFoundException {
    
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.appointmentNo = :inAppointmentNo");
@@ -53,25 +72,31 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         }
     }
     
+    @Override
     public List<AppointmentEntity> retrieveAppointmentsByDate(Date date, String serviceProviderName)
     {
-        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.date = :inDate and a.serviceProviderEntity.name. := inServiceProviderName");
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.date = :inDate and a.serviceProviderEntity.name := inServiceProviderName");
         query.setParameter("inDate", date);
         query.setParameter("inServiceProviderName", serviceProviderName);
         
         return query.getResultList();
     }
     
-    public String retrieveEarliestAppointmentsByDate(Date date, String serviceProviderName)
-    {
-        List<AppointmentEntity> appointments = retrieveAppointmentsByDate(date, serviceProviderName);
+    @Override
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(Date date, Long serviceProviderId) {
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.date = :inDate and a.serviceProviderEntityId := inServiceProviderId ORDER BY a.time");
+        query.setParameter("inDate", date);
+        query.setParameter("inServiceProviderId", serviceProviderId);
+        
+        return query.getResultList();
     }
 
+
     @Override
-    public void deleteAppointment(String appointmentNo) throws AppointmentNotFoundException
+    public void deleteAppointment(Long appointmentId) throws AppointmentNotFoundException
     {
 
-        AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
+        AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentId(appointmentId);
 
         em.remove(appointmentEntity);
         em.flush();
