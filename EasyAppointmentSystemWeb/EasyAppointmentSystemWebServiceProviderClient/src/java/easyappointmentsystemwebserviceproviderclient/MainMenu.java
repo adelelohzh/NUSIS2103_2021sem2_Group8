@@ -182,11 +182,11 @@ public class MainMenu
         
         System.out.println("*** Service provider terminal :: View Appointments ***\n");
         System.out.print("Appointments: ");
-        System.out.printf("%16s%10s%7s%9s\n", "Name", "Date", "Time", "Appointment No.");
+        System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
         
         for(AppointmentEntity appointment:appointments)
         {
-            System.out.printf("%16s%10s%7s%9s\n", appointment.getCustomerEntity().getFullName(), appointment.getScheduledDate(), appointment.getScheduledTime(), appointment.getAppointmentNo());
+            System.out.printf("%-15s%-13s%-8s%-15s\n", appointment.getCustomerEntity().getFullName(), appointment.getScheduledDate(), appointment.getScheduledTime(), appointment.getAppointmentNo());
         }
 
         while (response != "0")
