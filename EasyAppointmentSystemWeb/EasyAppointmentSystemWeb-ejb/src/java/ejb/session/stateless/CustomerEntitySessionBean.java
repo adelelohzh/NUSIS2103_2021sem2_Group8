@@ -98,7 +98,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
     @Override
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException
     {
-        Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.email = :inEmail");
+        Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.emailAddress = :inEmail");
         query.setParameter("inEmail", email);
         
         try
