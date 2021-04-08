@@ -124,7 +124,7 @@ public class MainApp
         while(true)
         {
             System.out.println("*** Admin terminal :: Main ***\n");
-            System.out.println("You are login as " + currentAdminEntity.getAdminId()+ "\n");
+            System.out.println("You are login as " + currentAdminEntity.getName()+ "\n");
             System.out.println("1: View Appointments for customers");
             System.out.println("2: View Appointments for service providers");
             System.out.println("3: View service providers");
