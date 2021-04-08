@@ -92,6 +92,8 @@ public class SystemAdministrationModule {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate date = LocalDate.parse(currentDate, formatter);
+            
+            System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
 
             try {
                 List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
@@ -102,7 +104,25 @@ public class SystemAdministrationModule {
                     if (appointmentEntities.size() == 10) { //full slots
                         continue;
                     }
-                    System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
+                    else
+                    {
+                        List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17.30", "18.30");
+                        List<String> timeSlots = new ArrayList<>();
+                        timeSlots.addAll(times);
+
+                        String firstAvailableTime = "";
+                        int i = 0;
+                        for (AppointmentEntity appointment : appointmentEntities) {
+                            if (!appointment.getScheduledTime().equals(timeSlots.get(i))) {
+                                firstAvailableTime = timeSlots.get(i);
+                                break; //found the index
+                            }
+                            i++;
+                        }   
+                        
+                        System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", + s.getServiceProviderId() + " " + s.getName() + " " + firstAvailableTime + " " + s.getBusinessAddress()+ " " + s.getRating());
+                    }
+                    
                     System.out.println(s.getName() + " " + s.getRating());
                 }
             } catch (ServiceProviderNotFoundException ex) {
