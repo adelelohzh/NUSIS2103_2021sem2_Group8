@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -141,7 +142,7 @@ public class SystemAdministrationModule {
             System.out.printf("%-15s", businessCategory.getBusinessCategoryId() + businessCategory.getCategory() + " |");
         }
         System.out.println();
-        String response;
+        String response = "";
 
         do {
             System.out.print("Enter Business category> ");
@@ -152,103 +153,108 @@ public class SystemAdministrationModule {
 
             System.out.print("Enter Date (YYYY-MM-DD)> ");
             String currentDate = sc.nextLine().trim();
-
+           
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate date = LocalDate.parse(currentDate, formatter);
+            String day = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US);
+            
+            if (day != "Sunday") 
+            {
+                try {
+                    List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
 
-            try {
-                List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
+                    System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
 
-                System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
-
-                for (ServiceProviderEntity s : serviceProviders) {
-                    List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, s.getServiceProviderId());
-                    if (appointmentEntities.size() == 10) {
-                        continue;
-                    }
-
-                    List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17.30", "18.30");
-                    List<String> timeSlots = new ArrayList<>();
-                    timeSlots.addAll(times);
-
-                    String firstAvailableTime = "";
-                    int i = 0;
-                    for (AppointmentEntity appointment : appointmentEntities) {
-                        if (!appointment.getScheduledTime().equals(timeSlots.get(i))) {
-                            firstAvailableTime = timeSlots.get(i);
-                            break; //found the index
+                    for (ServiceProviderEntity s : serviceProviders) {
+                        List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, s.getServiceProviderId());
+                        if (appointmentEntities.size() == 10) {
+                            continue;
                         }
-                        i++;
+
+                        List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17.30", "18.30");
+                        List<String> timeSlots = new ArrayList<>();
+                        timeSlots.addAll(times);
+
+                        String firstAvailableTime = "";
+                        int i = 0;
+                        for (AppointmentEntity appointment : appointmentEntities) {
+                            if (!appointment.getScheduledTime().equals(timeSlots.get(i))) {
+                                firstAvailableTime = timeSlots.get(i);
+                                break; //found the index
+                            }
+                            i++;
+                        }
+
+                        System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + s.getRating());
+
                     }
 
-                    System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + s.getRating());
-
+                } catch (ServiceProviderNotFoundException ex) {
+                    System.out.println("Service Provider cannot be found!");
                 }
 
-            } catch (ServiceProviderNotFoundException ex) {
-                System.out.println("Service Provider cannot be found!");
-            }
+                System.out.println("Enter 0 to go back to the previous menu.");
+                System.out.print("Service provider Id> ");
+                response = sc.nextLine().trim();
+                Long serviceProviderId = Long.parseLong(response);
 
-            System.out.println("Enter 0 to go back to the previous menu.");
-            System.out.print("Service provider Id> ");
-            response = sc.nextLine().trim();
-            Long serviceProviderId = Long.parseLong(response);
+                List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, serviceProviderId);
 
-            List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, serviceProviderId);
+                System.out.println("Enter 0 to go back to the previous menu.");
+                System.out.print("Enter Time> ");
+                response = sc.nextLine().trim();
+                LocalTime time = LocalTime.parse(response, DateTimeFormatter.ofPattern("HH:mm"));
 
-            System.out.println("Enter 0 to go back to the previous menu.");
-            System.out.print("Enter Time> ");
-            response = sc.nextLine().trim();
-            LocalTime time = LocalTime.parse(response, DateTimeFormatter.ofPattern("HH:mm"));
+                // check whether at least 2 hours before appointment first
+                LocalDate todayDate = LocalDate.now();
+                LocalDate appointmentDate = date;  //date of appointment to be scheduled
 
-            // check whether at least 2 hours before appointment first
-            LocalDate todayDate = LocalDate.now();
-            LocalDate appointmentDate = date;  //date of appointment to be scheduled
+                LocalTime todayTime = LocalTime.now();
+                todayTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+                LocalTime appointmentTime = time;
 
-            LocalTime todayTime = LocalTime.now();
-            todayTime.format(DateTimeFormatter.ofPattern("HH:mm"));
-            LocalTime appointmentTime = time;
+                int comparison = appointmentDate.compareTo(todayDate);
+                int compare = appointmentTime.compareTo(todayTime);
 
-            int comparison = appointmentDate.compareTo(todayDate);
-            int compare = appointmentTime.compareTo(todayTime);
+                if (comparison == 0) { // same day
+                    if (compare < 2) { //cannot
+                        System.out.println("Appointment cannot be made!");
+                        return;
+                    } 
+                }
 
-            if (comparison == 0) { // same day
-                if (compare < 2) { //cannot
+                if (comparison < 0) {
                     System.out.println("Appointment cannot be made!");
                     return;
-                } 
-            }
-            
-            if (comparison < 0) {
-                System.out.println("Appointment cannot be made!");
-                return;
-            }
-            
-            boolean validTime = true;
-            for (AppointmentEntity appointment : appointmentEntities) {
-                LocalTime scheduledTime = appointment.getScheduledTime();
-                if (appointment.getScheduledTime() == time) {
-                    System.out.println("Time slot is already full!");
-                    validTime = false;
-                    break;
                 }
-            }
 
-            if (validTime) {
-                AppointmentEntity appointmentEntity = new AppointmentEntity();
-                String serviceProviderUIN = String.valueOf(serviceProviderId);
-                String appointmentNumber = serviceProviderUIN + response + currentDate;
-                appointmentEntity.setAppointmentNo(appointmentNumber);
-                appointmentEntity.setScheduledTime(time);
-                appointmentEntity.setScheduledDate(date);
-                appointmentEntitySessionBeanRemote.createNewAppointment(appointmentEntity);
-            }
-            // if timeslot exists, confirm appointment
-            // System.out.println("The appointment with " + serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getName() + " at " + time + " on " + currentDate + " is confirmed.");
-            System.out.println("Enter 0 to go back to the previous menu.");
-            System.out.print("Exit>");
-            response = sc.nextLine().trim();
+                boolean validTime = true;
+                for (AppointmentEntity appointment : appointmentEntities) {
+                    LocalTime scheduledTime = appointment.getScheduledTime();
+                    if (appointment.getScheduledTime() == time) {
+                        System.out.println("Time slot is already full!");
+                        validTime = false;
+                        break;
+                    }
+                }
 
+                if (validTime) {
+                    AppointmentEntity appointmentEntity = new AppointmentEntity();
+                    String serviceProviderUIN = String.valueOf(serviceProviderId);
+                    String appointmentNumber = serviceProviderUIN + response + currentDate;
+                    appointmentEntity.setAppointmentNo(appointmentNumber);
+                    appointmentEntity.setScheduledTime(time);
+                    appointmentEntity.setScheduledDate(date);
+                    appointmentEntitySessionBeanRemote.createNewAppointment(appointmentEntity);
+                }
+                // if timeslot exists, confirm appointment
+                // System.out.println("The appointment with " + serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getName() + " at " + time + " on " + currentDate + " is confirmed.");
+                System.out.println("Enter 0 to go back to the previous menu.");
+                System.out.print("Exit>");
+                response = sc.nextLine().trim();
+
+            }
+            
         } while (!response.equals(0));
     }
 
