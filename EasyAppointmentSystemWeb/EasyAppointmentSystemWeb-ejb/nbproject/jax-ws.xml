@@ -10,6 +10,9 @@
     <service name="AppointmentEntityWebService">
       <implementation-class>ejb.session.ws.AppointmentEntityWebService</implementation-class>
     </service>
+    <service name="EmailWebService">
+      <implementation-class>ejb.session.ws.EmailWebService</implementation-class>
+    </service>
   </services>
   <clients/>
 </jax-ws>
