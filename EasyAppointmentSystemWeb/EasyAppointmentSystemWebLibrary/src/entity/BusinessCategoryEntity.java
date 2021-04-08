@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +26,7 @@ public class BusinessCategoryEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long businessCategoryId;
 
     @Column(nullable = false, length = 32)
@@ -36,6 +37,20 @@ public class BusinessCategoryEntity implements Serializable {
     
     @OneToMany(mappedBy = "businessCategoryEntity")
     private List<AppointmentEntity> appointmentEntities;
+
+    public BusinessCategoryEntity() 
+    {
+    }
+    
+    
+
+    public BusinessCategoryEntity(String category) 
+    {
+        this();
+        this.category = category;
+        this.serviceProviderEntities = new ArrayList<>();
+        this.appointmentEntities = new ArrayList<>();
+    }
     
     public Long getBusinessCategoryId() {
         return businessCategoryId;
