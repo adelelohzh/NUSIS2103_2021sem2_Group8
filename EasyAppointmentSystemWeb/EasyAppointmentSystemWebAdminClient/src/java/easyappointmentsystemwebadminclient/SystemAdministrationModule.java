@@ -310,14 +310,14 @@ public class SystemAdministrationModule {
                     // 01 - Synchronous Session Bean Invocation
                     emailSessionBeanRemote.emailCheckoutNotificationSync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
                     // 02 - Asynchronous Session Bean Invocation
-                    Future<Boolean> asyncResult = emailSessionBeanRemote.emailCheckoutNotificationAsync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
-                    RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
+                    //Future<Boolean> asyncResult = emailSessionBeanRemote.emailCheckoutNotificationAsync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
+                    //RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
                     //runnableNotification.start();
                     // 03 - JMS Messaging with Message Driven Bean
-                    sendJMSMessageToQueueCheckoutNotification(customerAppointmentEntities.get(0).getCustomerEntity().getCustomerId(), "Name <name@comp.nus.edu.sg>", toEmailAddress);
-                    System.out.println("Reminder email sent successfully!\n");
+                    //sendJMSMessageToQueueCheckoutNotification(customerAppointmentEntities.get(0).getCustomerEntity().getCustomerId(), "Name <name@comp.nus.edu.sg>", toEmailAddress);
+                    //System.out.println("Reminder email sent successfully!\n");
                 }
-            } catch (InterruptedException | JMSException | CustomerNotFoundException ex) {
+            } catch (CustomerNotFoundException ex) {
                 System.out.println("An error has occurred while sending the reminder email: " + ex.getMessage() + "\n");
             }
 
