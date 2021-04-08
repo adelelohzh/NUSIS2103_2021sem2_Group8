@@ -50,6 +50,9 @@ public class ServiceProviderEntity implements Serializable {
     private Long rating;
     
     @Column(nullable = false)
+    private int numberOfRatings;
+    
+    @Column(nullable = false)
     private StatusEnum statusEnum;
     
     @OneToMany(mappedBy = "serviceProviderEntity")
@@ -76,6 +79,7 @@ public class ServiceProviderEntity implements Serializable {
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.rating = Long.valueOf(0);
+        this.numberOfRatings = 0;
         appointmentEntities = new ArrayList<>();
     }
 
@@ -243,6 +247,8 @@ public class ServiceProviderEntity implements Serializable {
     public void setStatusEnum(StatusEnum statusEnum) {
         this.statusEnum = statusEnum;
     }
+    
+    
 
     
         @Override
@@ -268,6 +274,20 @@ public class ServiceProviderEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.ServiceProviderEntity[ id=" + serviceProviderId + " ]";
+    }
+
+    /**
+     * @return the numberOfRatings
+     */
+    public int getNumberOfRatings() {
+        return numberOfRatings;
+    }
+
+    /**
+     * @param numberOfRatings the numberOfRatings to set
+     */
+    public void setNumberOfRatings(int numberOfRatings) {
+        this.numberOfRatings = numberOfRatings;
     }
     
 }

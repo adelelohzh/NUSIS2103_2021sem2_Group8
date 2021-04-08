@@ -33,4 +33,6 @@ public interface ServiceProviderEntitySessionBeanRemote
     
     public ServiceProviderEntity retrieveServiceProviderEntityByName(String name) throws ServiceProviderNotFoundException;
 
+    public void updateRating(Long newRating, Long serviceProviderId) throws ServiceProviderNotFoundException;
+
 }
