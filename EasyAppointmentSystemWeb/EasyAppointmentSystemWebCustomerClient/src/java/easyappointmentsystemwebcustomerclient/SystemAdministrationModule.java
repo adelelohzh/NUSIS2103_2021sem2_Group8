@@ -12,6 +12,7 @@ import ejb.session.stateless.EmailSessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AdminEntity;
 import entity.AppointmentEntity;
+import entity.BusinessCategoryEntity;
 import entity.CustomerEntity;
 import entity.ServiceProviderEntity;
 import java.sql.Time;
@@ -115,6 +116,10 @@ public class SystemAdministrationModule {
         
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Customer terminal :: Add Appointment ***\n");
+        List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
+        for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
+            System.out.print(
+        }
         String response;
         
         do {
