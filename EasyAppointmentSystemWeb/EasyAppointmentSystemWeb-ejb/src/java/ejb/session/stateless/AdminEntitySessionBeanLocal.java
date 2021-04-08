@@ -21,5 +21,7 @@ public interface AdminEntitySessionBeanLocal {
     public void updateAdminEntity(AdminEntity adminEntity) throws InputDataValidationException, UpdateAdminException, AdminNotFoundException;
 
     public void deleteAdmin(Long adminId) throws AdminNotFoundException;
+
+    public AdminEntity retrieveAdminEntityByName(String name) throws AdminNotFoundException;
     
 }
