@@ -9,6 +9,7 @@ import ejb.session.stateful.AppointmentEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import entity.AppointmentEntity;
 import entity.CustomerEntity;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -38,7 +39,7 @@ public class AppointmentEntityWebService
     @WebMethod(operationName = "retrieveSortedAppointmentsByDate")
     public List<AppointmentEntity> retrieveSortedAppointmentsByDate(@WebParam(name = "username") String emailAddr,
                                                                         @WebParam(name = "password") String password,
-                                                                        @WebParam(name = "date") Date date,
+                                                                        @WebParam(name = "date") LocalDate date,
                                                                         @WebParam(name = "serviceProviderId") Long serviceProviderId)                                                      
                                                     throws InvalidLoginCredentialException
     {
