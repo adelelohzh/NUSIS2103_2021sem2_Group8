@@ -1,6 +1,9 @@
 package entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,11 +28,11 @@ public class AppointmentEntity implements Serializable {
     
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date scheduledTime;
+    private LocalTime scheduledTime;
     
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date scheduledDate;
+    private LocalDate scheduledDate;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -47,7 +50,8 @@ public class AppointmentEntity implements Serializable {
     {
     }
 
-    public AppointmentEntity(Date scheduledTime) {
+    public AppointmentEntity(LocalTime scheduledTime) {
+        LocalTime time=LocalTime.parse(scheduledTime.toString(), DateTimeFormatter.ofPattern("HH:mm"));
         this.scheduledTime = scheduledTime;
     }
 
@@ -60,19 +64,20 @@ public class AppointmentEntity implements Serializable {
         this.appointmentId = appointmentId;
     }
 
-    public Date getScheduledTime() {
+    public LocalTime getScheduledTime() {
         return scheduledTime;
     }
 
-    public void setScheduledTime(Date scheduledTime) {
+    public void setScheduledTime(LocalTime scheduledTime) {
+        LocalTime time=LocalTime.parse(scheduledTime.toString(), DateTimeFormatter.ofPattern("HH:mm"));
         this.scheduledTime = scheduledTime;
     }
 
-    public Date getScheduledDate() {
+    public LocalDate getScheduledDate() {
         return scheduledDate;
     }
 
-    public void setScheduledDate(Date scheduledDate) {
+    public void setScheduledDate(LocalDate scheduledDate) {
         this.scheduledDate = scheduledDate;
     }
 
