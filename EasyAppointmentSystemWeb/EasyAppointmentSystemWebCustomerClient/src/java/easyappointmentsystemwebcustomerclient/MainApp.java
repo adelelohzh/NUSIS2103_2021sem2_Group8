@@ -16,7 +16,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import util.exception.CustomerUsernameExistException;
+import util.exception.CustomerEmailExistsException;
 import util.exception.InputDataValidationException;
 import util.exception.UnknownPersistenceException;
 
@@ -217,7 +217,7 @@ public class MainApp {
                 Long newCustomerId = customerEntitySessionBeanRemote.createNewCustomer(customerEntity);
                 System.out.println("New customer created successfully!: " + newCustomerId + "\n");
             }
-            catch(CustomerUsernameExistException ex)
+            catch(CustomerEmailExistsException ex)
             {
                 System.out.println("An error has occurred while creating the new customer!: The username already exists\n");
             }
