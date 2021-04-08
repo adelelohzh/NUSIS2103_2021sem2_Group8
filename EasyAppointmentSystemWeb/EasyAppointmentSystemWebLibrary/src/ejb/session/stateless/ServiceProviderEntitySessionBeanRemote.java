@@ -31,4 +31,6 @@ public interface ServiceProviderEntitySessionBeanRemote
     
     public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(String businessCategory, String city) throws ServiceProviderNotFoundException;
     
+    public ServiceProviderEntity retrieveServiceProviderEntityByName(String name) throws ServiceProviderNotFoundException;
+
 }
