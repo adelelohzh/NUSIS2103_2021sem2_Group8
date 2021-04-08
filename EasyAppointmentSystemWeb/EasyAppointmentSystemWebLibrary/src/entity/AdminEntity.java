@@ -32,10 +32,11 @@ public class AdminEntity implements Serializable {
     {
     }
 
-    public AdminEntity(String email, String password) 
+    public AdminEntity(String name, String email, String password) 
     { 
         this();
         
+        this.name = name;
         this.email = email;
         this.password = password;
     }
