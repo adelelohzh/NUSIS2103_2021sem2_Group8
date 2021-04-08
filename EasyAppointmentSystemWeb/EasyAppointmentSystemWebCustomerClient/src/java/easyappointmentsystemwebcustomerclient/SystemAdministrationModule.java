@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -189,6 +190,37 @@ public class SystemAdministrationModule {
             }
             
         } while (!response.equals(0));
+    }
+    
+    public void rateServiceProvider()
+    {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** Customer terminal :: Rate Service Provider ***\n");
+        String response = "";
+        
+        System.out.print("Enter Service Provider Name> ");
+        String name = sc.nextLine().trim();
+        
+        try
+        {
+            ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityByName(name);
+            System.out.println("You are rating " + name + ".\n");
+            System.out.print("Enter rating> ");
+            double rating = sc.nextDouble();
+            if (rating > 5.0 | rating < 0.0)
+            {
+                System.out.println("Please enter a number between 0.0 to 5.0!");
+            }
+        }
+        catch(ServiceProviderNotFoundException ex)
+        {
+            System.out.println("Service Provider does not exist!");
+        }
+        catch(InputMismatchException ex)
+        {
+            System.out.println("Please enter a number between 0.0 to 5.0!");
+        }
+        
     }
     
     
