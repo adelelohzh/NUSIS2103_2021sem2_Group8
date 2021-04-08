@@ -16,11 +16,13 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.exception.CustomerDeletionException;
 import util.exception.CustomerNotFoundException;
 import util.exception.CustomerUsernameExistException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
+import util.exception.UpdateCustomerException;
 
 @Stateless
 @Local(CustomerEntitySessionBeanLocal.class)
@@ -137,6 +139,61 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
         catch(CustomerNotFoundException ex)
         {
             throw new InvalidLoginCredentialException("Email does not exist or invalid password!");
+        }
+    }
+    
+    @Override
+    public void updateCustomer(CustomerEntity customerEntity) throws CustomerNotFoundException, InputDataValidationException, UpdateCustomerException
+    {
+        if(customerEntity != null && customerEntity.getCustomerId() != null)
+        {
+            Set<ConstraintViolation<CustomerEntity>>constraintViolations = validator.validate(customerEntity);
+        
+            if(constraintViolations.isEmpty())
+            {
+                CustomerEntity customerEntityToUpdate = retrieveCustomerEntityByCustomerId(customerEntity.getCustomerId());
+
+                if(customerEntityToUpdate.getEmailAddress().equals(customerEntity.getEmailAddress()))
+                {
+                    customerEntityToUpdate.setIdentityNumber(customerEntity.getIdentityNumber());
+                    customerEntityToUpdate.setFirstName(customerEntity.getFirstName());
+                    customerEntityToUpdate.setLastName(customerEntity.getLastName());
+                    customerEntityToUpdate.setGender(customerEntity.getGender());
+                    customerEntityToUpdate.setAddress(customerEntity.getAddress());
+                    customerEntityToUpdate.setAge(customerEntity.getAge());
+                    customerEntityToUpdate.setCity(customerEntity.getCity());
+                    customerEntityToUpdate.setPhoneNumber(customerEntity.getPhoneNumber());
+                    customerEntityToUpdate.setPassword(customerEntity.getPassword());
+                }
+                
+                else
+                {                    
+                    throw new UpdateCustomerException("Email of customer record to be updated does not match the existing record");
+                }
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        }
+        else
+        {
+            throw new CustomerNotFoundException("Customer ID not found!");
+        }
+    }
+    
+    @Override
+    public void deleteCustomer(Long customerId) throws CustomerDeletionException, CustomerNotFoundException
+    {
+        CustomerEntity customerEntity = retrieveCustomerEntityByCustomerId(customerId);
+        
+        if(customerEntity.getAppointmentEntities().isEmpty())
+        {
+            em.remove(customerEntity);
+        }
+        else
+        {
+            throw new CustomerDeletionException("Customer ID " + customerId + " is associated with existing appointment(s) and cannot be deleted!");
         }
     }
 

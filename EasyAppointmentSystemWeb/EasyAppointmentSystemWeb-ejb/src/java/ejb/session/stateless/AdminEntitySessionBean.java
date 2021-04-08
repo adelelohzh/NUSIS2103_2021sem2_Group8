@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.AdminEntity;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -10,8 +11,15 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.AdminNotFoundException;
+import util.exception.CustomerNotFoundException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.UpdateAdminException;
 
 
 @Stateless
@@ -23,6 +31,13 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
     @PersistenceContext(unitName = "EasyAppointmentSystemWeb-ejbPU")
     private EntityManager em;
     
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
+    public AdminEntitySessionBean() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
     
     @Override
     public AdminEntity adminLogin(String email, String password) throws InvalidLoginCredentialException
@@ -54,7 +69,21 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
         
         return query.getResultList();
     }
-
+    
+    @Override
+    public AdminEntity retrieveAdminEntityById(Long adminId) throws AdminNotFoundException
+    {
+        AdminEntity adminEntity = em.find(AdminEntity.class, adminId);
+        
+        if (adminEntity != null)
+        {
+            return adminEntity;
+        }
+        else 
+        {
+            throw new AdminNotFoundException("Admin ID " + adminId + " does not exist!");
+        }
+    }
     
     @Override
     public AdminEntity retrieveAdminByEmail(String email) throws AdminNotFoundException {
@@ -71,6 +100,60 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
             throw new AdminNotFoundException("Admin Email Address " + email + " does not exist!");
         }
     }
+    
+    @Override
+    public void updateAdminEntity(AdminEntity adminEntity) throws InputDataValidationException, UpdateAdminException, AdminNotFoundException 
+    {
+        if(adminEntity != null && adminEntity.getAdminId() != null)
+        {
+            Set<ConstraintViolation<AdminEntity>>constraintViolations = validator.validate(adminEntity);
+        
+            if(constraintViolations.isEmpty())
+            {
+                AdminEntity adminEntityToUpdate = retrieveAdminEntityById(adminEntity.getAdminId());
+
+                if(adminEntityToUpdate.getEmail().equals(adminEntityToUpdate.getEmail()))
+                {
+                    adminEntityToUpdate.setPassword(adminEntity.getPassword());
+                    adminEntityToUpdate.setName(adminEntity.getName());
+                }
+                
+                else
+                {                    
+                    throw new UpdateAdminException("Email of customer record to be updated does not match the existing record");
+                }
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        }
+        else
+        {
+            throw new AdminNotFoundException("Customer ID not found!");
+        }
+    }
+    
+    @Override
+    public void deleteAdmin(Long adminId) throws AdminNotFoundException
+    {
+        AdminEntity adminEntity = retrieveAdminEntityById(adminId);
+        
+        em.remove(adminEntity);
+    }
+    
+     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<AdminEntity>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
+    }
+    
     
    
 }

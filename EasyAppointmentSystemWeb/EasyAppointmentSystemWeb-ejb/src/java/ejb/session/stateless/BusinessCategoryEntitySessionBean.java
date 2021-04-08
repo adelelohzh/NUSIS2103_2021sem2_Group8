@@ -20,12 +20,6 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
     @PersistenceContext(unitName = "EasyAppointmentSystemWeb-ejbPU")
     private EntityManager em;
 
-    public List<BusinessCategoryEntity> retrieveAllBusinessCategories() {
-        Query query = em.createQuery("SELECT b FROM BusinessCategoryEntity s");
-
-        return query.getResultList();
-    }
-
     public BusinessCategoryEntity createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws CreateNewBusinessCategoryException {
         if (newBusinessCategoryEntity != null) {
             em.persist(newBusinessCategoryEntity);
@@ -34,6 +28,12 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
         } else {
             throw new CreateNewBusinessCategoryException("Business Category not created!");
         }
+    }
+    
+    public List<BusinessCategoryEntity> retrieveAllBusinessCategories() {
+        Query query = em.createQuery("SELECT b FROM BusinessCategoryEntity s");
+
+        return query.getResultList();
     }
 
     public void deleteBusinessCategory(String businessCategory) throws BusinessCategoryNotFoundException {
