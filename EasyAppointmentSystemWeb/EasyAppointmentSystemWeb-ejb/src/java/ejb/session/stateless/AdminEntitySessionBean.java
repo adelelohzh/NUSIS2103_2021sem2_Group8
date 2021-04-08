@@ -10,15 +10,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.AdminNotFoundException;
+import util.exception.AdminUsernameExistException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.UnknownPersistenceException;
 import util.exception.UpdateAdminException;
 
 
@@ -59,6 +62,45 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
         catch(AdminNotFoundException ex)
         {
             throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
+        }
+    }
+    
+    @Override
+    public Long createNewAdmin(AdminEntity newAdminEntity) throws AdminUsernameExistException, UnknownPersistenceException, InputDataValidationException
+    {
+        try
+        {
+            Set<ConstraintViolation<AdminEntity>>constraintViolations = validator.validate(newAdminEntity);
+        
+            if(constraintViolations.isEmpty())
+            {
+                em.persist(newAdminEntity);
+                em.flush();
+
+                return newAdminEntity.getAdminId();
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }            
+        }
+        catch(PersistenceException ex)
+        {
+            if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+            {
+                if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                {
+                    throw new AdminUsernameExistException();
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+            else
+            {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
         }
     }
     
