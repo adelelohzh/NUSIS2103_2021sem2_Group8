@@ -145,11 +145,14 @@ public class MainApp {
         {
             System.out.print("Enter Name> ");
             String name = sc.nextLine().trim();
+            
+            System.out.println();
         
-            System.out.print("1 Health | 2 Fashion | 3 Education");
+            System.out.print("1 Health | 2 Fashion | 3 Education\n");
             System.out.print("Enter Business Category> ");
         
             int number = sc.nextInt();
+            sc.nextLine();
             if (number < 1 || number > 3)
             {
                 System.out.println("Invalid option!");
