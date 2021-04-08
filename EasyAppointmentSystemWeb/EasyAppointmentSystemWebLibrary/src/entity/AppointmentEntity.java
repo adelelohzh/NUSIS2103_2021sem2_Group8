@@ -78,6 +78,8 @@ public class AppointmentEntity implements Serializable {
     }
 
     public void setScheduledDate(LocalDate scheduledDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(scheduledDate.toString(), formatter);
         this.scheduledDate = scheduledDate;
     }
 
