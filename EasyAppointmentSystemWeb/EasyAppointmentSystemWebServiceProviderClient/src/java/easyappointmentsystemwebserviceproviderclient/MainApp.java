@@ -131,7 +131,7 @@ public class MainApp {
 
             System.out.println();
 
-            System.out.print("1 Health | 2 Fashion | 3 Education\n");
+            //System.out.print("1 Health | 2 Fashion | 3 Education\n");
             List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
             
             int i = 0;
