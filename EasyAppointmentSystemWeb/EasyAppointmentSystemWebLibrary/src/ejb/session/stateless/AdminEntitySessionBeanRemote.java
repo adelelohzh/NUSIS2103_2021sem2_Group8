@@ -22,4 +22,5 @@ public interface AdminEntitySessionBeanRemote {
 
     public void deleteAdmin(Long adminId) throws AdminNotFoundException;
     
+    public AdminEntity retrieveAdminEntityByName(String name) throws AdminNotFoundException;
 }
