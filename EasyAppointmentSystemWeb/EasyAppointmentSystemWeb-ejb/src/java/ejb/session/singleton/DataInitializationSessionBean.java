@@ -50,7 +50,7 @@ public class DataInitializationSessionBean {
     {
         try
         {
-            adminEntitySessionBeanLocal.retrieveAdminEntityByName("Admin01");
+            adminEntitySessionBeanLocal.retrieveAdminEntityById(1L);
         }
         catch(AdminNotFoundException ex)
         {
