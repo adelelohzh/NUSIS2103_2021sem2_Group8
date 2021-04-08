@@ -67,7 +67,7 @@ public class ServiceProviderEntity implements Serializable {
         appointmentEntities = new ArrayList<>();
     }
 
-    public ServiceProviderEntity(String name, String businessCategory, String businessRegistrationNumber, String city, String businessAddress, String emailAddress, String phoneNumber, String password) 
+    public ServiceProviderEntity(String name, String businessCategory, String businessRegistrationNumber, String city, String businessAddress, String emailAddress, String phoneNumber, String password, StatusEnum statusEnum) 
     {
         this();
         this.name = name;
@@ -80,6 +80,7 @@ public class ServiceProviderEntity implements Serializable {
         this.password = password;
         this.rating = Long.valueOf(0);
         this.numberOfRatings = 0;
+        this.statusEnum = statusEnum;
         appointmentEntities = new ArrayList<>();
     }
 
