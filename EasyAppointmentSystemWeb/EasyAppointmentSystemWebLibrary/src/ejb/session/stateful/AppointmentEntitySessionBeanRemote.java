@@ -4,9 +4,14 @@ import entity.AppointmentEntity;
 import java.util.Date;
 import java.util.List;
 import util.exception.AppointmentNotFoundException;
+import util.exception.AppointmentNumberExistsException;
+import util.exception.InputDataValidationException;
+import util.exception.UnknownPersistenceException;
 
 
 public interface AppointmentEntitySessionBeanRemote {
+    
+    public Long createNewAppointment(AppointmentEntity newAppointmentEntity) throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException;
 
     public AppointmentEntity retrieveAppointmentByCustomerID(Long customerID) throws AppointmentNotFoundException;
 
