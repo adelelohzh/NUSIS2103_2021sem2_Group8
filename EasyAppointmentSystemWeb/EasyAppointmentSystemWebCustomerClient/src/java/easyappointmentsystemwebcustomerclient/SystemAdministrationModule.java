@@ -18,6 +18,9 @@ import entity.ServiceProviderEntity;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,7 +34,10 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.AppointmentNotFoundException;
+import util.exception.AppointmentNumberExistsException;
+import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderNotFoundException;
+import util.exception.UnknownPersistenceException;
 
 /**
  *
@@ -78,19 +84,17 @@ public class SystemAdministrationModule {
         do {
             System.out.print("Enter Business category> ");
             businessCategory = sc.nextLine().trim();
-
             System.out.print("Enter City> ");
             String city = sc.nextLine().trim();
 
             System.out.print("Enter Date (YYYY-MM-DD)> ");
             String currentDate = sc.nextLine().trim();
 
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = formatter.parse(currentDate);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate date = LocalDate.parse(currentDate, formatter);
 
             try {
                 List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
-                //list of service providers in the category and city
 
                 for (ServiceProviderEntity s : serviceProviders) {
                     //each service provider, retrieve their appointment entities for a particular date, sorted by time
@@ -98,22 +102,19 @@ public class SystemAdministrationModule {
                     if (appointmentEntities.size() == 10) { //full slots
                         continue;
                     }
-
                     System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
-                    //find earliest time: I was thinking just have an arraylist of timeslots 0, 1, 2, ...
-                    //then we simply find which is the first index that is empty
-                    //then add 8.5 hours to the index and we get the timing
-                    //System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", s.getServiceProviderId(), "| " + s.getName(), "| " + earliestTime, "| " + s.getBusinessAddress(), "| " + s.getRating());
+                    System.out.println(s.getName() + " " + s.getRating());
                 }
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println("Service Provider cannot be found!");
             }
             System.out.println("Enter 0 to go back to the previous menu.");
-
+            System.out.print("Exit> ");
+            businessCategory = sc.nextLine().trim();
         } while (!businessCategory.equals("0"));
     }
 
-    public void addAppointment() throws ParseException {
+    public void addAppointment() throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException {
 
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Customer terminal :: Add Appointment ***\n");
@@ -134,16 +135,8 @@ public class SystemAdministrationModule {
             System.out.print("Enter Date (YYYY-MM-DD)> ");
             String currentDate = sc.nextLine().trim();
 
-            Date date;
-
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            date = formatter.parse(currentDate);
-            /*try {
-                date = formatter.parse(currentDate);
-            }
-            catch (ParseException ex) {
-                System.out.println("Invalid date entered!");
-            }*/
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate date = LocalDate.parse(currentDate, formatter);
 
             try {
                 List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
@@ -152,11 +145,10 @@ public class SystemAdministrationModule {
 
                 for (ServiceProviderEntity s : serviceProviders) {
                     List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, s.getServiceProviderId());
-                    if (appointmentEntities.size() == 10) { //full slots
+                    if (appointmentEntities.size() == 10) {
                         continue;
                     }
-                    //as above (search), print out first available timing
-                    //service provider does not have full slots
+
                     List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17.30", "18.30");
                     List<String> timeSlots = new ArrayList<>();
                     timeSlots.addAll(times);
@@ -178,34 +170,60 @@ public class SystemAdministrationModule {
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println("Service Provider cannot be found!");
             }
+
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Service provider Id> ");
             response = sc.nextLine().trim();
             Long serviceProviderId = Long.parseLong(response);
 
             List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, serviceProviderId);
-            //get the available appointment slots
 
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter Time> ");
             response = sc.nextLine().trim();
+            LocalTime time = LocalTime.parse(response, DateTimeFormatter.ofPattern("HH:mm"));
 
+            // check whether at least 2 hours before appointment first
+            LocalDate todayDate = LocalDate.now();
+            LocalDate appointmentDate = date;  //date of appointment to be scheduled
+
+            LocalTime todayTime = LocalTime.now();
+            todayTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+            LocalTime appointmentTime = time;
+
+            int comparison = appointmentDate.compareTo(todayDate);
+            int compare = appointmentTime.compareTo(todayTime);
+
+            if (comparison == 0) { // same day
+                if (compare < 2) { //cannot
+                    System.out.println("Appointment cannot be made!");
+                    return;
+                } 
+            }
+            
+            if (comparison < 0) {
+                System.out.println("Appointment cannot be made!");
+                return;
+            }
+            
             boolean validTime = true;
             for (AppointmentEntity appointment : appointmentEntities) {
-                if (appointment.getScheduledTime().equals(response)) {
-                    System.out.println("Time slot is full!");
+                LocalTime scheduledTime = appointment.getScheduledTime();
+                if (appointment.getScheduledTime() == time) {
+                    System.out.println("Time slot is already full!");
                     validTime = false;
                     break;
                 }
             }
+
             if (validTime) {
                 AppointmentEntity appointmentEntity = new AppointmentEntity();
                 String serviceProviderUIN = String.valueOf(serviceProviderId);
-                String appointmentNumber = serviceProviderUIN + response +  currentDate;
+                String appointmentNumber = serviceProviderUIN + response + currentDate;
                 appointmentEntity.setAppointmentNo(appointmentNumber);
-                //appointmentEntity.setScheduledTime(response); convert to Date/Time
+                appointmentEntity.setScheduledTime(time);
                 appointmentEntity.setScheduledDate(date);
-                
+                appointmentEntitySessionBeanRemote.createNewAppointment(appointmentEntity);
             }
             // if timeslot exists, confirm appointment
             // System.out.println("The appointment with " + serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getName() + " at " + time + " on " + currentDate + " is confirmed.");
@@ -231,7 +249,29 @@ public class SystemAdministrationModule {
 
             try {
                 AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentNumber(appointmentNo);
-                appointmentEntitySessionBeanRemote.deleteAppointment(appointmentNo);
+
+                LocalDate todayDate = LocalDate.now();
+                LocalDate appointmentDate = appointmentEntity.getScheduledDate();
+
+                LocalTime todayTime = LocalTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                todayTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+                LocalTime appointmentTime = appointmentEntity.getScheduledTime();
+
+                int comparison = appointmentDate.compareTo(todayDate);
+                int compare = appointmentTime.compareTo(todayTime);
+                if (comparison > 1) { //appointmentDate is more than one day from now
+                    appointmentEntitySessionBeanRemote.deleteAppointment(appointmentNo);
+                } else if (comparison == 1) {
+                    if (compare >= 0) {
+                        appointmentEntitySessionBeanRemote.deleteAppointment(appointmentNo);
+                    }
+                } else {
+                    System.out.println("Appointment cannot be deleted!");
+                }
+
+                response = sc.nextLine().trim();
+
             } catch (AppointmentNotFoundException ex) {
                 System.out.println("Appointment with id: " + appointmentNo + " does not exist!");
             }
