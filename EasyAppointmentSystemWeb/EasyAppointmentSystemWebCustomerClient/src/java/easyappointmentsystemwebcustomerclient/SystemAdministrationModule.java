@@ -214,6 +214,7 @@ public class SystemAdministrationModule {
             else
             {
                 serviceProviderEntitySessionBeanRemote.updateRating(rating, serviceProvider.getServiceProviderId());
+                System.out.println("Rating successfully submitted!");
             }
         }
         catch(ServiceProviderNotFoundException ex)
