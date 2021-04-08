@@ -86,6 +86,21 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
     }
     
     @Override
+    public AdminEntity retrieveAdminEntityByName(String name) throws AdminNotFoundException
+    {
+        AdminEntity adminEntity = em.find(AdminEntity.class, name);
+        
+        if (adminEntity != null)
+        {
+            return adminEntity;
+        }
+        else 
+        {
+            throw new AdminNotFoundException("Admin ID " + name + " does not exist!");
+        }
+    }
+    
+    @Override
     public AdminEntity retrieveAdminByEmail(String email) throws AdminNotFoundException {
    
         Query query = em.createQuery("SELECT a FROM AdminEntity a WHERE a.email = :inEmail");
