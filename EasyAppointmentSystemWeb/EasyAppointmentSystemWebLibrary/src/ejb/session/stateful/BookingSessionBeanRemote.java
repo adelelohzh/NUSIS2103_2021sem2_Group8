@@ -5,6 +5,8 @@
  */
 package ejb.session.stateful;
 
+import entity.AppointmentEntity;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -13,5 +15,13 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface BookingSessionBeanRemote {
+
+    public List<AppointmentEntity> getAppointmentEntities();
+
+    public void setAppointmentEntities(List<AppointmentEntity> appointmentEntities);
+
+    public Integer getTotalAppointments();
+
+    public void setTotalAppointments(Integer totalAppointments);
     
 }
