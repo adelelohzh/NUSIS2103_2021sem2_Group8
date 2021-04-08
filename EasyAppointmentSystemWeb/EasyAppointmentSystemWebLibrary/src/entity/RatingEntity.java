@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package entity;
 
 import java.io.Serializable;
@@ -11,41 +6,38 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-/**
- *
- * @author adele
- */
+
 @Entity
 public class RatingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long ratingId;
 
-    public Long getId() {
-        return id;
+    public Long getRatingId() {
+        return ratingId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setRatingId(Long ratingId) {
+        this.ratingId = ratingId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (ratingId != null ? ratingId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the ratingId fields are not set
         if (!(object instanceof RatingEntity)) {
             return false;
         }
         RatingEntity other = (RatingEntity) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.ratingId == null && other.ratingId != null) || (this.ratingId != null && !this.ratingId.equals(other.ratingId))) {
             return false;
         }
         return true;
@@ -53,7 +45,7 @@ public class RatingEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.RatingEntity[ id=" + id + " ]";
+        return "entity.RatingEntity[ id=" + ratingId + " ]";
     }
     
 }
