@@ -28,16 +28,16 @@ import util.exception.UnknownPersistenceException;
 @Startup
 public class DataInitializationSessionBean {
 
-    @EJB
+    @EJB(name = "ServiceProviderEntitySessionBeanLocal")
     private ServiceProviderEntitySessionBeanLocal serviceProviderEntitySessionBeanLocal;
 
-    @EJB
+    @EJB(name = "CustomerEntitySessionBeanLocal")
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
 
-    @EJB
+    @EJB(name = "BusinessCategoryEntitySessionBeanLocal")
     private BusinessCategoryEntitySessionBeanLocal businessCategoryEntitySessionBeanLocal;
 
-    @EJB
+    @EJB(name = "AdminEntitySessionBeanLocal")
     private AdminEntitySessionBeanLocal adminEntitySessionBeanLocal;
     
     
