@@ -182,6 +182,7 @@ public class MainApp {
 
         System.out.print("Enter Age> ");
         Integer age = scanner.nextInt();
+        scanner.nextLine();
 
         System.out.print("Enter Phone number> ");
         String phoneNumber = scanner.nextLine().trim();
@@ -192,7 +193,7 @@ public class MainApp {
         System.out.print("Enter City> ");
         String city = scanner.nextLine().trim();
 
-        System.out.print("Enter Email address ");
+        System.out.print("Enter Email address> ");
         String email = scanner.nextLine().trim();
 
         CustomerEntity customerEntity = new CustomerEntity();
