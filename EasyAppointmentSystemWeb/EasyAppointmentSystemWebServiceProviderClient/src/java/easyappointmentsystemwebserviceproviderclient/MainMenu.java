@@ -1,6 +1,6 @@
 package easyappointmentsystemwebserviceproviderclient;
 
-import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
+import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import entity.AppointmentEntity;
 import entity.ServiceProviderEntity;
