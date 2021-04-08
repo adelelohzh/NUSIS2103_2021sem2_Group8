@@ -27,7 +27,6 @@ public class AppointmentEntity implements Serializable {
     private String appointmentNo;
     
     @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalTime scheduledTime;
     
     @Column(nullable = false)
