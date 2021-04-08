@@ -122,8 +122,6 @@ public class SystemAdministrationModule {
                         
                         System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", + s.getServiceProviderId() + " " + s.getName() + " " + firstAvailableTime + " " + s.getBusinessAddress()+ " " + s.getRating());
                     }
-                    
-                    System.out.println(s.getName() + " " + s.getRating());
                 }
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println("Service Provider cannot be found!");
