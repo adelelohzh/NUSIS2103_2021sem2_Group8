@@ -206,10 +206,14 @@ public class SystemAdministrationModule {
             ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityByName(name);
             System.out.println("You are rating " + name + ".\n");
             System.out.print("Enter rating> ");
-            double rating = sc.nextDouble();
+            Long rating = sc.nextLong();
             if (rating > 5.0 | rating < 0.0)
             {
                 System.out.println("Please enter a number between 0.0 to 5.0!");
+            }
+            else
+            {
+                serviceProviderEntitySessionBeanRemote.updateRating(rating, serviceProvider.getServiceProviderId());
             }
         }
         catch(ServiceProviderNotFoundException ex)

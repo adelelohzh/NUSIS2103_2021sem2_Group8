@@ -112,6 +112,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         return query.getResultList();
     }
     
+    
     @Override
     public ServiceProviderEntity retrieveServiceProviderEntityByEmail(String email) throws ServiceProviderNotFoundException
     {   
@@ -261,6 +262,18 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         
         createNewServiceProvider(newServiceProvider);
     }
+    
+    @Override
+    public void updateRating(Long newRating, Long serviceProviderId) throws ServiceProviderNotFoundException
+    {
+        ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
+        Long currentRating = serviceProvider.getRating();
+        int numberOfRatings = serviceProvider.getNumberOfRatings();
+        Long rating = (currentRating * numberOfRatings + newRating)/(numberOfRatings+1);
+        serviceProvider.setNumberOfRatings(numberOfRatings);
+        serviceProvider.setRating(rating);
+    }
+     
     
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<ServiceProviderEntity>>constraintViolations)
     {
