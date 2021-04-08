@@ -17,7 +17,7 @@ import util.exception.AdminNotFoundException;
 import util.exception.AdminUsernameExistException;
 import util.exception.BusinessCategoryExistException;
 import util.exception.CreateNewBusinessCategoryException;
-import util.exception.CustomerUsernameExistException;
+import util.exception.CustomerEmailExistsException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderEmailExistException;
 import util.exception.UnknownPersistenceException;
@@ -70,7 +70,7 @@ public class DataInitializationSessionBean {
             businessCategoryEntitySessionBeanLocal.createNewBusinessCategoryEntity(new BusinessCategoryEntity("Fashion"));
             businessCategoryEntitySessionBeanLocal.createNewBusinessCategoryEntity(new BusinessCategoryEntity("Education"));
         }
-        catch(AdminUsernameExistException | CustomerUsernameExistException | CreateNewBusinessCategoryException | ServiceProviderEmailExistException | UnknownPersistenceException | InputDataValidationException ex)
+        catch(AdminUsernameExistException | CustomerEmailExistsException | CreateNewBusinessCategoryException | ServiceProviderEmailExistException | UnknownPersistenceException | InputDataValidationException ex)
         {
             ex.printStackTrace();
         }
