@@ -127,6 +127,21 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         }
     }
     
+     @Override
+    public ServiceProviderEntity retrieveServiceProviderEntityByName(String name) throws ServiceProviderNotFoundException
+    {   
+        ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, name);
+
+        if (serviceProvider != null)
+        {
+            return serviceProvider;
+        }
+        else
+        {
+            throw new ServiceProviderNotFoundException("Serivce Provider Name: " + name + " does not exist!");
+        }
+    }
+    
     @Override
     public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(String businessCategory, String city) throws ServiceProviderNotFoundException
     {   
