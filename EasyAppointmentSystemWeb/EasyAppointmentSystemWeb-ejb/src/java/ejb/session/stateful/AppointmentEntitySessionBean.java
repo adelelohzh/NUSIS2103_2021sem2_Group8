@@ -4,6 +4,7 @@ import ejb.session.stateful.AppointmentEntitySessionBeanLocal;
 import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
 import entity.AppointmentEntity;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -75,7 +76,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
-    public List<AppointmentEntity> retrieveAppointmentsByDate(Date date, String serviceProviderName)
+    public List<AppointmentEntity> retrieveAppointmentsByDate(LocalDate date, String serviceProviderName)
     {
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.date = :inDate and a.serviceProviderEntity.name := inServiceProviderName");
         query.setParameter("inDate", date);
@@ -85,7 +86,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
-    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(Date date, Long serviceProviderId) {
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) {
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.date = :inDate and a.serviceProviderEntityId := inServiceProviderId ORDER BY a.time");
         query.setParameter("inDate", date);
         query.setParameter("inServiceProviderId", serviceProviderId);
