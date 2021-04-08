@@ -30,7 +30,6 @@ public class AppointmentEntity implements Serializable {
     private LocalTime scheduledTime;
     
     @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDate scheduledDate;
     
     @ManyToOne(optional = false)
