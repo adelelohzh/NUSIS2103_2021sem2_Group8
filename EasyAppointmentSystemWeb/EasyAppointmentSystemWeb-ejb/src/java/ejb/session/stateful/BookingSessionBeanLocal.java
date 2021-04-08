@@ -5,6 +5,8 @@
  */
 package ejb.session.stateful;
 
+import entity.AppointmentEntity;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -14,4 +16,11 @@ import javax.ejb.Local;
 @Local
 public interface BookingSessionBeanLocal {
     
+    public List<AppointmentEntity> getAppointmentEntities();
+
+    public void setAppointmentEntities(List<AppointmentEntity> appointmentEntities);
+
+    public Integer getTotalAppointments();
+
+    public void setTotalAppointments(Integer totalAppointments);
 }
