@@ -26,9 +26,9 @@ public class BusinessCategoryEntityWebService
     
 
     @WebMethod(operationName = "retrieveAllBusinessCategories")
-    public List<BusinessCategoryEntity> retrieveAllBusinessCategories(@WebParam(name = "username") String emailAddr,
-                                                @WebParam(name = "password") String password)                                                      
-                                throws InvalidLoginCredentialException
+    public List<BusinessCategoryEntity> retrieveAllBusinessCategories(@WebParam(name = "email") String emailAddr,
+                                                                      @WebParam(name = "password") String password)                                                      
+                                                            throws InvalidLoginCredentialException
     {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.retrieveAllBusinessCategories(): Customer " 

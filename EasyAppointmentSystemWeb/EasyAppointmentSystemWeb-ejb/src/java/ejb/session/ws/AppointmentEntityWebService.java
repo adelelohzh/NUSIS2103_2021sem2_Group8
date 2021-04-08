@@ -37,7 +37,7 @@ public class AppointmentEntityWebService
     
 
     @WebMethod(operationName = "retrieveSortedAppointmentsByDate")
-    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(@WebParam(name = "username") String emailAddr,
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(@WebParam(name = "email") String emailAddr,
                                                                         @WebParam(name = "password") String password,
                                                                         @WebParam(name = "date") LocalDate date,
                                                                         @WebParam(name = "serviceProviderId") Long serviceProviderId)                                                      
@@ -52,7 +52,7 @@ public class AppointmentEntityWebService
     }
     
     @WebMethod(operationName = "retrieveAppointmentByAppointmentNumber")
-    public AppointmentEntity retrieveAppointmentByAppointmentNumber(@WebParam(name = "username") String emailAddr,
+    public AppointmentEntity retrieveAppointmentByAppointmentNumber(@WebParam(name = "email") String emailAddr,
                                                                         @WebParam(name = "password") String password,
                                                                         @WebParam(name = "appointmentNumber") String apptNo)                                                 
                                 throws InvalidLoginCredentialException, AppointmentNotFoundException

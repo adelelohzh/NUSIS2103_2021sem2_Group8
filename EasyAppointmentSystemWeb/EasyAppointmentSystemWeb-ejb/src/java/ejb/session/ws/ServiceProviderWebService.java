@@ -37,10 +37,10 @@ public class ServiceProviderWebService
     
 
     @WebMethod(operationName = "retrieveServiceProviderEntityByName")
-    public ServiceProviderEntity retrieveServiceProviderEntityByName(@WebParam(name = "username") String emailAddr,
-                                                                @WebParam(name = "password") String password,
-                                                                @WebParam(name = "name") String name) 
-                                throws InvalidLoginCredentialException, ServiceProviderNotFoundException
+    public ServiceProviderEntity retrieveServiceProviderEntityByName(@WebParam(name = "email") String emailAddr,
+                                                                     @WebParam(name = "password") String password,
+                                                                     @WebParam(name = "name") String name) 
+                                                            throws InvalidLoginCredentialException, ServiceProviderNotFoundException
     {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.retrieveServiceProviderEntityByName(): Customer " 
@@ -51,10 +51,10 @@ public class ServiceProviderWebService
     }
     
     @WebMethod(operationName = "retrieveServiceProviderEntityBySearch")
-    public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(@WebParam(name = "username") String emailAddr,
-                                                                @WebParam(name = "password") String password,
-                                                                @WebParam(name = "business category") String businessCategory,
-                                                                @WebParam(name = "city") String city) 
+    public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(@WebParam(name = "email") String emailAddr,
+                                                                             @WebParam(name = "password") String password,
+                                                                             @WebParam(name = "business category") String businessCategory,
+                                                                             @WebParam(name = "city") String city) 
                                 throws InvalidLoginCredentialException, ServiceProviderNotFoundException
     {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
@@ -66,7 +66,7 @@ public class ServiceProviderWebService
     }
     
     @WebMethod(operationName = "updateRating")
-    public void updateRating(@WebParam(name = "username") String emailAddr,
+    public void updateRating(@WebParam(name = "email") String emailAddr,
                                                         @WebParam(name = "password") String password,
                                                         @WebParam(name = "rating") Long rating,
                                                         @WebParam(name = "serviceProviderId") Long serviceProviderId) 
