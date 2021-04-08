@@ -24,6 +24,9 @@ public class AdminEntity implements Serializable {
     @Column(nullable = false)
     private String password;
     
+    @Column(nullable = false, length = 32)
+    private String name;
+    
     
     public AdminEntity() 
     {
@@ -81,6 +84,20 @@ public class AdminEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.AdminEntity[ id=" + adminId + " ]";
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
 }
