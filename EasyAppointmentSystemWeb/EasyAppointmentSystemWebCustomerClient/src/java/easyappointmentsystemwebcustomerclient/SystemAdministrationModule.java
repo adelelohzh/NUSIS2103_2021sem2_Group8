@@ -117,8 +117,8 @@ public class SystemAdministrationModule {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Customer terminal :: Add Appointment ***\n");
         List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
-        for (int i = 0; i < businessCategoryEntities.size(); i++) {
-            System.out.printf("%-15s", i + businessCategoryEntities.get(i).getCategory() + " |"); 
+        for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
+            System.out.printf("%-15s", businessCategory.getBusinessCategoryId() + businessCategory.getCategory() + " |"); 
         }
         System.out.println();
         String response;
