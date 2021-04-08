@@ -19,6 +19,7 @@ import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -69,11 +70,11 @@ public class SystemAdministrationModule {
     }
 
     public void searchOperation() throws ParseException {
-        
+
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Customer terminal :: Search Operation ***\n");
         String businessCategory;
-        
+
         do {
             System.out.print("Enter Business category> ");
             businessCategory = sc.nextLine().trim();
@@ -90,14 +91,14 @@ public class SystemAdministrationModule {
             try {
                 List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
                 //list of service providers in the category and city
-                
+
                 for (ServiceProviderEntity s : serviceProviders) {
                     //each service provider, retrieve their appointment entities for a particular date, sorted by time
                     List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, s.getServiceProviderId());
                     if (appointmentEntities.size() == 10) { //full slots
                         continue;
                     }
-                    
+
                     System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
                     //find earliest time: I was thinking just have an arraylist of timeslots 0, 1, 2, ...
                     //then we simply find which is the first index that is empty
@@ -108,21 +109,21 @@ public class SystemAdministrationModule {
                 System.out.println("Service Provider cannot be found!");
             }
             System.out.println("Enter 0 to go back to the previous menu.");
-            
+
         } while (!businessCategory.equals("0"));
     }
 
     public void addAppointment() throws ParseException {
-        
+
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Customer terminal :: Add Appointment ***\n");
         List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
         for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
-            System.out.printf("%-15s", businessCategory.getBusinessCategoryId() + businessCategory.getCategory() + " |"); 
+            System.out.printf("%-15s", businessCategory.getBusinessCategoryId() + businessCategory.getCategory() + " |");
         }
         System.out.println();
         String response;
-        
+
         do {
             System.out.print("Enter Business category> ");
             String businessCategory = sc.nextLine().trim();
@@ -133,24 +134,48 @@ public class SystemAdministrationModule {
             System.out.print("Enter Date (YYYY-MM-DD)> ");
             String currentDate = sc.nextLine().trim();
 
+            Date date;
+
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = formatter.parse(currentDate);
-            
+            date = formatter.parse(currentDate);
+            /*try {
+                date = formatter.parse(currentDate);
+            }
+            catch (ParseException ex) {
+                System.out.println("Invalid date entered!");
+            }*/
+
             try {
                 List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
 
                 System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
-                
+
                 for (ServiceProviderEntity s : serviceProviders) {
                     List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, s.getServiceProviderId());
                     if (appointmentEntities.size() == 10) { //full slots
                         continue;
                     }
                     //as above (search), print out first available timing
+                    //service provider does not have full slots
+                    List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17.30", "18.30");
+                    List<String> timeSlots = new ArrayList<>();
+                    timeSlots.addAll(times);
+
+                    String firstAvailableTime = "";
+                    int i = 0;
+                    for (AppointmentEntity appointment : appointmentEntities) {
+                        if (!appointment.getScheduledTime().equals(timeSlots.get(i))) {
+                            firstAvailableTime = timeSlots.get(i);
+                            break; //found the index
+                        }
+                        i++;
+                    }
+
+                    System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + s.getRating());
+
                 }
-                
-            }
-            catch (ServiceProviderNotFoundException ex) {
+
+            } catch (ServiceProviderNotFoundException ex) {
                 System.out.println("Service Provider cannot be found!");
             }
             System.out.println("Enter 0 to go back to the previous menu.");
@@ -160,79 +185,85 @@ public class SystemAdministrationModule {
 
             List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, serviceProviderId);
             //get the available appointment slots
-            
+
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter Time> ");
             response = sc.nextLine().trim();
-            // Time time = 
+
+            boolean validTime = true;
+            for (AppointmentEntity appointment : appointmentEntities) {
+                if (appointment.getScheduledTime().equals(response)) {
+                    System.out.println("Time slot is full!");
+                    validTime = false;
+                    break;
+                }
+            }
+            if (validTime) {
+                AppointmentEntity appointmentEntity = new AppointmentEntity();
+                String serviceProviderUIN = String.valueOf(serviceProviderId);
+                String appointmentNumber = serviceProviderUIN + response +  currentDate;
+                appointmentEntity.setAppointmentNo(appointmentNumber);
+                //appointmentEntity.setScheduledTime(response); convert to Date/Time
+                appointmentEntity.setScheduledDate(date);
+                
+            }
             // if timeslot exists, confirm appointment
             // System.out.println("The appointment with " + serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getName() + " at " + time + " on " + currentDate + " is confirmed.");
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Exit>");
             response = sc.nextLine().trim();
-            
+
         } while (!response.equals(0));
     }
-    
+
     public void cancelAppointment() {
-        
+
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Customer terminal :: Cancel Appointment ***\n");
         String response;
-        
+
         do {
             List<AppointmentEntity> appointmentEntities = currentCustomerEntity.getAppointmentEntities();
-            
+
             System.out.print("Enter Appointment Id to cancel>");
             response = sc.nextLine().trim();
             String appointmentNo = response;
-            
+
             try {
                 AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentNumber(appointmentNo);
-                // do cancel
-            }
-            catch (AppointmentNotFoundException ex) {
+                appointmentEntitySessionBeanRemote.deleteAppointment(appointmentNo);
+            } catch (AppointmentNotFoundException ex) {
                 System.out.println("Appointment with id: " + appointmentNo + " does not exist!");
             }
-            
+
         } while (!response.equals(0));
     }
-    
-    public void rateServiceProvider()
-    {
+
+    public void rateServiceProvider() {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Customer terminal :: Rate Service Provider ***\n");
         String response = "";
-        
+
         System.out.print("Enter Service Provider Name> ");
         String name = sc.nextLine().trim();
-        
-        try
-        {
+
+        try {
             ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityByName(name);
             System.out.println("You are rating " + name + ".\n");
             System.out.print("Enter rating> ");
             Long rating = sc.nextLong();
-            if (rating > 5.0 | rating < 0.0)
-            {
+            if (rating > 5.0 | rating < 0.0) {
                 System.out.println("Please enter a number between 0.0 to 5.0!");
-            }
-            else
-            {
+            } else {
                 serviceProviderEntitySessionBeanRemote.updateRating(rating, serviceProvider.getServiceProviderId());
                 System.out.println("Rating successfully submitted!");
             }
-        }
-        catch(ServiceProviderNotFoundException ex)
-        {
+        } catch (ServiceProviderNotFoundException ex) {
             System.out.println("Service Provider does not exist!");
-        }
-        catch(InputMismatchException ex)
-        {
+        } catch (InputMismatchException ex) {
             System.out.println("Please enter a number between 0.0 to 5.0!");
         }
-        
+
     }
-    
-    
+
 }
