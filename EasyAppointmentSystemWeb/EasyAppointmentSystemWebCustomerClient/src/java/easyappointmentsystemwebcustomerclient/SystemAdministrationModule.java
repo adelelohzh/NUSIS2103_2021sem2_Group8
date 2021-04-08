@@ -19,6 +19,7 @@ import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -132,9 +133,18 @@ public class SystemAdministrationModule {
 
             System.out.print("Enter Date (YYYY-MM-DD)> ");
             String currentDate = sc.nextLine().trim();
+            
+            Date date;
 
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = formatter.parse(currentDate);
+            date = formatter.parse(currentDate);
+            /*try {
+                date = formatter.parse(currentDate);
+            }
+            catch (ParseException ex) {
+                System.out.println("Invalid date entered!");
+            }*/
+            
             
             try {
                 List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
@@ -147,6 +157,23 @@ public class SystemAdministrationModule {
                         continue;
                     }
                     //as above (search), print out first available timing
+                    //service provider does not have full slots
+                    List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17.30", "18.30");
+                    List<String> timeSlots = new ArrayList<>();
+                    timeSlots.addAll(times);
+                    
+                    String firstAvailableTime = "";
+                    int i = 0;
+                    for (AppointmentEntity appointment: appointmentEntities) {
+                        if (!appointment.getScheduledTime().equals(timeSlots.get(i))) {
+                            firstAvailableTime = timeSlots.get(i);
+                            break; //found the index
+                        }
+                        i++;
+                    }
+                    
+                    System.out.println(s.getServiceProviderId() +  "| " +  s.getName() + "| " + firstAvailableTime + "| " +  s.getBusinessAddress() + "| " + s.getRating());  
+                    
                 }
                 
             }
