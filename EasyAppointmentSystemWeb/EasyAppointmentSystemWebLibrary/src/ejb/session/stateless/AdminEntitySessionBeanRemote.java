@@ -14,7 +14,7 @@ public interface AdminEntitySessionBeanRemote {
 
     public List<AdminEntity> retrieveAllAdmins();
 
-    public AdminEntity adminLogin(String username, String password) throws InvalidLoginCredentialException;
+    public AdminEntity adminLogin(String email, String password) throws InvalidLoginCredentialException;
     
     public AdminEntity retrieveAdminByEmail(String email) throws AdminNotFoundException;
     
