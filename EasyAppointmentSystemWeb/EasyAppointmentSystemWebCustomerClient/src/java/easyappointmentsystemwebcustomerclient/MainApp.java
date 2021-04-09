@@ -119,7 +119,7 @@ public class MainApp {
         }
     }
 
-    private void menuMain(CustomerEntity customerEntity) throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException {
+    private void menuMain(CustomerEntity customerEntity) {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -141,19 +141,19 @@ public class MainApp {
                     System.out.print("> ");
 
                     response = scanner.nextInt();
-
-                if (response == 1) {
-                    systemAdministrationModule.searchOperation();
-                } else if (response == 2) {
-                    systemAdministrationModule.addAppointment();
-                } else if (response == 3) {
-                    systemAdministrationModule.viewAppointments();
-                } else if (response == 4) {
-                    systemAdministrationModule.cancelAppointment();
-                } else if (response == 5) {
-                    systemAdministrationModule.rateServiceProvider();
-                } else if (response == 6) {
-                    break;
+                    if (response == 1) {
+                        systemAdministrationModule.searchOperation();
+                    } else if (response == 2) {
+                        systemAdministrationModule.addAppointment();
+                    } else if (response == 3) {
+                        systemAdministrationModule.viewAppointments();
+                    } else if (response == 4) {
+                        systemAdministrationModule.cancelAppointment();
+                    } else if (response == 5) {
+                        systemAdministrationModule.rateServiceProvider();
+                    } else if (response == 6) {
+                        break;
+                    }
                 }
             }
             catch (ParseException | UnknownPersistenceException | InputDataValidationException | AppointmentNumberExistsException ex)
