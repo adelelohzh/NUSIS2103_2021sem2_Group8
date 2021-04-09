@@ -136,9 +136,10 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     @Override
     public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(String businessCategory, String city) throws ServiceProviderNotFoundException
     {   
-        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.businessCategory := inBusinessCategory and s.city := inCity");
-        query.setParameter("inBusinessCategory", businessCategory);
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.city := inCity and s.businessCategory := inBusinessCategory");
         query.setParameter("inCity", city);
+        query.setParameter("inBusinessCategory", businessCategory);
+
         
         return query.getResultList();    
     }
