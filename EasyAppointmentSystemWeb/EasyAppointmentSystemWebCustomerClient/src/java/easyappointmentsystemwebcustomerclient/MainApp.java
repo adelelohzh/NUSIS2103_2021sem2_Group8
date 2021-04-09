@@ -60,7 +60,7 @@ public class MainApp {
         this.queueCheckoutNotificationFactory = queueCheckoutNotificationFactory;
     }
 
-    public void runApp() {
+    public void runApp() throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         while (true) {
@@ -119,7 +119,7 @@ public class MainApp {
         }
     }
 
-    private void menuMain(CustomerEntity customerEntity) {
+    private void menuMain(CustomerEntity customerEntity) throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -142,22 +142,17 @@ public class MainApp {
 
                     response = scanner.nextInt();
 
-                    if (response == 1) {
-                        systemAdministrationModule.searchOperation();
-                    } else if (response == 2) {
-                       systemAdministrationModule.addAppointment();
-                    } else if (response == 3) {
-                        systemAdministrationModule.cancelAppointment();
-                    } else if (response == 4) {
-                        systemAdministrationModule.rateServiceProvider();
-                    } else if (response == 5) {
-                        break;
-                    } else {
-                        System.out.println("Invalid option, please try again!\n");
-                    }
-                }
-
-                if (response == 5) {
+                if (response == 1) {
+                    systemAdministrationModule.searchOperation();
+                } else if (response == 2) {
+                    systemAdministrationModule.addAppointment();
+                } else if (response == 3) {
+                    systemAdministrationModule.viewAppointments();
+                } else if (response == 4) {
+                    systemAdministrationModule.cancelAppointment();
+                } else if (response == 5) {
+                    systemAdministrationModule.rateServiceProvider();
+                } else if (response == 6) {
                     break;
                 }
             }

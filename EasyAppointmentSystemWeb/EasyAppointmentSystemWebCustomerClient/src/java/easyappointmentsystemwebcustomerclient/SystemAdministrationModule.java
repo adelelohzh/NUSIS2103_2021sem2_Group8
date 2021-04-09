@@ -257,6 +257,30 @@ public class SystemAdministrationModule {
             
         } while (!response.equals(0));
     }
+    
+    public void viewAppointments() {
+
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** Customer terminal :: View Appointments ***\n");
+        String response = "";
+        
+        List<AppointmentEntity> appointments = currentCustomerEntity.getAppointmentEntities();
+        
+        System.out.println("*** Customer terminal :: View Appointments ***\n");
+        System.out.print("Appointments: ");
+        System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
+        
+        for(AppointmentEntity appointment:appointments)
+        {
+            System.out.printf("%-15s%-13s%-8s%-15s\n", currentCustomerEntity.getFullName(), appointment.getScheduledDate(), appointment.getScheduledTime(), appointment.getAppointmentNo());
+        }
+
+        while (response != "0")
+        {
+            System.out.println("Enter 0 to go back to the previous menu.");  
+            response = sc.nextLine().trim();
+        }
+    }
 
     public void cancelAppointment() {
 
