@@ -116,31 +116,21 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     @Override
     public ServiceProviderEntity retrieveServiceProviderEntityByEmail(String email) throws ServiceProviderNotFoundException
     {   
-        ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, email);
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.emailAddress = :inEmail");
+        query.setParameter("inEmail", email);
 
-        if (serviceProvider != null)
-        {
-            return serviceProvider;
-        }
-        else
-        {
-            throw new ServiceProviderNotFoundException("Serivce Provider email: " + email + " does not exist!");
-        }
+        
+        return (ServiceProviderEntity) query.getSingleResult();
     }
     
      @Override
     public ServiceProviderEntity retrieveServiceProviderEntityByName(String name) throws ServiceProviderNotFoundException
     {   
-        ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, name);
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.email = :inName");
+        query.setParameter("inName", name);
 
-        if (serviceProvider != null)
-        {
-            return serviceProvider;
-        }
-        else
-        {
-            throw new ServiceProviderNotFoundException("Serivce Provider Name: " + name + " does not exist!");
-        }
+        
+        return (ServiceProviderEntity) query.getSingleResult();
     }
     
     @Override
