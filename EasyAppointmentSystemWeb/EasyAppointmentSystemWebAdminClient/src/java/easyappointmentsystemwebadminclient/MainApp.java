@@ -97,18 +97,18 @@ public class MainApp
     private void doLogin() throws InvalidLoginCredentialException
     {
         Scanner scanner = new Scanner(System.in);
-        String username = "";
+        String email = "";
         String password = "";
         
         System.out.println("*** Admin terminal :: Login ***\n");
         System.out.print("Enter Email Address> ");
-        username = scanner.nextLine().trim();
+        email = scanner.nextLine().trim();
         System.out.print("Enter Password> ");
         password = scanner.nextLine().trim();
         
-        if(username.length() > 0 && password.length() > 0)
+        if(email.length() > 0 && password.length() > 0)
         {
-            currentAdminEntity = adminEntitySessionBeanRemote.adminLogin(username, password);      
+            currentAdminEntity = adminEntitySessionBeanRemote.adminLogin(email, password);      
         }
         else
         {
