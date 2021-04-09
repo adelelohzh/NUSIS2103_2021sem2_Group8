@@ -19,7 +19,6 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.BusinessCategoryExistException;
 import util.exception.BusinessCategoryNotFoundException;
-import util.exception.CreateNewBusinessCategoryException;
 import util.exception.InputDataValidationException;
 import util.exception.UnknownPersistenceException;
 
@@ -41,7 +40,7 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
 
     
     @Override
-    public String createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws CreateNewBusinessCategoryException, BusinessCategoryExistException, UnknownPersistenceException, InputDataValidationException
+    public String createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws BusinessCategoryExistException, UnknownPersistenceException, InputDataValidationException
     {
         try
         {
