@@ -166,6 +166,7 @@ public class MainApp {
                 String email = sc.nextLine().trim();
                 System.out.print("Enter Password> ");
                 String password = sc.nextLine().trim();
+                System.out.println();
 
                 ServiceProviderEntity serviceProviderEntity = new ServiceProviderEntity();
                 serviceProviderEntity.setName(name);
@@ -184,7 +185,8 @@ public class MainApp {
                 Long serviceProviderId = serviceProviderEntitySessionBeanRemote.createNewServiceProvider(serviceProviderEntity);
                 System.out.println("You have been registered successfully!\n");
 
-                System.out.println("Enter 0 to go back to the previous menu!\n");
+                System.out.println("Enter 0 to go back to the previous menu.\n");
+                System.out.print(">");
                 
                 input = sc.nextLine().trim();
             }

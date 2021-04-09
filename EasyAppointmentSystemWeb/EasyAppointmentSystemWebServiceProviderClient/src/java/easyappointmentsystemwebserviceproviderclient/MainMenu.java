@@ -102,13 +102,14 @@ public class MainMenu
         String response = "";
        
         System.out.println("*** Service provider terminal :: View Profile ***\n");
-        System.out.print("Profile: ");
+        System.out.println("Profile: ");
         System.out.printf("%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", "Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status");
         System.out.printf("%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", currentServiceProviderEntity.getName(), "| " + currentServiceProviderEntity.getBusinessCategory(), "| " + currentServiceProviderEntity.getBusinessRegistrationNumber(), "| " + currentServiceProviderEntity.getCity(), "| " + currentServiceProviderEntity.getBusinessAddress(), "| " + currentServiceProviderEntity.getEmailAddress(), "| " + currentServiceProviderEntity.getPhoneNumber(), "| " + currentServiceProviderEntity.getRating(), "| " + currentServiceProviderEntity.getStatusEnum());
             
-        while (response != "0")
+        while (!response.equals("0"))
         {
-            System.out.println("Enter 0 to go back to the previous menu.");  
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print(">");
             response = sc.nextLine().trim();
         }
     }
@@ -117,6 +118,7 @@ public class MainMenu
     public void editProfile(ServiceProviderEntity serviceProviderEntity)
     {
         Scanner sc = new Scanner(System.in);
+        String response = "";
         
         System.out.println("*** Service provider terminal :: Edit Profile ***\n");
         System.out.print("Enter City (blank if no change)> ");
@@ -163,6 +165,8 @@ public class MainMenu
             {
                 serviceProviderEntitySessionBeanRemote.updateServiceProvider(serviceProviderEntity);
                 currentServiceProviderEntity = serviceProviderEntity; //update the current service provider if it can be updated in database
+                System.out.println("Update successful!\n");
+                
             }
             catch (UpdateServiceProviderException | ServiceProviderNotFoundException ex)
             {
@@ -177,6 +181,13 @@ public class MainMenu
         {
             showInputDataValidationErrorsForServiceProviderEntity(constraintViolations);
         }
+        
+        while (!response.equals("0"))
+        {
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print(">");
+            response = sc.nextLine().trim();
+        }
     }
     
     public void viewAppointment()
@@ -187,7 +198,7 @@ public class MainMenu
         List<AppointmentEntity> appointments = currentServiceProviderEntity.getAppointmentEntities();
         
         System.out.println("*** Service provider terminal :: View Appointments ***\n");
-        System.out.print("Appointments: ");
+        System.out.println("Appointments: ");
         System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
         
         for(AppointmentEntity appointment:appointments)
@@ -195,9 +206,10 @@ public class MainMenu
             System.out.printf("%-15s%-13s%-8s%-15s\n", appointment.getCustomerEntity().getFullName(), appointment.getScheduledDate(), appointment.getScheduledTime(), appointment.getAppointmentNo());
         }
 
-        while (response != "0")
+        while (!response.equals("0"))
         {
-            System.out.println("Enter 0 to go back to the previous menu.");  
+            System.out.println("Enter 0 to go back to the previous menu."); 
+            System.out.print(">");
             response = sc.nextLine().trim();
         }
     }
@@ -218,13 +230,13 @@ public class MainMenu
             System.out.printf("%16s%10s%7s%9s\n", appointment.getCustomerEntity().getFullName(), appointment.getScheduledDate(), appointment.getScheduledTime(), appointment.getAppointmentNo());
         }
         
-        while (response != "0") 
+        while (!response.equals("0")) 
         {
             System.out.println("Enter 0 to go back to the previous menu.");  
-            System.out.println("Enter Appointment Id> ");
+            System.out.print("Enter Appointment Id> ");
             response = sc.nextLine().trim();
             
-            if (response != "0")
+            if (response.equals("0"))
             {
                 try 
                 {
