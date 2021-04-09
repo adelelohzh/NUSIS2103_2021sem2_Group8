@@ -75,12 +75,20 @@ public class SystemAdministrationModule {
             try {
                 CustomerEntity customerEntity = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(customerId);
                 //retrieve appointments
-                List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
+                customerEntity.getAppointmentEntities().size();
                 //print appointments
                 System.out.println("Appointments:");
+                
+                List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
+                
                 System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
+                String name = customerEntity.getFullName();
                 for (AppointmentEntity appointmentEntity : appointmentEntities) {
-                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", customerEntity.getFullName(), "| " + appointmentEntity.getBusinessCategoryEntity(), "| " + appointmentEntity.getScheduledDate(), "| " + appointmentEntity.getScheduledTime(), "| " + appointmentEntity.getAppointmentNo());
+                    String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
+                    String scheduledDate = appointmentEntity.getScheduledDate().toString();
+                    String scheduledTime = appointmentEntity.getScheduledTime().toString();
+                    String appointmentNumber = appointmentEntity.getAppointmentNo();
+                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
                 }
             } catch (CustomerNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving customer: " + ex.getMessage() + "\n");
