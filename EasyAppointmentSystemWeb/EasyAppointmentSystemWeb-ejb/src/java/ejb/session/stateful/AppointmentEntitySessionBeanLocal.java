@@ -27,5 +27,5 @@ public interface AppointmentEntitySessionBeanLocal {
     
     public AppointmentEntity retrieveAppointmentByAppointmentNumber(String appointmentNo) throws AppointmentNotFoundException;
 
-    
+    public void updateAppointmentEntity(AppointmentEntity appointmentEntity);
 }
