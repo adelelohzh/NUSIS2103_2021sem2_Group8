@@ -9,6 +9,9 @@ import entity.AppointmentEntity;
 import entity.BusinessCategoryEntity;
 import entity.CustomerEntity;
 import entity.ServiceProviderEntity;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Future;
@@ -76,11 +79,11 @@ public class SystemAdministrationModule {
             try {
                 CustomerEntity customerEntity = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(customerId);
                 //retrieve appointments
-                
+
                 List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
                 //print appointments
                 System.out.println("Appointments:");
-                
+
                 if (appointmentEntities.size() != 0) {
                     System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
                     String name = customerEntity.getFullName();
@@ -121,9 +124,9 @@ public class SystemAdministrationModule {
                 String name = serviceProviderEntity.getName();
                 for (AppointmentEntity appointmentEntity : appointmentEntities) {
                     String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
-                        String scheduledDate = appointmentEntity.getScheduledDate().toString();
-                        String scheduledTime = appointmentEntity.getScheduledTime().toString();
-                        String appointmentNumber = appointmentEntity.getAppointmentNo();
+                    String scheduledDate = appointmentEntity.getScheduledDate().toString();
+                    String scheduledTime = appointmentEntity.getScheduledTime().toString();
+                    String appointmentNumber = appointmentEntity.getAppointmentNo();
                     System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
                 }
             } catch (ServiceProviderNotFoundException ex) {
@@ -260,7 +263,7 @@ public class SystemAdministrationModule {
             if (category.equals(0)) {
                 break;
             }
-            
+
             try {
                 businessCategoryEntitySessionBeanRemote.deleteBusinessCategory(category);
             } catch (BusinessCategoryNotFoundException ex) {
@@ -270,7 +273,6 @@ public class SystemAdministrationModule {
             System.out.println();
 
             // method to be added into SessionBean
-            
         } while (!category.equals(0));
     }
 
@@ -315,18 +317,41 @@ public class SystemAdministrationModule {
             try {
                 CustomerEntity currentCustomerEntity = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(customerId);
                 List<AppointmentEntity> customerAppointmentEntities = currentCustomerEntity.getAppointmentEntities();
+                //the above list will retrieve all the previous and upcoming
+
+                LocalDate todayDate = LocalDate.now();
+
+                String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+                LocalTime currTime = LocalTime.parse(time);
+
 
                 if (customerAppointmentEntities.isEmpty()) {
-                    System.out.println("There are no new appointments to " + currentCustomerEntity.getFullName());
+                    throw new AppointmentNotFoundException("There are no new appointments to " + currentCustomerEntity.getFullName());
                 } else {
 
                     String toEmailAddress = currentCustomerEntity.getEmailAddress();
-                    //List<AppointmentEntity> appointmentEntities = customerEntitySessionBeanRemote.getAppointmentEntities();
-                    //if (appointmentEntities.length() == 0) {
-
+                    //get the upcoming one
+                    
+                    int index = 0;
+                    for (AppointmentEntity appointmentEntity : customerAppointmentEntities) {
+                        LocalDate appointmentDate = appointmentEntity.getScheduledDate();
+                        if (appointmentDate.compareTo(todayDate) < 0) { //previous appointment
+                            index++;
+                            continue;
+                        } else if (appointmentDate.compareTo(todayDate) == 0) {
+                            LocalTime appointmentTime = appointmentEntity.getScheduledTime();
+                            if (appointmentTime.compareTo(currTime) <= 0) {
+                                index++;
+                                continue;
+                            } else {
+                                break;
+                            }
+                        }
+                        break;
+                    }
                     //}
                     // 01 - Synchronous Session Bean Invocation
-                    emailSessionBeanRemote.emailCheckoutNotificationSync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
+                    emailSessionBeanRemote.emailCheckoutNotificationSync(customerAppointmentEntities.get(index), "Name <name@comp.nus.edu.sg>", toEmailAddress);
                     // 02 - Asynchronous Session Bean Invocation
                     //Future<Boolean> asyncResult = emailSessionBeanRemote.emailCheckoutNotificationAsync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
                     //RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
@@ -337,7 +362,11 @@ public class SystemAdministrationModule {
                 }
             } catch (CustomerNotFoundException ex) {
                 System.out.println("An error has occurred while sending the reminder email: " + ex.getMessage() + "\n");
+            } catch (AppointmentNotFoundException ex) {
+                System.out.println("There are no appointments to send a reminder email for!");
             }
+
+            customerId = sc.nextLong();
 
         } while (customerId != 0);
 
