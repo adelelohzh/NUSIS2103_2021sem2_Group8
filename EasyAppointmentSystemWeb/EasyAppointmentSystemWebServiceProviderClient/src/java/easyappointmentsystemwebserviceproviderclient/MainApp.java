@@ -24,6 +24,7 @@ import javax.jms.Queue;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import util.enumeration.StatusEnum;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderEmailExistException;
 import util.exception.UnknownPersistenceException;
@@ -173,6 +174,7 @@ public class MainApp {
                 serviceProviderEntity.setPhoneNumber(phone);
                 serviceProviderEntity.setEmailAddress(address);
                 serviceProviderEntity.setPassword(password);
+                serviceProviderEntity.setStatusEnum(StatusEnum.Pending);
                 
                 serviceProviderEntitySessionBeanRemote.registerServiceProvider(name, number, businessRegNumber, city, phone, address, email, password);
 
