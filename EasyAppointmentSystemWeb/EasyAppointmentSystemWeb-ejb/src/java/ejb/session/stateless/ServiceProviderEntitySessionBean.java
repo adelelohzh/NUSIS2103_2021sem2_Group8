@@ -126,7 +126,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
      @Override
     public ServiceProviderEntity retrieveServiceProviderEntityByName(String name) throws ServiceProviderNotFoundException
     {   
-        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.email = :inName");
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.name = :inName");
         query.setParameter("inName", name);
 
         
