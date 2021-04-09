@@ -60,7 +60,7 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
         }
         catch(AdminNotFoundException ex)
         {
-            throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
+            throw new InvalidLoginCredentialException("Email Address does not exist or invalid password!");
         }
     }
     
