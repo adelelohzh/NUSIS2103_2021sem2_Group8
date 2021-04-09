@@ -57,10 +57,6 @@ public class BusinessCategoryEntity implements Serializable {
         return businessCategoryId;
     }
 
-    public void setBusinessCategoryId(Long businessCategoryId) {
-        this.businessCategoryId = businessCategoryId;
-    }
-
     public List<AppointmentEntity> getAppointmentEntities() {
         return appointmentEntities;
     }
