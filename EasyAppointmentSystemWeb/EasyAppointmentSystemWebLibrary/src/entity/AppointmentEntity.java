@@ -55,8 +55,7 @@ public class AppointmentEntity implements Serializable {
         this.appointmentNo = appointmentNo;
     }
 
-    public AppointmentEntity(Long appointmentId, String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity) {
-        this.appointmentId = appointmentId;
+    public AppointmentEntity(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity) {
         this.appointmentNo = appointmentNo;
         this.scheduledTime = scheduledTime;
         this.scheduledDate = scheduledDate;
