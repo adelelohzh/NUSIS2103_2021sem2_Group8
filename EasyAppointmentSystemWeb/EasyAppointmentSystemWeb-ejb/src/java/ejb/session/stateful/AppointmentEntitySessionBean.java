@@ -2,12 +2,17 @@ package ejb.session.stateful;
 
 import ejb.session.stateful.AppointmentEntitySessionBeanLocal;
 import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
+import ejb.session.stateless.CustomerEntitySessionBeanLocal;
+import ejb.session.stateless.ServiceProviderEntitySessionBeanLocal;
 import entity.AppointmentEntity;
+import entity.CustomerEntity;
+import entity.ServiceProviderEntity;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -23,7 +28,9 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.AppointmentNotFoundException;
 import util.exception.AppointmentNumberExistsException;
+import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 
@@ -33,10 +40,17 @@ import util.exception.UnknownPersistenceException;
 public class AppointmentEntitySessionBean implements AppointmentEntitySessionBeanRemote, AppointmentEntitySessionBeanLocal 
 {
 
+    @EJB
+    private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
+    @EJB
+    private ServiceProviderEntitySessionBeanLocal serviceProviderEntitySessionBeanLocal;
+    
+
     @PersistenceContext(unitName = "EasyAppointmentSystemWeb-ejbPU")
     private EntityManager em;
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
+    
     
     public AppointmentEntitySessionBean() 
     {
@@ -45,14 +59,21 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
-    public Long createNewAppointment(AppointmentEntity newAppointmentEntity) throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException
+    public Long createNewAppointment(Long customerId, Long serviceProviderId, AppointmentEntity newAppointmentEntity) throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, CustomerNotFoundException, ServiceProviderNotFoundException
     {
         try
         {
             Set<ConstraintViolation<AppointmentEntity>>constraintViolations = validator.validate(newAppointmentEntity);
         
             if(constraintViolations.isEmpty())
-            {
+            { 
+                CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerEntityByCustomerId(customerId);
+                ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(serviceProviderId);
+                newAppointmentEntity.setCustomerEntity(customerEntity);
+                newAppointmentEntity.setServiceProviderEntity(serviceProviderEntity);
+                customerEntity.getAppointmentEntities().add(newAppointmentEntity);
+                serviceProviderEntity.getAppointmentEntities().add(newAppointmentEntity);
+
                 em.persist(newAppointmentEntity);
                 em.flush();
 
@@ -101,15 +122,16 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     
     @Override
     public AppointmentEntity retrieveAppointmentByAppointmentId(Long appointmentId) throws AppointmentNotFoundException {
-   
-        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.appointmentId = :inAppointmentId");
-        query.setParameter("inAppointmentId", appointmentId);
         
-        try
+        AppointmentEntity appointmentEntity = em.find(AppointmentEntity.class, appointmentId);
+        
+        if(appointmentEntity != null)
         {
-            return (AppointmentEntity)query.getSingleResult();
+            appointmentEntity.getCustomerEntity();
+            appointmentEntity.getServiceProviderEntity();
+            return appointmentEntity;
         }
-        catch(NoResultException | NonUniqueResultException ex)
+        else
         {
             throw new AppointmentNotFoundException("Appointment Id: " + appointmentId + " does not exist!");
         }
@@ -123,7 +145,10 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         
         try
         {
-            return (AppointmentEntity)query.getSingleResult();
+            AppointmentEntity appointmentEntity = (AppointmentEntity)query.getSingleResult();
+            appointmentEntity.getCustomerEntity();
+            appointmentEntity.getServiceProviderEntity();
+            return appointmentEntity;
         }
         catch(NoResultException | NonUniqueResultException ex)
         {
@@ -175,4 +200,9 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         return msg;
     }
     
+    @Override
+    public void updateAppointmentEntity(AppointmentEntity appointmentEntity)
+    {
+        em.merge(appointmentEntity);
+    }
 }
