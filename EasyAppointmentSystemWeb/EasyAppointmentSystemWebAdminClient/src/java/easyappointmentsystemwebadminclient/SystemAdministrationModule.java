@@ -193,7 +193,7 @@ public class SystemAdministrationModule {
         } while (serviceProviderId != 0);
     }
 
-    public void addBusinessCategory() throws BusinessCategoryExistException, CreateNewBusinessCategoryException {
+    public void addBusinessCategory() throws BusinessCategoryExistException, CreateNewBusinessCategoryException, UnknownPersistenceException, InputDataValidationException {
 
         Scanner sc = new Scanner(System.in);
         boolean contains = false;
