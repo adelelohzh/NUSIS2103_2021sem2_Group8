@@ -9,6 +9,7 @@ import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
 import entity.CustomerEntity;
+import java.text.ParseException;
 import java.util.Set;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
@@ -16,6 +17,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.exception.AppointmentNumberExistsException;
 import util.exception.CustomerEmailExistsException;
 import util.exception.InputDataValidationException;
 import util.exception.UnknownPersistenceException;
@@ -58,7 +60,7 @@ public class MainApp {
         this.queueCheckoutNotificationFactory = queueCheckoutNotificationFactory;
     }
 
-    public void runApp() {
+    public void runApp() throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         while (true) {
@@ -117,7 +119,7 @@ public class MainApp {
         }
     }
 
-    private void menuMain(CustomerEntity customerEntity) {
+    private void menuMain(CustomerEntity customerEntity) throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -139,15 +141,15 @@ public class MainApp {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-                    // search operation
+                    systemAdministrationModule.searchOperation();
                 } else if (response == 2) {
-                    // add appt
+                    systemAdministrationModule.addAppointment();
                 } else if (response == 3) {
-                    // view appt
+                    systemAdministrationModule.viewAppointments();
                 } else if (response == 4) {
-                    // cancel appt
+                    systemAdministrationModule.cancelAppointment();
                 } else if (response == 5) {
-                    // rate service provider
+                    systemAdministrationModule.rateServiceProvider();
                 } else if (response == 6) {
                     break;
                 } else {
