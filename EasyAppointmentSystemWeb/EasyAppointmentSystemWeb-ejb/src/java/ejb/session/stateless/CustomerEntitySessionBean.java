@@ -83,11 +83,12 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
     @Override
     public CustomerEntity retrieveCustomerEntityByCustomerId(Long customerId) throws CustomerNotFoundException
     {   
-        CustomerEntity customer = em.find(CustomerEntity.class, customerId);
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
 
-        if (customer != null)
+        if (customerEntity != null)
         {
-            return customer;
+            customerEntity.getAppointmentEntities().size();
+            return customerEntity;
         }
         else
         {
@@ -103,7 +104,9 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
         
         try
         {
-            return (CustomerEntity)query.getSingleResult();
+            CustomerEntity customerEntity = (CustomerEntity)query.getSingleResult();
+            customerEntity.getAppointmentEntities().size();
+            return customerEntity;
         }
         catch(NoResultException | NonUniqueResultException ex)
         {
