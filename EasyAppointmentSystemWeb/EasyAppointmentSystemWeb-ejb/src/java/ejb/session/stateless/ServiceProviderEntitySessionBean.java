@@ -119,8 +119,16 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.emailAddress = :inEmail");
         query.setParameter("inEmail", email);
 
-        
-        return (ServiceProviderEntity) query.getSingleResult();
+        try
+        {
+            ServiceProviderEntity serviceProviderEntity = (ServiceProviderEntity)query.getSingleResult();
+            serviceProviderEntity.getAppointmentEntities().size();
+            return serviceProviderEntity;
+        }
+        catch(NoResultException | NonUniqueResultException ex)
+        {
+            throw new ServiceProviderNotFoundException("Service Provider Email " + email + " does not exist!");
+        }
     }
     
      @Override
@@ -128,9 +136,17 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     {   
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.name = :inName");
         query.setParameter("inName", name);
-
         
-        return (ServiceProviderEntity) query.getSingleResult();
+        try
+        {
+            ServiceProviderEntity serviceProviderEntity = (ServiceProviderEntity)query.getSingleResult();
+            serviceProviderEntity.getAppointmentEntities().size();
+            return serviceProviderEntity;
+        }
+        catch(NoResultException | NonUniqueResultException ex)
+        {
+            throw new ServiceProviderNotFoundException("Service Provider Name " + name + " does not exist!");
+        }
     }
     
     @Override
@@ -147,11 +163,12 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     @Override
     public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException
     {   
-        ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, serviceProviderId);
+        ServiceProviderEntity serviceProviderEntity = em.find(ServiceProviderEntity.class, serviceProviderId);
 
-        if (serviceProvider != null)
+        if (serviceProviderEntity != null)
         {
-            return serviceProvider;
+            serviceProviderEntity.getAppointmentEntities().size();
+            return serviceProviderEntity;
         }
         else
         {
