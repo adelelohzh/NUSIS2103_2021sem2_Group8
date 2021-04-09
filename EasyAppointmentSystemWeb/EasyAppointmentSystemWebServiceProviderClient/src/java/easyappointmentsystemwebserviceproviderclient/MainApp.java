@@ -170,14 +170,18 @@ public class MainApp {
                 ServiceProviderEntity serviceProviderEntity = new ServiceProviderEntity();
                 serviceProviderEntity.setName(name);
                 serviceProviderEntity.setBusinessRegistrationNumber(businessRegNumber);
+                serviceProviderEntity.setBusinessAddress(address);
                 serviceProviderEntity.setCity(city);
                 serviceProviderEntity.setPhoneNumber(phone);
-                serviceProviderEntity.setEmailAddress(address);
+                serviceProviderEntity.setEmailAddress(email);
                 serviceProviderEntity.setPassword(password);
                 serviceProviderEntity.setStatusEnum(StatusEnum.Pending);
                 
-                serviceProviderEntitySessionBeanRemote.registerServiceProvider(name, number, businessRegNumber, city, phone, address, email, password);
-
+                BusinessCategoryEntity businessCategoryEntity = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories().get(number-1);
+                serviceProviderEntity.setBusinessCategory(businessCategoryEntity.getCategory());
+           
+                
+                Long serviceProviderId = serviceProviderEntitySessionBeanRemote.createNewServiceProvider(serviceProviderEntity);
                 System.out.println("You have been registered successfully!\n");
 
                 System.out.println("Enter 0 to go back to the previous menu!\n");
