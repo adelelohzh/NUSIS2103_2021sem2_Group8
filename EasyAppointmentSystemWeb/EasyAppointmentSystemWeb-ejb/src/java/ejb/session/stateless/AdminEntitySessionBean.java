@@ -50,8 +50,7 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
             AdminEntity adminEntity = retrieveAdminByEmail(email);
             
             if(adminEntity.getPassword().equals(password))
-            {
-                //adminEntity.getServiceProviderEntities().size();                
+            {              
                 return adminEntity;
             }
             else
