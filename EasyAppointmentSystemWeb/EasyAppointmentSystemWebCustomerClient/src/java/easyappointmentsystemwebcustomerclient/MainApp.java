@@ -9,6 +9,7 @@ import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
 import entity.CustomerEntity;
+import java.text.ParseException;
 import java.util.Set;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
@@ -16,6 +17,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.exception.AppointmentNumberExistsException;
 import util.exception.CustomerEmailExistsException;
 import util.exception.InputDataValidationException;
 import util.exception.UnknownPersistenceException;
@@ -133,30 +135,35 @@ public class MainApp {
             System.out.println("6: Logout\n");
             response = 0;
 
-            while (response < 1 || response > 6) {
-                System.out.print("> ");
+            try
+            {
+                while (response < 1 || response > 6) {
+                    System.out.print("> ");
 
-                response = scanner.nextInt();
+                    response = scanner.nextInt();
 
-                if (response == 1) {
-                    // search operation
-                } else if (response == 2) {
-                    // add appt
-                } else if (response == 3) {
-                    // view appt
-                } else if (response == 4) {
-                    // cancel appt
-                } else if (response == 5) {
-                    // rate service provider
-                } else if (response == 6) {
+                    if (response == 1) {
+                        systemAdministrationModule.searchOperation();
+                    } else if (response == 2) {
+                       systemAdministrationModule.addAppointment();
+                    } else if (response == 3) {
+                        systemAdministrationModule.cancelAppointment();
+                    } else if (response == 4) {
+                        systemAdministrationModule.rateServiceProvider();
+                    } else if (response == 5) {
+                        break;
+                    } else {
+                        System.out.println("Invalid option, please try again!\n");
+                    }
+                }
+
+                if (response == 5) {
                     break;
-                } else {
-                    System.out.println("Invalid option, please try again!\n");
                 }
             }
-
-            if (response == 6) {
-                break;
+            catch (ParseException | UnknownPersistenceException | InputDataValidationException | AppointmentNumberExistsException ex)
+            {
+                System.out.println("parseException!");
             }
         }
     }
