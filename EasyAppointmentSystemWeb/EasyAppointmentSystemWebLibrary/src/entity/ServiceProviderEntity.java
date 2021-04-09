@@ -59,7 +59,6 @@ public class ServiceProviderEntity implements Serializable {
     private List<AppointmentEntity> appointmentEntities;
     
     @ManyToOne(optional = false)
-    @JoinColumn
     private BusinessCategoryEntity businessCategoryEntity;
 
     public ServiceProviderEntity() 
