@@ -21,7 +21,6 @@ import util.enumeration.StatusEnum;
 import util.exception.AdminNotFoundException;
 import util.exception.AdminUsernameExistException;
 import util.exception.BusinessCategoryExistException;
-import util.exception.CreateNewBusinessCategoryException;
 import util.exception.CustomerEmailExistsException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderEmailExistException;
@@ -78,15 +77,14 @@ public class DataInitializationSessionBean {
             businessCategoryEntitySessionBeanLocal.createNewBusinessCategoryEntity(new BusinessCategoryEntity("Education"));
             serviceProviderEntitySessionBeanLocal.createNewServiceProvider(new ServiceProviderEntity("Kevin Peterson", "Health",  "1111001111", "Singapore", "13, Clementi Road", "kevin@nuh.com.sg", "93718799", "113322", StatusEnum.Approved));
         }
-        catch(AdminUsernameExistException |  CustomerEmailExistsException | CreateNewBusinessCategoryException | ServiceProviderEmailExistException | UnknownPersistenceException | InputDataValidationException ex)
+        catch(AdminUsernameExistException |  CustomerEmailExistsException | BusinessCategoryExistException | ServiceProviderEmailExistException | UnknownPersistenceException | InputDataValidationException ex)
         {
             ex.printStackTrace();
-        } catch (BusinessCategoryExistException ex) {
-            Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void persist(Object object) {
-        em.persist(object);
+        } 
     }
 }
+
+//    public void persist(Object object) {
+//        em.persist(object);
+//    }
+//}
