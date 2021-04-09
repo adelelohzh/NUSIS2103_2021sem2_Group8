@@ -50,7 +50,8 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
             AdminEntity adminEntity = retrieveAdminByEmail(email);
             
             if(adminEntity.getPassword().equals(password))
-            {              
+            {   
+                adminEntity.getPassword();
                 return adminEntity;
             }
             else
@@ -147,14 +148,8 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
         Query query = em.createQuery("SELECT a FROM AdminEntity a WHERE a.email = :inEmail");
         query.setParameter("inEmail", email);
         
-        try
-        {
-            return (AdminEntity)query.getSingleResult();
-        }
-        catch(NoResultException | NonUniqueResultException ex)
-        {
-            throw new AdminNotFoundException("Admin Email Address " + email + " does not exist!");
-        }
+        return (AdminEntity)query.getSingleResult();
+
     }
     
     @Override
