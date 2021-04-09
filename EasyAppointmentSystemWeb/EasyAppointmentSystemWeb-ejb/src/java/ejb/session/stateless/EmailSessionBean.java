@@ -23,10 +23,10 @@ public class EmailSessionBean implements EmailSessionBeanLocal, EmailSessionBean
     
     
     @Override
-    public Boolean emailCheckoutNotificationSync(List<AppointmentEntity> appointmentEntities, String fromEmailAddress, String toEmailAddress)
+    public Boolean emailCheckoutNotificationSync(AppointmentEntity appointmentEntity, String fromEmailAddress, String toEmailAddress)
     {
         EmailManager emailManager = new EmailManager(GMAIL_USERNAME, GMAIL_PASSWORD);
-        Boolean result = emailManager.emailCheckoutNotification(appointmentEntities, fromEmailAddress, toEmailAddress);
+        Boolean result = emailManager.emailCheckoutNotification(appointmentEntity, fromEmailAddress, toEmailAddress);
         
         return result;
     } 
@@ -34,10 +34,10 @@ public class EmailSessionBean implements EmailSessionBeanLocal, EmailSessionBean
     
     
     @Asynchronous
-    public Future<Boolean> emailCheckoutNotificationAsync(List<AppointmentEntity> appointmentEntities, String fromEmailAddress, String toEmailAddress) throws InterruptedException
+    public Future<Boolean> emailCheckoutNotificationAsync(AppointmentEntity appointmentEntity, String fromEmailAddress, String toEmailAddress) throws InterruptedException
     {        
         EmailManager emailManager = new EmailManager(GMAIL_USERNAME, GMAIL_PASSWORD);
-        Boolean result = emailManager.emailCheckoutNotification(appointmentEntities, fromEmailAddress, toEmailAddress);
+        Boolean result = emailManager.emailCheckoutNotification(appointmentEntity, fromEmailAddress, toEmailAddress);
         
         return new AsyncResult<>(result);
     }
