@@ -97,16 +97,22 @@ public class MainMenu
     
     public void viewProfile()
     {
+
+        Scanner sc = new Scanner(System.in);
+        String response = "";
+       
         System.out.println("*** Service provider terminal :: View Profile ***\n");
-        System.out.println("Name: " + currentServiceProviderEntity.getName());
-        System.out.println("Business Category: " + currentServiceProviderEntity.getBusinessCategory());
-        System.out.println("Business Registration Number: " + currentServiceProviderEntity.getBusinessRegistrationNumber());
-        System.out.println("Business Address: " + currentServiceProviderEntity.getBusinessAddress());
-        System.out.println("City: " + currentServiceProviderEntity.getCity());
-        System.out.println("Email Address: " + currentServiceProviderEntity.getEmailAddress());
-        System.out.println("Phone Number: " + currentServiceProviderEntity.getPhoneNumber());
-        //System.out.println("Overall Rating: " + currentServiceProviderEntity.getBusinessCategory());
+        System.out.print("Profile: ");
+        System.out.printf("%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", "Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status");
+        System.out.printf("%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", currentServiceProviderEntity.getName(), "| " + currentServiceProviderEntity.getBusinessCategory(), "| " + currentServiceProviderEntity.getBusinessRegistrationNumber(), "| " + currentServiceProviderEntity.getCity(), "| " + currentServiceProviderEntity.getBusinessAddress(), "| " + currentServiceProviderEntity.getEmailAddress(), "| " + currentServiceProviderEntity.getPhoneNumber(), "| " + currentServiceProviderEntity.getRating(), "| " + currentServiceProviderEntity.getStatusEnum());
+            
+        while (response != "0")
+        {
+            System.out.println("Enter 0 to go back to the previous menu.");  
+            response = sc.nextLine().trim();
+        }
     }
+
     
     public void editProfile(ServiceProviderEntity serviceProviderEntity)
     {
