@@ -10,8 +10,10 @@ public interface BusinessCategoryEntitySessionBeanLocal {
     
      public List<BusinessCategoryEntity> retrieveAllBusinessCategories();
 
-     public BusinessCategoryEntity createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws CreateNewBusinessCategoryException;
+     //public BusinessCategoryEntity createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws CreateNewBusinessCategoryException;
      
+     public String createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws CreateNewBusinessCategoryException; 
+             
      public void deleteBusinessCategory(String businessCategory) throws BusinessCategoryNotFoundException;
              
 }
