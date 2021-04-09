@@ -41,7 +41,7 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
 
     
     @Override
-    public String createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws CreateNewBusinessCategoryException 
+    public String createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws CreateNewBusinessCategoryException, BusinessCategoryExistException, UnknownPersistenceException, InputDataValidationException
     {
         try
         {
@@ -76,9 +76,7 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
             {
                 throw new UnknownPersistenceException(ex.getMessage());
             }
-        } catch (InputDataValidationException ex) {
-            Logger.getLogger(BusinessCategoryEntitySessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }
     
     @Override
