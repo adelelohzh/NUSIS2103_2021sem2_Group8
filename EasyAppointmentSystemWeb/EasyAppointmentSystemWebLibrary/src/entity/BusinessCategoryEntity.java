@@ -27,6 +27,7 @@ public class BusinessCategoryEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "BUSINESSCATEGORYID")
     private Long businessCategoryId;
 
     @Column(nullable = false, length = 32)
