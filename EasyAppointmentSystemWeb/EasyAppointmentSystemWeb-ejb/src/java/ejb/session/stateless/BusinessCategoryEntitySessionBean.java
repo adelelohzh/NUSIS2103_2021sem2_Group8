@@ -20,6 +20,7 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
     @PersistenceContext(unitName = "EasyAppointmentSystemWeb-ejbPU")
     private EntityManager em;
 
+    @Override
     public BusinessCategoryEntity createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws CreateNewBusinessCategoryException {
         if (newBusinessCategoryEntity != null) {
             em.persist(newBusinessCategoryEntity);
@@ -30,12 +31,14 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
         }
     }
     
+    @Override
     public List<BusinessCategoryEntity> retrieveAllBusinessCategories() {
         Query query = em.createQuery("SELECT b FROM BusinessCategoryEntity s");
 
         return query.getResultList();
     }
 
+    @Override
     public void deleteBusinessCategory(String businessCategory) throws BusinessCategoryNotFoundException {
 
         boolean exist = false;
