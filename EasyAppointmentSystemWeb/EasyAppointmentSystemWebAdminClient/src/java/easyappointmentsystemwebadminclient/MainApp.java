@@ -164,7 +164,7 @@ public class MainApp
                 }
                 else if(response == 6)
                 {
-                    //systemAdministrationModule.addBusinessCategory();
+                    systemAdministrationModule.addBusinessCategory();
                 }
                 else if(response == 7)
                 {
