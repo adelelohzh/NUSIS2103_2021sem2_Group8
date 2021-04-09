@@ -135,7 +135,7 @@ public class SystemAdministrationModule {
         } while (!businessCategory.equals("0"));
     }
 
-    public void addAppointment() throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, InvalidAddAppointmentException {
+    public void addAppointment() throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException {
 
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Customer terminal :: Add Appointment ***\n");
@@ -160,9 +160,8 @@ public class SystemAdministrationModule {
             LocalDate date = LocalDate.parse(currentDate, formatter);
             String day = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US);
 
-            if (day.equals("Sunday")) {
-                throw new InvalidAddAppointmentException("Appointment cannot be made.");
-            } else {
+            if (day.equals("Sunday")) { //insert invalid add appt
+
                 try {
                     List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
 
