@@ -36,21 +36,15 @@ public class EmailManager {
         this.smtpAuthPassword = smtpAuthPassword;
     }
 
-    public Boolean emailCheckoutNotification(List<AppointmentEntity> appointmentEntities, String fromEmailAddress, String toEmailAddress) {
+    public Boolean emailCheckoutNotification(AppointmentEntity appointmentEntity, String fromEmailAddress, String toEmailAddress) {
         
         String emailBody = "";
         
         int count = 0;
 
-        CustomerEntity customerEntity = appointmentEntities.get(0).getCustomerEntity();
-        emailBody += "An email is sent to " + customerEntity.getFullName() + " for the appointment\n\n";
-        for (AppointmentEntity currentAppointmentEntity : appointmentEntities) {
-            emailBody += currentAppointmentEntity.getAppointmentNo();
-            count += 1;
-            if (count < appointmentEntities.size()) {
-                emailBody += ", ";
-            }    
-        }
+        CustomerEntity customerEntity = appointmentEntity.getCustomerEntity();
+        emailBody += "An email is sent to " + customerEntity.getFullName() + " for the appointment ";
+        emailBody += appointmentEntity.getAppointmentNo();
         emailBody += ".";
         
         
