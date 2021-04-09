@@ -25,6 +25,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.StatusEnum;
+import util.exception.AppointmentNotFoundException;
 import util.exception.BusinessCategoryExistException;
 import util.exception.BusinessCategoryNotFoundException;
 import util.exception.CustomerNotFoundException;
@@ -75,23 +76,28 @@ public class SystemAdministrationModule {
             try {
                 CustomerEntity customerEntity = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(customerId);
                 //retrieve appointments
-                customerEntity.getAppointmentEntities().size();
+                
+                List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
                 //print appointments
                 System.out.println("Appointments:");
                 
-                List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
-                
-                System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
-                String name = customerEntity.getFullName();
-                for (AppointmentEntity appointmentEntity : appointmentEntities) {
-                    String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
-                    String scheduledDate = appointmentEntity.getScheduledDate().toString();
-                    String scheduledTime = appointmentEntity.getScheduledTime().toString();
-                    String appointmentNumber = appointmentEntity.getAppointmentNo();
-                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
+                if (appointmentEntities.size() != 0) {
+                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
+                    String name = customerEntity.getFullName();
+                    for (AppointmentEntity appointmentEntity : appointmentEntities) {
+                        String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
+                        String scheduledDate = appointmentEntity.getScheduledDate().toString();
+                        String scheduledTime = appointmentEntity.getScheduledTime().toString();
+                        String appointmentNumber = appointmentEntity.getAppointmentNo();
+                        System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
+                    }
+                } else {
+                    throw new AppointmentNotFoundException("No appointments found for customer with customer id " + customerEntity.getCustomerId());
                 }
             } catch (CustomerNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving customer: " + ex.getMessage() + "\n");
+            } catch (AppointmentNotFoundException ex) {
+                System.out.println("No appointments found for customer with customer");
             }
 
             System.out.println("Enter 0 to go back to the previous menu.");
@@ -112,8 +118,13 @@ public class SystemAdministrationModule {
                 System.out.println("Appointments:");
                 System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
 
+                String name = serviceProviderEntity.getName();
                 for (AppointmentEntity appointmentEntity : appointmentEntities) {
-                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", serviceProviderEntity.getName(), "| " + appointmentEntity.getBusinessCategoryEntity(), "| " + appointmentEntity.getScheduledDate(), "| " + appointmentEntity.getScheduledTime(), "| " + appointmentEntity.getAppointmentNo());
+                    String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
+                        String scheduledDate = appointmentEntity.getScheduledDate().toString();
+                        String scheduledTime = appointmentEntity.getScheduledTime().toString();
+                        String appointmentNumber = appointmentEntity.getAppointmentNo();
+                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
                 }
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
