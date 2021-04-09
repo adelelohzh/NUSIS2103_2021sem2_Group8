@@ -48,11 +48,22 @@ public class AppointmentEntity implements Serializable {
     {
     }
 
-    public AppointmentEntity(LocalTime scheduledTime) {
-        LocalTime time=LocalTime.parse(scheduledTime.toString(), DateTimeFormatter.ofPattern("HH:mm"));
+    public AppointmentEntity(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate) {
+        //LocalTime time = LocalTime.parse(scheduledTime.toString(), DateTimeFormatter.ofPattern("HH:mm"));
+        this.scheduledDate = scheduledDate;
         this.scheduledTime = scheduledTime;
+        this.appointmentNo = appointmentNo;
     }
 
+    public AppointmentEntity(Long appointmentId, String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity) {
+        this.appointmentId = appointmentId;
+        this.appointmentNo = appointmentNo;
+        this.scheduledTime = scheduledTime;
+        this.scheduledDate = scheduledDate;
+        this.customerEntity = customerEntity;
+        this.serviceProviderEntity = serviceProviderEntity;
+        this.businessCategoryEntity = businessCategoryEntity;
+    }
     
     public Long getAppointmentId() {
         return appointmentId;
