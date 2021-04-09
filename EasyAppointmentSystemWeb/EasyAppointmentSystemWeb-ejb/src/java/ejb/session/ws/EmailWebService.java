@@ -27,7 +27,7 @@ public class EmailWebService {
     @WebMethod(operationName = "emailCheckoutNotificationSync")
     public Boolean emailCheckoutNotificationSync(@WebParam(name = "email") String emailAddr,
                                                  @WebParam(name = "password") String password,
-                                                 @WebParam(name = "appointmentEntities") List<AppointmentEntity> appointmentEntities,
+                                                 @WebParam(name = "appointmentEntity") AppointmentEntity appointmentEntity,
                                                  @WebParam(name = "fromEmailAddress") String fromEmailAddress,
                                                  @WebParam(name = "toEmailAddress") String toEmailAddress)                                                 
                                         throws InvalidLoginCredentialException
@@ -38,13 +38,13 @@ public class EmailWebService {
                             + customerEntity.getEmailAddress() 
                             + " login remotely via web service");
        
-       return emailSessionBeanLocal.emailCheckoutNotificationSync(appointmentEntities, fromEmailAddress, toEmailAddress);
+       return emailSessionBeanLocal.emailCheckoutNotificationSync(appointmentEntity, fromEmailAddress, toEmailAddress);
    }
     
     @WebMethod(operationName = "emailCheckoutNotificationAsync") 
     public Future<Boolean> emailCheckoutNotificationAsync(@WebParam(name = "email") String emailAddr,
                                                  @WebParam(name = "password") String password,
-                                                 @WebParam(name = "appointmentEntities") List<AppointmentEntity> appointmentEntities,
+                                                 @WebParam(name = "appointmentEntity") AppointmentEntity appointmentEntity,
                                                  @WebParam(name = "fromEmailAddress") String fromEmailAddress,
                                                  @WebParam(name = "toEmailAddress") String toEmailAddress)                                                 
                                         throws InvalidLoginCredentialException, InterruptedException
@@ -55,6 +55,6 @@ public class EmailWebService {
                             + customerEntity.getEmailAddress() 
                             + " login remotely via web service");
        
-       return emailSessionBeanLocal.emailCheckoutNotificationAsync(appointmentEntities, fromEmailAddress, toEmailAddress);
+       return emailSessionBeanLocal.emailCheckoutNotificationAsync(appointmentEntity, fromEmailAddress, toEmailAddress);
    }  
 }
