@@ -8,11 +8,15 @@ import entity.AdminEntity;
 import entity.BusinessCategoryEntity;
 import entity.CustomerEntity;
 import entity.ServiceProviderEntity;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import util.enumeration.StatusEnum;
 import util.exception.AdminNotFoundException;
 import util.exception.AdminUsernameExistException;
@@ -41,6 +45,8 @@ public class DataInitializationSessionBean {
     @EJB(name = "AdminEntitySessionBeanLocal")
     private AdminEntitySessionBeanLocal adminEntitySessionBeanLocal;
     
+    @PersistenceContext(unitName = "EasyAppointmentSystemWeb-ejbPU")
+    private EntityManager em;
     
     public DataInitializationSessionBean()
     {
@@ -49,15 +55,16 @@ public class DataInitializationSessionBean {
     @PostConstruct
     public void postConstruct()
     {
-        try
-        {
+        try {
             adminEntitySessionBeanLocal.retrieveAdminEntityById(1L);
-        }
-        catch(AdminNotFoundException ex)
-        {
-            initializeData();
+            AdminEntity admin = em.find(AdminEntity.class, 1L);
+        } 
+        catch (AdminNotFoundException ex) {
+                initializeData();
+                
         }
     }
+
     
     private void initializeData() 
     {
@@ -71,9 +78,15 @@ public class DataInitializationSessionBean {
             businessCategoryEntitySessionBeanLocal.createNewBusinessCategoryEntity(new BusinessCategoryEntity("Education"));
             serviceProviderEntitySessionBeanLocal.createNewServiceProvider(new ServiceProviderEntity("Kevin Peterson", "Health",  "1111001111", "Singapore", "13, Clementi Road", "kevin@nuh.com.sg", "93718799", "113322", StatusEnum.Approved));
         }
-        catch(AdminUsernameExistException | CustomerEmailExistsException | CreateNewBusinessCategoryException | ServiceProviderEmailExistException | UnknownPersistenceException | InputDataValidationException ex)
+        catch(AdminUsernameExistException |  CustomerEmailExistsException | CreateNewBusinessCategoryException | ServiceProviderEmailExistException | UnknownPersistenceException | InputDataValidationException ex)
         {
             ex.printStackTrace();
+        } catch (BusinessCategoryExistException ex) {
+            Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void persist(Object object) {
+        em.persist(object);
     }
 }
