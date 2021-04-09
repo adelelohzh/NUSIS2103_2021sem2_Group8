@@ -100,7 +100,7 @@ public class DataInitializationSessionBean {
 
             LocalTime scheduledTime = LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm"));
 
-            appointmentEntitySessionBeanLocal.createNewAppointment(new AppointmentEntity(appointmentId, scheduledTime, date, customerEntity, serviceProviderEntity, businessCategoryEntity));
+            appointmentEntitySessionBeanLocal.createNewAppointment(1L, 1L, new AppointmentEntity(appointmentId, scheduledTime, date, customerEntity, serviceProviderEntity, businessCategoryEntity));
         
         }
         catch(AdminUsernameExistException |  CustomerEmailExistsException | BusinessCategoryExistException | ServiceProviderEmailExistException | UnknownPersistenceException | InputDataValidationException | CustomerNotFoundException | AppointmentNumberExistsException ex)
