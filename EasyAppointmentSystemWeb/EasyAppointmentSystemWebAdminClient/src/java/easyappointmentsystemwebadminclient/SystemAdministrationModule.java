@@ -214,7 +214,7 @@ public class SystemAdministrationModule {
         } while (serviceProviderId != 0);
     }
 
-    public void addBusinessCategory() throws BusinessCategoryExistException, UnknownPersistenceException, InputDataValidationException {
+    public void addBusinessCategory() {
 
         Scanner sc = new Scanner(System.in);
         boolean contains = false;
@@ -233,19 +233,26 @@ public class SystemAdministrationModule {
 
             List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
 
-            for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
-
-                if (businessCategory.getCategory().equals(category)) {
-                    contains = true;
-                    throw new BusinessCategoryExistException("Business Category " + category + " already exists!");
+            try {
+                for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
+                    if (businessCategory.getCategory().equals(category)) {
+                        contains = true;
+                        throw new BusinessCategoryExistException("Business Category " + category + " already exists!");
+                    }
                 }
-            }
-            if (!contains) {
-                BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
-                newBusinessCategory.setCategory(category);
-                businessCategoryEntities.add(newBusinessCategory);
-                businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
-                System.out.println("The business category \"\"" + category + "\" is added.");
+                if (!contains) {
+                    BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
+                    newBusinessCategory.setCategory(category);
+                    businessCategoryEntities.add(newBusinessCategory);
+                    try {
+                        businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
+                    } catch (UnknownPersistenceException | InputDataValidationException ex) {
+                        System.out.println("Business Category is not created!");
+                    }
+                    System.out.println("The business category \"\"" + category + "\" is added.");
+                }
+            } catch (BusinessCategoryExistException ex) {
+                System.out.println("Business Category " + category + " already exists!");
             }
         } while (!category.equals(0));
     }
