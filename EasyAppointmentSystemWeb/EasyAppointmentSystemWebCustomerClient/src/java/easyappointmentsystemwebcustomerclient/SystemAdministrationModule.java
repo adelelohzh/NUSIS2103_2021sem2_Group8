@@ -29,6 +29,8 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
 import javax.validation.Validation;
@@ -36,7 +38,9 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.AppointmentNotFoundException;
 import util.exception.AppointmentNumberExistsException;
+import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.InvalidAddAppointmentException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
 
@@ -93,7 +97,7 @@ public class SystemAdministrationModule {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate date = LocalDate.parse(currentDate, formatter);
-            
+
             System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
 
             try {
@@ -104,9 +108,7 @@ public class SystemAdministrationModule {
                     List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, s.getServiceProviderId());
                     if (appointmentEntities.size() == 10) { //full slots
                         continue;
-                    }
-                    else
-                    {
+                    } else {
                         List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17.30", "18.30");
                         List<String> timeSlots = new ArrayList<>();
                         timeSlots.addAll(times);
@@ -119,9 +121,9 @@ public class SystemAdministrationModule {
                                 break; //found the index
                             }
                             i++;
-                        }   
-                        
-                        System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", + s.getServiceProviderId() + " " + s.getName() + " " + firstAvailableTime + " " + s.getBusinessAddress()+ " " + s.getRating());
+                        }
+
+                        System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", +s.getServiceProviderId() + " " + s.getName() + " " + firstAvailableTime + " " + s.getBusinessAddress() + " " + s.getRating());
                     }
                 }
             } catch (ServiceProviderNotFoundException ex) {
@@ -133,7 +135,7 @@ public class SystemAdministrationModule {
         } while (!businessCategory.equals("0"));
     }
 
-    public void addAppointment() throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException {
+    public void addAppointment() throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, InvalidAddAppointmentException {
 
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Customer terminal :: Add Appointment ***\n");
@@ -153,13 +155,14 @@ public class SystemAdministrationModule {
 
             System.out.print("Enter Date (YYYY-MM-DD)> ");
             String currentDate = sc.nextLine().trim();
-           
+
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate date = LocalDate.parse(currentDate, formatter);
             String day = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US);
-            
-            if (day != "Sunday") 
-            {
+
+            if (day.equals("Sunday")) {
+                throw new InvalidAddAppointmentException("Appointment cannot be made.");
+            } else {
                 try {
                     List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
 
@@ -220,7 +223,7 @@ public class SystemAdministrationModule {
                     if (compare < 2) { //cannot
                         System.out.println("Appointment cannot be made!");
                         return;
-                    } 
+                    }
                 }
 
                 if (comparison < 0) {
@@ -239,13 +242,19 @@ public class SystemAdministrationModule {
                 }
 
                 if (validTime) {
-                    AppointmentEntity appointmentEntity = new AppointmentEntity();
-                    String serviceProviderUIN = String.valueOf(serviceProviderId);
-                    String appointmentNumber = serviceProviderUIN + response + currentDate;
-                    appointmentEntity.setAppointmentNo(appointmentNumber);
-                    appointmentEntity.setScheduledTime(time);
-                    appointmentEntity.setScheduledDate(date);
-                    appointmentEntitySessionBeanRemote.createNewAppointment(appointmentEntity);
+                    try {
+                        AppointmentEntity appointmentEntity = new AppointmentEntity();
+                        String serviceProviderUIN = String.valueOf(serviceProviderId);
+                        String appointmentNumber = serviceProviderUIN + response + currentDate;
+                        appointmentEntity.setAppointmentNo(appointmentNumber);
+                        appointmentEntity.setScheduledTime(time);
+                        appointmentEntity.setScheduledDate(date);
+                        appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
+                    } catch (CustomerNotFoundException ex) {
+                        System.out.println("Customer with customer id " + currentCustomerEntity.getCustomerId() + " not found");
+                    } catch (ServiceProviderNotFoundException ex) {
+                        System.out.println("Service with service provider id " + serviceProviderId + " not found");
+                    }
                 }
                 // if timeslot exists, confirm appointment
                 // System.out.println("The appointment with " + serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getName() + " at " + time + " on " + currentDate + " is confirmed.");
@@ -254,30 +263,28 @@ public class SystemAdministrationModule {
                 response = sc.nextLine().trim();
 
             }
-            
+
         } while (!response.equals(0));
     }
-    
+
     public void viewAppointments() {
 
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Customer terminal :: View Appointments ***\n");
         String response = "";
-        
+
         List<AppointmentEntity> appointments = currentCustomerEntity.getAppointmentEntities();
-        
+
         System.out.println("*** Customer terminal :: View Appointments ***\n");
         System.out.print("Appointments: ");
         System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
-        
-        for(AppointmentEntity appointment:appointments)
-        {
+
+        for (AppointmentEntity appointment : appointments) {
             System.out.printf("%-15s%-13s%-8s%-15s\n", currentCustomerEntity.getFullName(), appointment.getScheduledDate(), appointment.getScheduledTime(), appointment.getAppointmentNo());
         }
 
-        while (response != "0")
-        {
-            System.out.println("Enter 0 to go back to the previous menu.");  
+        while (response != "0") {
+            System.out.println("Enter 0 to go back to the previous menu.");
             response = sc.nextLine().trim();
         }
     }
