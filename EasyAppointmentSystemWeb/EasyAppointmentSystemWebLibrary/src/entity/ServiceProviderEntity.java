@@ -46,7 +46,7 @@ public class ServiceProviderEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String password;
     
-    @Column(nullable = false)
+    @Column
     private Long rating;
     
     @Column(nullable = false)
