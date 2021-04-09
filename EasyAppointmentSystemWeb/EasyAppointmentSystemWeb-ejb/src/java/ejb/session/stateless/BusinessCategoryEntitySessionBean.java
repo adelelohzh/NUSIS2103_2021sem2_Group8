@@ -81,7 +81,7 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
     
     @Override
     public List<BusinessCategoryEntity> retrieveAllBusinessCategories() {
-        Query query = em.createQuery("SELECT b FROM BusinessCategoryEntity s");
+        Query query = em.createQuery("SELECT b FROM BusinessCategoryEntity b");
 
         return query.getResultList();
     }
