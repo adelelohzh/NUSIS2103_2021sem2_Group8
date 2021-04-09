@@ -27,7 +27,6 @@ import javax.validation.ValidatorFactory;
 import util.enumeration.StatusEnum;
 import util.exception.BusinessCategoryExistException;
 import util.exception.BusinessCategoryNotFoundException;
-import util.exception.CreateNewBusinessCategoryException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderNotFoundException;
@@ -193,7 +192,7 @@ public class SystemAdministrationModule {
         } while (serviceProviderId != 0);
     }
 
-    public void addBusinessCategory() throws BusinessCategoryExistException, CreateNewBusinessCategoryException, UnknownPersistenceException, InputDataValidationException {
+    public void addBusinessCategory() throws BusinessCategoryExistException, UnknownPersistenceException, InputDataValidationException {
 
         Scanner sc = new Scanner(System.in);
         boolean contains = false;
