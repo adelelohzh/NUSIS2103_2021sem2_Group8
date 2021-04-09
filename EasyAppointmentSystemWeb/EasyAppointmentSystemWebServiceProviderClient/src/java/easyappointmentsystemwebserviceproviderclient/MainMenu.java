@@ -72,7 +72,7 @@ public class MainMenu
                 }
                 else if(response == 2)
                 {
-                    editProfile(currentServiceProviderEntity);
+                    editProfile();
                 }
                 else if (response == 3)
                 {
@@ -103,8 +103,8 @@ public class MainMenu
        
         System.out.println("*** Service provider terminal :: View Profile ***\n");
         System.out.println("Profile: ");
-        System.out.printf("%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", "Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status");
-        System.out.printf("%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", currentServiceProviderEntity.getName(), "| " + currentServiceProviderEntity.getBusinessCategory(), "| " + currentServiceProviderEntity.getBusinessRegistrationNumber(), "| " + currentServiceProviderEntity.getCity(), "| " + currentServiceProviderEntity.getBusinessAddress(), "| " + currentServiceProviderEntity.getEmailAddress(), "| " + currentServiceProviderEntity.getPhoneNumber(), "| " + currentServiceProviderEntity.getRating(), "| " + currentServiceProviderEntity.getStatusEnum());
+        System.out.printf("%-15s%-20s%-30s%-15s%-30s%-15s%-20s%-20s%-15s\n", "Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status");
+        System.out.printf("%-15s%-20s%-30s%-15s%-30s%-15s%-20s%-20s%-15s\n", currentServiceProviderEntity.getName(), "| " + currentServiceProviderEntity.getBusinessCategory(), "| " + currentServiceProviderEntity.getBusinessRegistrationNumber(), "| " + currentServiceProviderEntity.getCity(), "| " + currentServiceProviderEntity.getBusinessAddress(), "| " + currentServiceProviderEntity.getEmailAddress(), "| " + currentServiceProviderEntity.getPhoneNumber(), "| " + currentServiceProviderEntity.getRating(), "| " + currentServiceProviderEntity.getStatusEnum());
             
         while (!response.equals("0"))
         {
@@ -115,58 +115,78 @@ public class MainMenu
     }
 
     
-    public void editProfile(ServiceProviderEntity serviceProviderEntity)
+    public void editProfile()
     {
         Scanner sc = new Scanner(System.in);
         String response = "";
         
         System.out.println("*** Service provider terminal :: Edit Profile ***\n");
+        
+        System.out.print("Enter Name (blank if no change)> ");
+        String name = sc.nextLine().trim();
+        if (name.length() > 0) 
+        {
+            currentServiceProviderEntity.setName(name);
+
+        }
+        System.out.print("Enter Business Category (blank if no change)> ");
+        String category = sc.nextLine().trim();
+        if (category.length() > 0) 
+        {
+            currentServiceProviderEntity.setBusinessCategory(category);
+
+        }
+        System.out.print("Enter Business Registration Number (blank if no change)> ");
+        String regNo = sc.nextLine().trim();
+        if (regNo.length() > 0) 
+        {
+            currentServiceProviderEntity.setBusinessCategory(regNo);
+
+        }
         System.out.print("Enter City (blank if no change)> ");
         String city = sc.nextLine().trim();
         if (city.length() > 0) 
         {
-            serviceProviderEntity.setCity(city);
+            currentServiceProviderEntity.setCity(city);
 
         }
         System.out.print("Enter Business address (blank if no change)> ");
         String businessAddr = sc.nextLine().trim();
         if (businessAddr.length() > 0) 
         {
-            serviceProviderEntity.setBusinessAddress(businessAddr);
+            currentServiceProviderEntity.setBusinessAddress(businessAddr);
 
         }
         System.out.print("Enter Email address (blank if no change)> ");
         String emailAddr = sc.nextLine().trim();
         if (emailAddr.length() > 0) 
         {
-            serviceProviderEntity.setEmailAddress(emailAddr);
+            currentServiceProviderEntity.setEmailAddress(emailAddr);
 
         }
         System.out.print("Enter Phone number (blank if no change)> ");
         String phoneNumber = sc.nextLine().trim();
         if (phoneNumber.length() > 0) 
         {
-            serviceProviderEntity.setPhoneNumber(phoneNumber);
+            currentServiceProviderEntity.setPhoneNumber(phoneNumber);
 
         }
         System.out.print("Enter Password (blank if no change)> ");
         String password = sc.nextLine().trim();
         if (password.length() > 0) 
         {
-            serviceProviderEntity.setPassword(password);
+            currentServiceProviderEntity.setPassword(password);
 
         }
         
-        Set<ConstraintViolation<ServiceProviderEntity>>constraintViolations = validator.validate(serviceProviderEntity);
+        Set<ConstraintViolation<ServiceProviderEntity>>constraintViolations = validator.validate(currentServiceProviderEntity);
         
         if(constraintViolations.isEmpty())
         {
             try
             {
-                serviceProviderEntitySessionBeanRemote.updateServiceProvider(serviceProviderEntity);
-                currentServiceProviderEntity = serviceProviderEntity; //update the current service provider if it can be updated in database
+                serviceProviderEntitySessionBeanRemote.updateServiceProvider(currentServiceProviderEntity);
                 System.out.println("Update successful!\n");
-                
             }
             catch (UpdateServiceProviderException | ServiceProviderNotFoundException ex)
             {
