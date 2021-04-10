@@ -14,8 +14,10 @@ public interface BusinessCategoryEntitySessionBeanLocal {
 
      //public BusinessCategoryEntity createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws CreateNewBusinessCategoryException;
      
-     public String createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws BusinessCategoryExistException, UnknownPersistenceException, InputDataValidationException;
+    public String createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws BusinessCategoryExistException, UnknownPersistenceException, InputDataValidationException;
              
-     public void deleteBusinessCategory(String businessCategory) throws BusinessCategoryNotFoundException;
+    public void deleteBusinessCategory(String businessCategory) throws BusinessCategoryNotFoundException;
+
+    public BusinessCategoryEntity retrieveBusinessCategoriesByName(String name);
              
 }

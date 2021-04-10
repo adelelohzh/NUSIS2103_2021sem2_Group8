@@ -90,6 +90,20 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
         }
         return businessCategoryList;
     }
+    
+    @Override
+    public BusinessCategoryEntity retrieveBusinessCategoriesByName(String name) {
+        Query query = em.createQuery("SELECT b FROM BusinessCategoryEntity b WHERE b.name = :inName");
+        query.setParameter("inName", name);
+        
+        BusinessCategoryEntity businessCategory = (BusinessCategoryEntity)query.getSingleResult();
+        
+        businessCategory.getServiceProviderEntities().size();
+        
+        return businessCategory;
+    }
+    
+    
 
     @Override
     public void deleteBusinessCategory(String businessCategory) throws BusinessCategoryNotFoundException {

@@ -17,4 +17,6 @@ public interface BusinessCategoryEntitySessionBeanRemote {
     public String createNewBusinessCategoryEntity(BusinessCategoryEntity newBusinessCategoryEntity) throws BusinessCategoryExistException, UnknownPersistenceException, InputDataValidationException;
     
     public void deleteBusinessCategory(String businessCategory) throws BusinessCategoryNotFoundException;
+    
+    public BusinessCategoryEntity retrieveBusinessCategoriesByName(String name);
 }
