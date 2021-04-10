@@ -282,29 +282,26 @@ public class SystemAdministrationModule {
             }
             System.out.println();
 
-            List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
-
-            try {
-                for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
-                    if (businessCategory.getCategory().equals(category)) {
-                        contains = true;
-                        throw new BusinessCategoryExistException("Business Category " + category + " already exists!");
-                    }
+            BusinessCategoryEntity businessCategory = businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesByName(category);
+            if (businessCategory != null)
+            {
+                BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
+                newBusinessCategory.setCategory(category);
+                try {
+                    businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
+                } catch (UnknownPersistenceException | InputDataValidationException ex) {
+                    System.out.println("Business Category is not created!\n");
+                } catch (BusinessCategoryExistException ex) {
+                    System.out.println("Business Category already exists!\n");
                 }
-                if (!contains) {
-                    BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
-                    newBusinessCategory.setCategory(category);
-                    businessCategoryEntities.add(newBusinessCategory);
-                    try {
-                        businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
-                    } catch (UnknownPersistenceException | InputDataValidationException ex) {
-                        System.out.println("Business Category is not created!");
-                    }
-                    System.out.println("The business category \"\"" + category + "\" is added.");
-                }
-            } catch (BusinessCategoryExistException ex) {
-                System.out.println("Business Category " + category + " already exists!");
+                System.out.println("The business category \"\"" + category + "\" is added.");
             }
+            else 
+            {
+               System.out.println("Business Category already exists!\n");
+            }
+                
+           
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter service provider Id> ");
             category = sc.nextLine().trim();

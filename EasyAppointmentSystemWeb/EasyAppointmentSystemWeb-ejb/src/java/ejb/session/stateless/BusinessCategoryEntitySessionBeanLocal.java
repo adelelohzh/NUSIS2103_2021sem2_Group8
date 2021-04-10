@@ -18,6 +18,6 @@ public interface BusinessCategoryEntitySessionBeanLocal {
              
     public void deleteBusinessCategory(String businessCategory) throws BusinessCategoryNotFoundException;
 
-    public BusinessCategoryEntity retrieveBusinessCategoriesByName(String name);
+    public BusinessCategoryEntity retrieveBusinessCategoriesByName(String name) throws BusinessCategoryNotFoundException;
              
 }

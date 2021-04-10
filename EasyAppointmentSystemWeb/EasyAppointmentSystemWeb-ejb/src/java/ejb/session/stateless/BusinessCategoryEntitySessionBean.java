@@ -10,6 +10,8 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -20,6 +22,7 @@ import javax.validation.ValidatorFactory;
 import util.exception.BusinessCategoryExistException;
 import util.exception.BusinessCategoryNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 @Stateless
@@ -92,15 +95,20 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
     }
     
     @Override
-    public BusinessCategoryEntity retrieveBusinessCategoriesByName(String name) {
+    public BusinessCategoryEntity retrieveBusinessCategoriesByName(String name) throws BusinessCategoryNotFoundException {
         Query query = em.createQuery("SELECT b FROM BusinessCategoryEntity b WHERE b.name = :inName");
         query.setParameter("inName", name);
         
-        BusinessCategoryEntity businessCategory = (BusinessCategoryEntity)query.getSingleResult();
-        
-        businessCategory.getServiceProviderEntities().size();
-        
-        return businessCategory;
+        try
+        {
+            BusinessCategoryEntity businessCategory = (BusinessCategoryEntity)query.getSingleResult();
+            businessCategory.getServiceProviderEntities().size();
+            return businessCategory;
+        }
+        catch(NoResultException | NonUniqueResultException ex)
+        {
+            throw new BusinessCategoryNotFoundException("Business Category " + name + " does not exist!");
+        }
     }
     
     

@@ -171,15 +171,13 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         if (serviceProviderEntity != null)
         {
             serviceProviderEntity.getAppointmentEntities().size();
-            return serviceProviderEntity;
         }
         else if (serviceProviderEntity.getStatusEnum().equals(StatusEnum.Blocked))
         {
             throw new ServiceProviderBlockedException("Serivce Provider ID: " + serviceProviderId + " is blocked!");
         }
-        {
-            throw new ServiceProviderNotFoundException("Serivce Provider ID: " + serviceProviderId + " does not exist!");
-        }
+        
+        return serviceProviderEntity;
     }
     
     @Override
