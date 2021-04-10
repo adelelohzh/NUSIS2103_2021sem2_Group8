@@ -284,7 +284,7 @@ public class SystemAdministrationModule {
         } while (!category.equals(0));
     }
 
-    private void sendJMSMessageToQueueCheckoutNotification(Long customerEntityId, String fromEmailAddress, String toEmailAddress) throws JMSException {
+    private void sendJMSMessageToQueueCheckoutNotification(Long appointmentEntityId, String fromEmailAddress, String toEmailAddress) throws JMSException {
         Connection connection = null;
         Session session = null;
         try {
@@ -294,7 +294,7 @@ public class SystemAdministrationModule {
             MapMessage mapMessage = session.createMapMessage();
             mapMessage.setString("fromEmailAddress", fromEmailAddress);
             mapMessage.setString("toEmailAddress", toEmailAddress);
-            mapMessage.setLong("customerEntityId", customerEntityId);
+            mapMessage.setLong("appointmentEntityId", appointmentEntityId);
             MessageProducer messageProducer = session.createProducer(queueCheckoutNotification);
             messageProducer.send(mapMessage);
         } finally {
@@ -361,14 +361,23 @@ public class SystemAdministrationModule {
                     System.out.println("Current Appointment Entity is " + currentAppointment);
                     //}
                     // 01 - Synchronous Session Bean Invocation
-                    emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Kevin Peterson <kevin.peterson2103@gmail.com>", "valencia.teh00@gmail.com"); //testing with my email first
+                    String sendTo = "valencia.teh00@gmail.com";
+                    try {
+                        emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Kevin Peterson <kevin.peterson2103@gmail.com>", sendTo); //testing with my email first
+                    
+                    
                     // 02 - Asynchronous Session Bean Invocation
                     //Future<Boolean> asyncResult = emailSessionBeanRemote.emailCheckoutNotificationAsync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
                     //RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
                     //runnableNotification.start();
                     // 03 - JMS Messaging with Message Driven Bean
                     //sendJMSMessageToQueueCheckoutNotification(customerAppointmentEntities.get(0).getCustomerEntity().getCustomerId(), "Name <name@comp.nus.edu.sg>", toEmailAddress);
-                    //System.out.println("Reminder email sent successfully!\n");
+                        System.out.println("Reminder email sent successfully!\n");
+                    
+                    }
+                    catch (Exception ex) {
+                        System.out.println("An error has occurred while sending the checkout notification email: " + ex.getMessage() + "\n");
+                    }
                 }
             } catch (CustomerNotFoundException ex) {
                 System.out.println("An error has occurred while sending the reminder email: " + ex.getMessage() + "\n");
