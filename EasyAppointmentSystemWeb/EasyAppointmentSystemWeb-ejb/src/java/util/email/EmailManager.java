@@ -42,7 +42,7 @@ public class EmailManager
         emailBody += "Dear " + appointmentEntity.getCustomerEntity().getFullName() + ",\n\n";
         emailBody += "This is a reminder email for your appointment with Appointment Number: " + appointmentEntity.getAppointmentNo() + ".\n";
 
-        emailBody += "Please be reminded that you have an upcoming appointment. Here are the details:\n\n";
+        emailBody += "Here are the details of your appointment:\n\n";
         emailBody += "Appointment Date: " + appointmentEntity.getScheduledDate() + "\n";
         emailBody += "Appointment Time: " + appointmentEntity.getScheduledTime() + "\n";
         emailBody += "Service Provider Name: " + appointmentEntity.getServiceProviderEntity().getName() + "\n";
