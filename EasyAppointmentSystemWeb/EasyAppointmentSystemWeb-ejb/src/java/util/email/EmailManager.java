@@ -60,7 +60,7 @@ public class EmailManager
             {
                 msg.setFrom(InternetAddress.parse(fromEmailAddress, false)[0]);
                 msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmailAddress, false));
-                msg.setSubject("Checkout Completed Successfully!");
+                msg.setSubject("Reminder Email for your appointment!");
                 msg.setText(emailBody);
                 msg.setHeader("X-Mailer", mailer);
                 
