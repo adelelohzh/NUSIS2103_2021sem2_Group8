@@ -363,7 +363,7 @@ public class SystemAdministrationModule {
                     // 01 - Synchronous Session Bean Invocation
                     String sendTo = "valencia.teh00@gmail.com";
                     try {
-                        emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Kevin Peterson <kevin.peterson2103@gmail.com>", sendTo); //testing with my email first
+                        emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Valencia Teh<vtjw1000@gmail.com>", sendTo); //testing with my email first
                     
                     
                     // 02 - Asynchronous Session Bean Invocation
