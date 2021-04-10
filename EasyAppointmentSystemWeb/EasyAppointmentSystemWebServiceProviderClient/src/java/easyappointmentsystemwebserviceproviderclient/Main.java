@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
+import util.exception.BusinessCategoryNotFoundException;
 
 
 public class Main {
@@ -37,7 +38,7 @@ public class Main {
     @Resource(mappedName = "jms/queueCheckoutNotificationFactory")
     private static ConnectionFactory queueCheckoutNotificationFactory;
     
-    public static void main(String[] args) 
+    public static void main(String[] args) throws BusinessCategoryNotFoundException 
     {
         MainApp mainApp = new MainApp(adminEntitySessionBeanRemote, appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, emailSessionBeanRemote, queueCheckoutNotification, queueCheckoutNotificationFactory);
         mainApp.runApp();
