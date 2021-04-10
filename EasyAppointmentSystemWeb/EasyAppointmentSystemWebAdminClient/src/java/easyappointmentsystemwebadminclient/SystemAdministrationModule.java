@@ -57,13 +57,14 @@ public class SystemAdministrationModule {
         validator = validatorFactory.getValidator();
     }
 
-    public SystemAdministrationModule(CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, AdminEntity currentAdminEntity, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
+    public SystemAdministrationModule(CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, AdminEntity currentAdminEntity, EmailSessionBeanRemote emailSessionBeanRemote, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
         this();
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
         this.currentAdminEntity = currentAdminEntity;
         this.queueCheckoutNotification = queueCheckoutNotification;
         this.queueCheckoutNotificationFactory = queueCheckoutNotificationFactory;
+        this.emailSessionBeanRemote = emailSessionBeanRemote;
     }
 
     public void viewCustomerAppointments() {
@@ -356,9 +357,11 @@ public class SystemAdministrationModule {
                         }
                         break;
                     }
+                    AppointmentEntity currentAppointment = customerAppointmentEntities.get(index);
+                    System.out.println("Current Appointment Entity is " + currentAppointment);
                     //}
                     // 01 - Synchronous Session Bean Invocation
-                    emailSessionBeanRemote.emailCheckoutNotificationSync(customerAppointmentEntities.get(index), "Kevin Peterson <kevin.peterson2103@gmail.com>", "valencia.teh00@gmail.com"); //testing with my email first
+                    emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Kevin Peterson <kevin.peterson2103@gmail.com>", "valencia.teh00@gmail.com"); //testing with my email first
                     // 02 - Asynchronous Session Bean Invocation
                     //Future<Boolean> asyncResult = emailSessionBeanRemote.emailCheckoutNotificationAsync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
                     //RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
