@@ -96,7 +96,8 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
     
     @Override
     public BusinessCategoryEntity retrieveBusinessCategoriesByName(String name) throws BusinessCategoryNotFoundException {
-        Query query = em.createQuery("SELECT b FROM BusinessCategoryEntity b WHERE b.name = :inName");
+        
+        Query query = em.createQuery("SELECT b FROM BusinessCategoryEntity b WHERE b.category = :inName");
         query.setParameter("inName", name);
         
         try
