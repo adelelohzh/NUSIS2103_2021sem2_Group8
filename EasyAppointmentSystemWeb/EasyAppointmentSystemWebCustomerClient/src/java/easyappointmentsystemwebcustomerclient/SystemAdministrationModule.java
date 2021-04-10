@@ -275,15 +275,17 @@ public class SystemAdministrationModule {
         List<AppointmentEntity> appointments = currentCustomerEntity.getAppointmentEntities();
 
         System.out.println("*** Customer terminal :: View Appointments ***\n");
-        System.out.print("Appointments: ");
+        System.out.println("Appointments: ");
         System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
 
         for (AppointmentEntity appointment : appointments) {
-            System.out.printf("%-15s%-13s%-8s%-15s\n", currentCustomerEntity.getFullName(), appointment.getScheduledDate(), appointment.getScheduledTime(), appointment.getAppointmentNo());
+            System.out.printf("%-15s%-13s%-8s%-15s\n", currentCustomerEntity.getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
         }
 
-        while (response != "0") {
+        while (!response.equals("0")) 
+        {
             System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print(">");
             response = sc.nextLine().trim();
         }
     }
@@ -344,14 +346,26 @@ public class SystemAdministrationModule {
         try {
             ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityByName(name);
             System.out.println("You are rating " + name + ".\n");
+            System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter rating> ");
-            Long rating = sc.nextLong();
-            if (rating > 5.0 | rating < 0.0) {
-                System.out.println("Please enter a number between 0.0 to 5.0!");
-            } else {
-                serviceProviderEntitySessionBeanRemote.updateRating(rating, serviceProvider.getServiceProviderId());
-                System.out.println("Rating successfully submitted!");
+            double rating = sc.nextDouble();
+            sc.nextLine();
+            if (rating != 0)
+            {
+                if (rating > 5.0 | rating < 0.0) {
+                    System.out.println("Please enter a number between 0.0 to 5.0!");
+                } else {
+                    serviceProviderEntitySessionBeanRemote.updateRating(rating, serviceProvider.getServiceProviderId());
+                    System.out.println("Rating successfully submitted!");
+                }
             }
+            do 
+            {
+                System.out.println("Enter 0 to go back to the previous menu.");
+                System.out.print(">");
+                response = sc.nextLine().trim();      
+            } 
+            while (!response.equals("0"));
         } catch (ServiceProviderNotFoundException ex) {
             System.out.println("Service Provider does not exist!");
         } catch (InputMismatchException ex) {
