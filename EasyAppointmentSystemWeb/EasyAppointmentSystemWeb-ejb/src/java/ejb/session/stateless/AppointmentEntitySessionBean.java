@@ -106,7 +106,12 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         
         try
         {
-            return (AppointmentEntity)query.getSingleResult();
+            AppointmentEntity appointment = (AppointmentEntity)query.getSingleResult();
+            appointment.getCustomerEntity();
+            appointment.getBusinessCategoryEntity();
+            appointment.getServiceProviderEntity();
+            return appointment;
+            
         }
         catch(NoResultException | NonUniqueResultException ex)
         {
@@ -122,6 +127,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         if(appointmentEntity != null)
         {
             appointmentEntity.getCustomerEntity();
+            appointmentEntity.getBusinessCategoryEntity();
             appointmentEntity.getServiceProviderEntity();
             return appointmentEntity;
         }
@@ -141,6 +147,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         {
             AppointmentEntity appointmentEntity = (AppointmentEntity)query.getSingleResult();
             appointmentEntity.getCustomerEntity();
+            appointmentEntity.getBusinessCategoryEntity();
             appointmentEntity.getServiceProviderEntity();
             return appointmentEntity;
         }
@@ -158,7 +165,14 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         query.setParameter("inDate", date);
         query.setParameter("inServiceProviderName", serviceProviderName);
         
-        return query.getResultList();
+        List<AppointmentEntity> apptList = query.getResultList();
+        for (AppointmentEntity a : apptList)
+        {
+            a.getCustomerEntity();
+            a.getBusinessCategoryEntity();
+            a.getServiceProviderEntity();
+        }
+        return apptList;
     }
     
     @Override
@@ -168,7 +182,14 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         query.setParameter("inDate", date);
         query.setParameter("inServiceProviderId", serviceProviderId);
         
-        return query.getResultList();
+        List<AppointmentEntity> apptList = query.getResultList();
+        for (AppointmentEntity a : apptList)
+        {
+            a.getCustomerEntity();
+            a.getBusinessCategoryEntity();
+            a.getServiceProviderEntity();
+        }
+        return apptList;
     }
 
 

@@ -218,16 +218,21 @@ public class MainMenu
         List<AppointmentEntity> appointments = currentServiceProviderEntity.getAppointmentEntities();
         
         System.out.println("*** Service provider terminal :: View Appointments ***\n");
-        System.out.println("Appointments: ");
+        System.out.println("Appointments: \n");
         System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
         
+        System.out.println();
         for(AppointmentEntity appointment:appointments)
         {
-            System.out.printf("%-15s%-13s%-8s%-15s\n", appointment.getCustomerEntity().getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
+            if (appointment.getIsCancelled() == false)
+            {
+                System.out.printf("%-15s%-13s%-8s%-15s\n", appointment.getCustomerEntity().getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
+            }
         }
 
         while (!response.equals("0"))
         {
+            System.out.println();
             System.out.println("Enter 0 to go back to the previous menu."); 
             System.out.print(">");
             response = sc.nextLine().trim();
@@ -242,16 +247,24 @@ public class MainMenu
         List<AppointmentEntity> appointments = currentServiceProviderEntity.getAppointmentEntities();
         
         System.out.println("*** Service provider terminal :: Delete Appointments ***\n");
-        System.out.print("Appointments: ");
+        System.out.println("Appointments: \n");
         System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
+        
+        System.out.println();
         
         for(AppointmentEntity appointment:appointments)
         {
-            System.out.printf("%-15s%-13s%-8s%-15s\n", appointment.getCustomerEntity().getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
+            if (appointment.getIsCancelled() == false)
+            {
+                System.out.printf("%-15s%-13s%-8s%-15s\n", appointment.getCustomerEntity().getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
+            }
         }
+            
+        
         
         while (!response.equals("0")) 
         {
+            System.out.println();
             System.out.println("Enter 0 to go back to the previous menu.");  
             System.out.print("Enter Appointment Id> ");
             response = sc.nextLine().trim();
@@ -261,11 +274,11 @@ public class MainMenu
                 try 
                 {
                     appointmentEntitySessionBeanRemote.cancelAppointment(response);
-                    System.out.println("Appointment " +  response + " has been canceled successfully!");
+                    System.out.println("Appointment " +  response + " has been canceled successfully!\n");
                 }
                 catch (AppointmentNotFoundException ex)
                 {
-                    System.out.println("Appointment Number " + response + " cannot be found!");
+                    System.out.println("Appointment Number " + response + " cannot be found!\n");
                 }
             } 
             else
@@ -273,7 +286,6 @@ public class MainMenu
                 break;
             }
         }
-
     }
     
     private void showInputDataValidationErrorsForServiceProviderEntity(Set<ConstraintViolation<ServiceProviderEntity>>constraintViolations)
