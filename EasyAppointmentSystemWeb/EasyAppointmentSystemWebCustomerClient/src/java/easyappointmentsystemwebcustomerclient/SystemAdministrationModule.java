@@ -175,7 +175,7 @@ public class SystemAdministrationModule {
 
                     for (ServiceProviderEntity s : serviceProviders) {
                         List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, s.getServiceProviderId());
-                        if (appointmentEntities.size() == 10) {
+                        if (appointmentEntities.size() == 11) {
                             continue;
                         }
 
@@ -206,7 +206,6 @@ public class SystemAdministrationModule {
                 Long serviceProviderId = Long.parseLong(response);
 
                 List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, serviceProviderId);
-                
                 List<String> availableTimings = new ArrayList<>();
                 int index = 0;
                 
@@ -216,11 +215,15 @@ public class SystemAdministrationModule {
                     {
                         availableTimings.add(times.get(index));
                         index++;
-                        if (index == 10)
+                        if (index == 11)
                         {
                             break;
                         }
                     }
+                    if (index == 11)
+                        {
+                            break;
+                        }
                 }
                 
                 if (index != 10)
