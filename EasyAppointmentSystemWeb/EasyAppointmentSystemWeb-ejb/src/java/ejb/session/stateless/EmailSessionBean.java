@@ -18,8 +18,8 @@ import util.email.EmailManager;
 
 public class EmailSessionBean implements EmailSessionBeanLocal, EmailSessionBeanRemote 
 {
-    private final String GMAIL_USERNAME = "<REPLACE_WITH_GMAIL_EMAIL>";
-    private final String GMAIL_PASSWORD = "<REPLACE_WITH_GMAIL_PASSWORD>";
+    private final String GMAIL_USERNAME = "vtjw1000@gmail.com";
+    private final String GMAIL_PASSWORD = "Valencia100!";
     
     
     @Override

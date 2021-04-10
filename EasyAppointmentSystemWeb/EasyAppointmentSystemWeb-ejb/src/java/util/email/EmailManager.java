@@ -39,7 +39,8 @@ public class EmailManager
     {
         String emailBody = "";
             
-        emailBody += "This is a reminder email for your appointment with appointment Id: " + appointmentEntity.getAppointmentId() +  "\n\n";  
+        emailBody += "This is a reminder email for your appointment with appointment Id: " + appointmentEntity.getAppointmentNo() +  "\n\n";
+        emailBody += "Please be reminded that your upcoming appointment with " + appointmentEntity.getServiceProviderEntity().getName() + " is at " + appointmentEntity.getScheduledTime() + " on " + appointmentEntity.getScheduledDate() + "\n\n";
         
         try 
         {

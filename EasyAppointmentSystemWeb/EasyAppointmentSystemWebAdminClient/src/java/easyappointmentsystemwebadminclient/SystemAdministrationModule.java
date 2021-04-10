@@ -416,7 +416,7 @@ public class SystemAdministrationModule {
                     // 01 - Synchronous Session Bean Invocation
                     String sendTo = "valencia.teh00@gmail.com";
                     try {
-                        //emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Valencia Teh<vtjw1000@gmail.com>", sendTo); //testing with my email first
+                        emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Valencia Teh<vtjw1000@gmail.com>", sendTo); //testing with my email first
                     
                     
                     // 02 - Asynchronous Session Bean Invocation
@@ -424,7 +424,7 @@ public class SystemAdministrationModule {
                     //RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
                     //runnableNotification.start();
                     // 03 - JMS Messaging with Message Driven Bean
-                        sendJMSMessageToQueueCheckoutNotification(currentAppointment.getAppointmentId(), "Valencia Teh<vtjw1000@gmail.com>", toEmailAddress);
+                        //sendJMSMessageToQueueCheckoutNotification(currentAppointment.getAppointmentId(), "Valencia Teh<vtjw1000@gmail.com>", toEmailAddress);
                         System.out.println("Reminder email sent successfully!\n");
                     
                     }
