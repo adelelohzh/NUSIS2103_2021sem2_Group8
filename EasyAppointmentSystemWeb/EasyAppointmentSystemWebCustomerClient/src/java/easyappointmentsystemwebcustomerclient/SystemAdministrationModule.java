@@ -41,6 +41,7 @@ import util.exception.AppointmentNumberExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidAddAppointmentException;
+import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
 
@@ -116,7 +117,7 @@ public class SystemAdministrationModule {
                         String firstAvailableTime = "";
                         int i = 0;
                         for (AppointmentEntity appointment : appointmentEntities) {
-                            if (!appointment.getScheduledTime().equals(timeSlots.get(i)) | appointment.getIsCancelled().equals(Boolean.FALSE)) {
+                            if (!appointment.getScheduledTime().equals(timeSlots.get(i)) | appointment.getIsCancelled().equals(Boolean.TRUE)) {
                                 firstAvailableTime = timeSlots.get(i);
                                 break; //found the index
                             }
@@ -182,7 +183,7 @@ public class SystemAdministrationModule {
                         String firstAvailableTime = "";
                         int i = 0;
                         for (AppointmentEntity appointment : appointmentEntities) {
-                            if (!appointment.getScheduledTime().equals(timeSlots.get(i)) | appointment.getIsCancelled().equals(Boolean.FALSE)) {
+                            if (!appointment.getScheduledTime().equals(timeSlots.get(i)) | appointment.getIsCancelled().equals(Boolean.TRUE)) {
                                 firstAvailableTime = timeSlots.get(i);
                                 break; //found the index
                             }
@@ -284,6 +285,8 @@ public class SystemAdministrationModule {
                         System.out.println("Customer with customer id " + currentCustomerEntity.getCustomerId() + " not found");
                     } catch (ServiceProviderNotFoundException ex) {
                         System.out.println("Service with service provider id " + serviceProviderId + " not found");
+                    } catch (ServiceProviderBlockedException ex) {
+                        System.out.println("Service with service provider id " + serviceProviderId + " is blocked!");
                     }
                 }
                 // if timeslot exists, confirm appointment
@@ -310,6 +313,7 @@ public class SystemAdministrationModule {
         System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
 
         for (AppointmentEntity appointment : appointments) {
+            if (appointment.getIsCancelled() == false)
             System.out.printf("%-15s%-13s%-8s%-15s\n", currentCustomerEntity.getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
         }
 
@@ -329,35 +333,46 @@ public class SystemAdministrationModule {
 
         do {
             List<AppointmentEntity> appointmentEntities = currentCustomerEntity.getAppointmentEntities();
-
+            
+            System.out.print("Enter 0 to go back to the previous menu.");
             System.out.print("Enter Appointment Id to cancel>");
             response = sc.nextLine().trim();
+            System.out.println();
             String appointmentNo = response;
 
             try {
                 AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentNumber(appointmentNo);
+                
+                if (appointmentEntity.getIsCancelled() == false)
+                {
+                    LocalDate todayDate = LocalDate.now();
+                    LocalDate appointmentDate = appointmentEntity.getScheduledDate();
 
-                LocalDate todayDate = LocalDate.now();
-                LocalDate appointmentDate = appointmentEntity.getScheduledDate();
+                    LocalTime todayTime = LocalTime.now();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                    todayTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+                    LocalTime appointmentTime = appointmentEntity.getScheduledTime();
 
-                LocalTime todayTime = LocalTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-                todayTime.format(DateTimeFormatter.ofPattern("HH:mm"));
-                LocalTime appointmentTime = appointmentEntity.getScheduledTime();
-
-                int comparison = appointmentDate.compareTo(todayDate);
-                int compare = appointmentTime.compareTo(todayTime);
-                if (comparison > 1) { //appointmentDate is more than one day from now
-                    appointmentEntitySessionBeanRemote.cancelAppointment(appointmentNo);
-                } else if (comparison == 1) {
-                    if (compare >= 0) {
+                    int comparison = appointmentDate.compareTo(todayDate);
+                    int compare = appointmentTime.compareTo(todayTime);
+                    if (comparison > 1) { //appointmentDate is more than one day from now
                         appointmentEntitySessionBeanRemote.cancelAppointment(appointmentNo);
+                    } else if (comparison == 1) {
+                        if (compare >= 0) {
+                            appointmentEntitySessionBeanRemote.cancelAppointment(appointmentNo);
+                        }
+                    } else {
+                        System.out.println("Appointment cannot be deleted!");
                     }
-                } else {
-                    System.out.println("Appointment cannot be deleted!");
-                }
 
-                response = sc.nextLine().trim();
+                    
+                }
+                else
+                {
+                    System.out.println("Appointment is already cancelled!");
+                }
+                
+            response = sc.nextLine().trim();
 
             } catch (AppointmentNotFoundException ex) {
                 System.out.println("Appointment with id: " + appointmentNo + " does not exist!");
@@ -401,6 +416,8 @@ public class SystemAdministrationModule {
             System.out.println("Service Provider does not exist!");
         } catch (InputMismatchException ex) {
             System.out.println("Please enter a number between 0.0 to 5.0!");
+        } catch (ServiceProviderBlockedException ex) {
+            System.out.println("Service Provider is blocked!");
         }
 
     }

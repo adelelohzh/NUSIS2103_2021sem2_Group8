@@ -18,6 +18,7 @@ import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderNotFoundException;
 
 /**
@@ -70,7 +71,7 @@ public class ServiceProviderWebService
                                                         @WebParam(name = "password") String password,
                                                         @WebParam(name = "rating") Long rating,
                                                         @WebParam(name = "serviceProviderId") Long serviceProviderId) 
-                                throws InvalidLoginCredentialException, ServiceProviderNotFoundException
+                                throws InvalidLoginCredentialException, ServiceProviderNotFoundException, ServiceProviderBlockedException
     {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.updateRating(): Customer " 

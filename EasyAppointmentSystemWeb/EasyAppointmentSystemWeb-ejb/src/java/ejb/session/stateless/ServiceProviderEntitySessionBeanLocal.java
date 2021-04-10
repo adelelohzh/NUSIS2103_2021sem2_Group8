@@ -6,6 +6,7 @@ import java.util.List;
 import util.exception.DeleteServiceProviderException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderEmailExistException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -22,11 +23,11 @@ public interface ServiceProviderEntitySessionBeanLocal
 
     public ServiceProviderEntity retrieveServiceProviderEntityByEmail(String email) throws ServiceProviderNotFoundException;
 
-    public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException;
+    public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException;
 
     public void updateServiceProvider(ServiceProviderEntity serviceProviderEntity) throws UpdateServiceProviderException, ServiceProviderNotFoundException, InputDataValidationException;
      
-    public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException, DeleteServiceProviderException;
+    public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException, DeleteServiceProviderException, ServiceProviderBlockedException;
     
     public void registerServiceProvider(String name, int category, String businessRegNumber, String city, String phone, String addr, String email, String password) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException;
 
@@ -34,11 +35,11 @@ public interface ServiceProviderEntitySessionBeanLocal
 
     public ServiceProviderEntity retrieveServiceProviderEntityByName(String name) throws ServiceProviderNotFoundException;
 
-    public void updateRating(double newRating, Long serviceProviderId) throws ServiceProviderNotFoundException;
+    public void updateRating(double newRating, Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException;
 
-    public void approveServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException;
+    public void approveServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException;
 
-    public void blockServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException;
+    public void blockServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException;
 
     
 }

@@ -32,6 +32,7 @@ import util.exception.BusinessCategoryExistException;
 import util.exception.CustomerEmailExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderEmailExistException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -162,6 +163,8 @@ public class DataInitializationSessionBean {
         } catch (ServiceProviderNotFoundException ex) {
             Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } catch (AppointmentNotFoundException ex) {
+            Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ServiceProviderBlockedException ex) {
             Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } 
     }
