@@ -39,8 +39,19 @@ public class EmailManager
     {
         String emailBody = "";
             
-        emailBody += "This is a reminder email for your appointment with appointment Id: " + appointmentEntity.getAppointmentNo() +  "\n\n";
-        emailBody += "Please be reminded that your upcoming appointment with " + appointmentEntity.getServiceProviderEntity().getName() + " is at " + appointmentEntity.getScheduledTime() + " on " + appointmentEntity.getScheduledDate() + "\n\n";
+        emailBody += "Dear " + appointmentEntity.getCustomerEntity().getFullName() + ",\n\n";
+        emailBody += "This is a reminder email for your appointment with Appointment Number: " + appointmentEntity.getAppointmentNo() + ".\n";
+
+        emailBody += "Please be reminded that you have an upcoming appointment. Here are the details:\n\n";
+        emailBody += "Appointment Date: " + appointmentEntity.getScheduledDate() + "\n";
+        emailBody += "Appointment Time: " + appointmentEntity.getScheduledTime() + "\n";
+        emailBody += "Service Provider Name: " + appointmentEntity.getServiceProviderEntity().getName() + "\n";
+        emailBody += "Business Category: " + appointmentEntity.getBusinessCategoryEntity().getCategory() + "\n";
+        emailBody += "City: " + appointmentEntity.getServiceProviderEntity().getCity() + "\n\n";
+        
+        emailBody += "If you are unable to make it for the appointment, you are advised to cancel the appointment and make a new one. The new appointment must be made 2 hours in advance prior to the actual appointment. Thank you.\n\n";
+        emailBody += "Regards, \n";
+        emailBody += "EasyAppointment Administrators";
         
         try 
         {
