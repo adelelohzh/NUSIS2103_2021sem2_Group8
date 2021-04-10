@@ -116,7 +116,7 @@ public class SystemAdministrationModule {
                         String firstAvailableTime = "";
                         int i = 0;
                         for (AppointmentEntity appointment : appointmentEntities) {
-                            if (!appointment.getScheduledTime().equals(timeSlots.get(i))) {
+                            if (!appointment.getScheduledTime().equals(timeSlots.get(i)) | appointment.getIsCancelled().equals(Boolean.FALSE)) {
                                 firstAvailableTime = timeSlots.get(i);
                                 break; //found the index
                             }
@@ -135,9 +135,10 @@ public class SystemAdministrationModule {
         } while (!businessCategory.equals("0"));
     }
 
-    public void addAppointment() throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException {
+    public void addAppointment() throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, ServiceProviderNotFoundException {
 
         Scanner sc = new Scanner(System.in);
+        List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17.30", "18.30");
         System.out.println("*** Customer terminal :: Add Appointment ***\n");
         List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
         for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
@@ -166,6 +167,7 @@ public class SystemAdministrationModule {
                     List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
 
                     System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
+                    
 
                     for (ServiceProviderEntity s : serviceProviders) {
                         List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, s.getServiceProviderId());
@@ -173,14 +175,13 @@ public class SystemAdministrationModule {
                             continue;
                         }
 
-                        List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17.30", "18.30");
                         List<String> timeSlots = new ArrayList<>();
                         timeSlots.addAll(times);
 
                         String firstAvailableTime = "";
                         int i = 0;
                         for (AppointmentEntity appointment : appointmentEntities) {
-                            if (!appointment.getScheduledTime().equals(timeSlots.get(i))) {
+                            if (!appointment.getScheduledTime().equals(timeSlots.get(i)) | appointment.getIsCancelled().equals(Boolean.FALSE)) {
                                 firstAvailableTime = timeSlots.get(i);
                                 break; //found the index
                             }
@@ -201,6 +202,35 @@ public class SystemAdministrationModule {
                 Long serviceProviderId = Long.parseLong(response);
 
                 List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, serviceProviderId);
+                
+                List<String> availableTimings = new ArrayList<>();
+                int index = 0;
+                
+                for (AppointmentEntity a : appointmentEntities)
+                {
+                    while (!a.getScheduledTime().equals(times.get(index)) | (a.getIsCancelled().equals(Boolean.TRUE) && a.getScheduledTime().equals(times.get(index))))
+                    {
+                        availableTimings.add(times.get(index));
+                        index++;
+                    }
+                }
+                
+                if (index != 10)
+                {
+                    while (index < 10)
+                    {
+                        availableTimings.add(times.get(index));
+                        index++;
+                    }
+                }
+                
+                System.out.println("Available Appointment Slots:");   
+                
+                for (String timings: availableTimings)
+                {
+                    System.out.print(timings + " | ");
+                }
+               
 
                 System.out.println("Enter 0 to go back to the previous menu.");
                 System.out.print("Enter Time> ");
@@ -317,10 +347,10 @@ public class SystemAdministrationModule {
                 int comparison = appointmentDate.compareTo(todayDate);
                 int compare = appointmentTime.compareTo(todayTime);
                 if (comparison > 1) { //appointmentDate is more than one day from now
-                    appointmentEntitySessionBeanRemote.deleteAppointment(appointmentNo);
+                    appointmentEntitySessionBeanRemote.cancelAppointment(appointmentNo);
                 } else if (comparison == 1) {
                     if (compare >= 0) {
-                        appointmentEntitySessionBeanRemote.deleteAppointment(appointmentNo);
+                        appointmentEntitySessionBeanRemote.cancelAppointment(appointmentNo);
                     }
                 } else {
                     System.out.println("Appointment cannot be deleted!");

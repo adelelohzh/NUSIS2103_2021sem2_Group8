@@ -23,10 +23,12 @@ public interface AppointmentEntitySessionBeanRemote {
 
     public List<AppointmentEntity> retrieveAppointmentsByDate(LocalDate date, String serviceProviderName);
     
-    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId);
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) throws ServiceProviderNotFoundException ;
     
     public AppointmentEntity retrieveAppointmentByAppointmentNumber(String appointmentNo) throws AppointmentNotFoundException;
     
     public void updateAppointmentEntity(AppointmentEntity appointmentEntity);
+    
+    public void cancelAppointment(String appointmentNo) throws AppointmentNotFoundException;
     
 }

@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -168,10 +170,13 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
-    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) {
-        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.date = :inDate and a.serviceProviderEntityId := inServiceProviderId ORDER BY a.time");
-        query.setParameter("inDate", date);
-        query.setParameter("inServiceProviderId", serviceProviderId);
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) throws ServiceProviderNotFoundException {
+        
+
+        ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(serviceProviderId);
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.scheduledDate = :inDate and a.serviceProviderEntity.serviceProviderId := inServiceProviderId ORDER BY a.scheduledTime");
+        query.setParameter("inScheduledDate", date);
+        query.setParameter("inServiceProvider", serviceProvider);
         
         return query.getResultList();
     }
@@ -187,6 +192,15 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         em.flush();
         
         // are there any exception cases?
+    }
+    
+    @Override
+    public void cancelAppointment(String appointmentNo) throws AppointmentNotFoundException
+    {
+
+        AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
+        appointmentEntity.setIsCancelled(Boolean.TRUE);
+        
     }
     
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<AppointmentEntity>>constraintViolations)

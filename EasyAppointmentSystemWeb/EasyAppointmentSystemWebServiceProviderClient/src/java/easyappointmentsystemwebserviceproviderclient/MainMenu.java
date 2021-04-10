@@ -260,7 +260,7 @@ public class MainMenu
             {
                 try 
                 {
-                    appointmentEntitySessionBeanRemote.deleteAppointment(response);
+                    appointmentEntitySessionBeanRemote.cancelAppointment(response);
                     System.out.println("Appointment " +  response + " has been canceled successfully!");
                 }
                 catch (AppointmentNotFoundException ex)

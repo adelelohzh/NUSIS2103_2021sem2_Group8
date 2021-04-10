@@ -99,9 +99,9 @@ public class DataInitializationSessionBean {
             ServiceProviderEntity serviceProviderEntityTwo = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(2L);
             
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            String currDate = "2019-04-12";
+            String currDate = "2021-04-12";
             LocalDate date = LocalDate.parse(currDate, formatter);
-            LocalDate dateTwo = LocalDate.parse("2019-04-14", formatter);
+            LocalDate dateTwo = LocalDate.parse("2021-04-14", formatter);
 
             appointmentEntitySessionBeanLocal.createNewAppointment(1L, 1L, new AppointmentEntity("104120830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntity, serviceProviderEntity, businessCategoryEntity));
             appointmentEntitySessionBeanLocal.createNewAppointment(1L, 1L, new AppointmentEntity("104140830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntity, serviceProviderEntity, businessCategoryEntity));

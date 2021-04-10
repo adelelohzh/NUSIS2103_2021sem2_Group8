@@ -19,6 +19,7 @@ import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import util.exception.AppointmentNotFoundException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.ServiceProviderNotFoundException;
 
 /**
  *
@@ -41,7 +42,7 @@ public class AppointmentEntityWebService
                                                                         @WebParam(name = "password") String password,
                                                                         @WebParam(name = "date") LocalDate date,
                                                                         @WebParam(name = "serviceProviderId") Long serviceProviderId)                                                      
-                                                    throws InvalidLoginCredentialException
+                                                    throws InvalidLoginCredentialException, ServiceProviderNotFoundException
     {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.retrieveSortedAppointmentsByDate(): Customer " 

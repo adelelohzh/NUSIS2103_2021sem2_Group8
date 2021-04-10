@@ -43,9 +43,12 @@ public class AppointmentEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private BusinessCategoryEntity businessCategoryEntity;
+    
+    private Boolean isCancelled;
 
     public AppointmentEntity() 
     {
+        this.isCancelled = false;
     }
 
     public AppointmentEntity(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate) {
@@ -53,6 +56,7 @@ public class AppointmentEntity implements Serializable {
         this.scheduledDate = scheduledDate;
         this.scheduledTime = scheduledTime;
         this.appointmentNo = appointmentNo;
+        this.isCancelled = false;
     }
 
     public AppointmentEntity(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity) {
@@ -62,6 +66,7 @@ public class AppointmentEntity implements Serializable {
         this.customerEntity = customerEntity;
         this.serviceProviderEntity = serviceProviderEntity;
         this.businessCategoryEntity = businessCategoryEntity;
+        this.isCancelled = false;
     }
     
     public Long getAppointmentId() {
@@ -186,6 +191,20 @@ public class AppointmentEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.AppointmentEntity[ id=" + appointmentId + " ]";
+    }
+
+    /**
+     * @return the isCancelled
+     */
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+    /**
+     * @param isCancelled the isCancelled to set
+     */
+    public void setIsCancelled(Boolean isCancelled) {
+        this.isCancelled = isCancelled;
     }
     
 }
