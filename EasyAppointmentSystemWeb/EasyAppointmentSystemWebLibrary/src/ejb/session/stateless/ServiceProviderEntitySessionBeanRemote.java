@@ -3,6 +3,7 @@ package ejb.session.stateless;
 import entity.ServiceProviderEntity;
 import java.util.Date;
 import java.util.List;
+import util.exception.BusinessCategoryNotFoundException;
 import util.exception.DeleteServiceProviderException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
@@ -14,8 +15,8 @@ import util.exception.UpdateServiceProviderException;
 
 public interface ServiceProviderEntitySessionBeanRemote 
 {
-    public Long createNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException;
-
+    public Long createNewServiceProvider(String businessCategoryName, ServiceProviderEntity newServiceProviderEntity) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException, BusinessCategoryNotFoundException;
+    
     public ServiceProviderEntity doServiceProviderLogin(String email, String password) throws InvalidLoginCredentialException;
 
     public List<ServiceProviderEntity> retrieveAllServiceProviderEntity();

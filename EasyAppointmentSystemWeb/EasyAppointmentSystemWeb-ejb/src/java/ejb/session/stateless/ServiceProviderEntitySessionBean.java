@@ -1,9 +1,13 @@
 package ejb.session.stateless;
 
+import entity.BusinessCategoryEntity;
 import entity.ServiceProviderEntity;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -18,6 +22,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.StatusEnum;
+import util.exception.BusinessCategoryNotFoundException;
 import util.exception.DeleteServiceProviderException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
@@ -32,6 +37,10 @@ import util.exception.UpdateServiceProviderException;
 @Remote(ServiceProviderEntitySessionBeanRemote.class)
 public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySessionBeanRemote, ServiceProviderEntitySessionBeanLocal 
 {
+
+    @EJB
+    private BusinessCategoryEntitySessionBeanLocal businessCategoryEntitySessionBeanLocal;
+    
     @PersistenceContext(unitName = "EasyAppointmentSystemWeb-ejbPU")
     private EntityManager em;
     
@@ -45,7 +54,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public Long createNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException
+    public Long createNewServiceProvider(String businessCategoryName, ServiceProviderEntity newServiceProviderEntity) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException, BusinessCategoryNotFoundException
     {
        try
         {
@@ -53,6 +62,10 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         
             if(constraintViolations.isEmpty())
             {
+                BusinessCategoryEntity businessCategoryEntity = businessCategoryEntitySessionBeanLocal.retrieveBusinessCategoriesByName(businessCategoryName);
+                newServiceProviderEntity.setBusinessCategoryEntity(businessCategoryEntity);
+                businessCategoryEntity.getServiceProviderEntities().add(newServiceProviderEntity);
+
                 em.persist(newServiceProviderEntity);
                 em.flush();
 
@@ -289,7 +302,11 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         newServiceProvider.setEmailAddress(email);
         newServiceProvider.setPassword(password);
         
-        createNewServiceProvider(newServiceProvider);
+        try {
+            createNewServiceProvider(businessCategory, newServiceProvider);
+        } catch (BusinessCategoryNotFoundException ex) {
+            Logger.getLogger(ServiceProviderEntitySessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Override
