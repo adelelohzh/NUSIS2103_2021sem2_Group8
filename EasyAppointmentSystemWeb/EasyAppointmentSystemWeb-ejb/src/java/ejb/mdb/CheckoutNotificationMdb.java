@@ -31,14 +31,16 @@ import util.exception.AppointmentNotFoundException;
 })
 public class CheckoutNotificationMdb implements MessageListener {
 
-    public CheckoutNotificationMdb() {
-    }
-
     @EJB
     private AppointmentEntitySessionBeanLocal appointmentEntitySessionBeanLocal;
     @EJB
     private EmailSessionBeanLocal emailSessionBeanLocal;
 
+    
+    public CheckoutNotificationMdb() {
+        
+    }
+    
     @Override
     public void onMessage(Message message) {
 
