@@ -109,6 +109,8 @@ public class SystemAdministrationModule {
             }
 
             System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            customerId = sc.nextLong();
         } while (customerId != 0);
     }
 
@@ -137,6 +139,9 @@ public class SystemAdministrationModule {
             } catch (ServiceProviderNotFoundException | ServiceProviderBlockedException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             }
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            serviceProviderId = sc.nextLong();
         } while (serviceProviderId != 0);
     }
 
@@ -203,6 +208,9 @@ public class SystemAdministrationModule {
             } catch (ServiceProviderNotFoundException | ServiceProviderBlockedException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             }
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            serviceProviderId = sc.nextLong();
         } while (serviceProviderId != 0);
     }
 
@@ -251,6 +259,9 @@ public class SystemAdministrationModule {
             } catch (ServiceProviderNotFoundException | ServiceProviderBlockedException | AppointmentNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             } 
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            serviceProviderId = sc.nextLong();
         } while (serviceProviderId != 0);
     }
 
@@ -266,7 +277,7 @@ public class SystemAdministrationModule {
             System.out.print("Enter 0 to go back to the previous menu.");
             System.out.print("Enter a new business category> ");
             category = sc.nextLine().trim();
-            if (category.equals(0)) {
+            if (category.equals("0")) {
                 break;
             }
             System.out.println();
@@ -294,7 +305,10 @@ public class SystemAdministrationModule {
             } catch (BusinessCategoryExistException ex) {
                 System.out.println("Business Category " + category + " already exists!");
             }
-        } while (!category.equals(0));
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            category = sc.nextLine().trim();
+        } while (!category.equals("0"));
     }
 
     public void removeBusinessCategory() {
@@ -307,7 +321,7 @@ public class SystemAdministrationModule {
             System.out.print("Enter 0 to go back to the previous menu.");
             System.out.print("Enter a business category to remove> ");
             category = sc.nextLine().trim();
-            if (category.equals(0)) {
+            if (category.equals("0")) {
                 break;
             }
 
@@ -318,9 +332,11 @@ public class SystemAdministrationModule {
             }
             //throw new BusinessCategoryNotFoundException("Business Category " + category + " does not exist!");
             System.out.println();
-
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter a business category to remove> ");
+            category = sc.nextLine().trim();
             // method to be added into SessionBean
-        } while (!category.equals(0));
+        } while (!category.equals("0"));
     }
 
     private void sendJMSMessageToQueueCheckoutNotification(Long appointmentEntityId, String fromEmailAddress, String toEmailAddress) throws JMSException {
@@ -402,7 +418,7 @@ public class SystemAdministrationModule {
                     // 01 - Synchronous Session Bean Invocation
                     String sendTo = "valencia.teh00@gmail.com";
                     try {
-                        emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Valencia Teh<vtjw1000@gmail.com>", sendTo); //testing with my email first
+                        //emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Valencia Teh<vtjw1000@gmail.com>", sendTo); //testing with my email first
                     
                     
                     // 02 - Asynchronous Session Bean Invocation
@@ -410,7 +426,7 @@ public class SystemAdministrationModule {
                     //RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
                     //runnableNotification.start();
                     // 03 - JMS Messaging with Message Driven Bean
-                    //sendJMSMessageToQueueCheckoutNotification(customerAppointmentEntities.get(0).getCustomerEntity().getCustomerId(), "Name <name@comp.nus.edu.sg>", toEmailAddress);
+                        sendJMSMessageToQueueCheckoutNotification(currentAppointment.getAppointmentId(), "Valencia Teh<vtjw1000@gmail.com>", toEmailAddress);
                         System.out.println("Reminder email sent successfully!\n");
                     
                     }
