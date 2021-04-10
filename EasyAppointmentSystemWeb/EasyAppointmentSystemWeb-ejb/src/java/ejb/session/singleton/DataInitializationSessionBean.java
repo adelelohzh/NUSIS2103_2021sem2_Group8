@@ -103,7 +103,7 @@ public class DataInitializationSessionBean {
             newServiceProvider.setPhoneNumber("93718799");
             newServiceProvider.setPassword("113322");
             newServiceProvider.setStatusEnum(StatusEnum.Approved);
-            newServiceProvider.setBusinessCategoryEntity(bizCategoryEntity);
+            //newServiceProvider.setBusinessCategoryEntity(bizCategoryEntity);
             serviceProviderEntitySessionBeanLocal.createNewServiceProvider(bizCategoryEntity.getCategory(), newServiceProvider);
             
             ServiceProviderEntity newServiceProvider2 = new ServiceProviderEntity();
@@ -117,8 +117,8 @@ public class DataInitializationSessionBean {
             newServiceProvider2.setPhoneNumber("94827980");
             newServiceProvider2.setPassword("113322");
             newServiceProvider2.setStatusEnum(StatusEnum.Approved);
-            newServiceProvider2.setBusinessCategoryEntity(bizCategoryEntity2);
-            serviceProviderEntitySessionBeanLocal.createNewServiceProvider(bizCategoryEntity.getCategory(), newServiceProvider2);
+            //newServiceProvider2.setBusinessCategoryEntity(bizCategoryEntity2);
+            serviceProviderEntitySessionBeanLocal.createNewServiceProvider(bizCategoryEntity2.getCategory(), newServiceProvider2);
             //serviceProviderEntitySessionBeanLocal.createNewServiceProvider(new ServiceProviderEntity("Kevin Peterson", "Health",  "1111001111", "Singapore", "13, Clementi Road", "kevin@nuh.com.sg", "93718799", "113322", StatusEnum.Approved));
             //serviceProviderEntitySessionBeanLocal.createNewServiceProvider(new ServiceProviderEntity("Christian Dior", "Fashion",  "1111001112", "Singapore", "15, Marina One Drive", "dior@gmail.com", "94827980", "113322", StatusEnum.Approved));
 
