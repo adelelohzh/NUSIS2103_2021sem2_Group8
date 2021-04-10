@@ -317,7 +317,7 @@ public class SystemAdministrationModule {
         Long customerId;
 
         do {
-            System.out.print("Enter 0 to go back to the previous menu.");
+            
             System.out.print("Enter customer Id> ");
             customerId = sc.nextLong();
 
@@ -358,7 +358,7 @@ public class SystemAdministrationModule {
                     }
                     //}
                     // 01 - Synchronous Session Bean Invocation
-                    emailSessionBeanRemote.emailCheckoutNotificationSync(customerAppointmentEntities.get(index), "Name <name@comp.nus.edu.sg>", toEmailAddress);
+                    emailSessionBeanRemote.emailCheckoutNotificationSync(customerAppointmentEntities.get(index), "Kevin Peterson <kevin.peterson2103@gmail.com>", "valencia.teh00@gmail.com"); //testing with my email first
                     // 02 - Asynchronous Session Bean Invocation
                     //Future<Boolean> asyncResult = emailSessionBeanRemote.emailCheckoutNotificationAsync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
                     //RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
@@ -372,7 +372,8 @@ public class SystemAdministrationModule {
             } catch (AppointmentNotFoundException ex) {
                 System.out.println("There are no appointments to send a reminder email for!");
             }
-
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter customer Id> ");
             customerId = sc.nextLong();
 
         } while (customerId != 0);
