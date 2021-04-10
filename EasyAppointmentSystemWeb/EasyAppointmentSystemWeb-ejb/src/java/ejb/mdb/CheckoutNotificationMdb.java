@@ -49,8 +49,8 @@ public class CheckoutNotificationMdb implements MessageListener {
                 MapMessage mapMessage = (MapMessage) message;
                 String toEmailAddress = mapMessage.getString("toEmailAddress");
                 String fromEmailAddress = mapMessage.getString("fromEmailAddress");
-                Long appointmentId = (Long) mapMessage.getLong("appointmentId");
-                AppointmentEntity appointmentEntity = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(appointmentId);
+                Long appointmentEntityId = (Long) mapMessage.getLong("appointmentEntityId");
+                AppointmentEntity appointmentEntity = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(appointmentEntityId);
 
                 emailSessionBeanLocal.emailCheckoutNotificationSync(appointmentEntity, fromEmailAddress, toEmailAddress);
 
