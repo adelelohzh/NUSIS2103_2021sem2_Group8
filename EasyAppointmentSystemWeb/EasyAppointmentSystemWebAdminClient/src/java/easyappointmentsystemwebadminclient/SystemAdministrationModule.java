@@ -1,5 +1,6 @@
 package easyappointmentsystemwebadminclient;
 
+import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.EmailSessionBeanRemote;
@@ -33,6 +34,7 @@ import util.exception.BusinessCategoryExistException;
 import util.exception.BusinessCategoryNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.thread.RunnableNotification;
@@ -45,6 +47,7 @@ public class SystemAdministrationModule {
     private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
     private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
     private BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote;
+    private AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
     private EmailSessionBeanRemote emailSessionBeanRemote;
 
     private AdminEntity currentAdminEntity;
@@ -57,8 +60,9 @@ public class SystemAdministrationModule {
         validator = validatorFactory.getValidator();
     }
 
-    public SystemAdministrationModule(CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, AdminEntity currentAdminEntity, EmailSessionBeanRemote emailSessionBeanRemote, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
+    public SystemAdministrationModule(AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, AdminEntity currentAdminEntity, EmailSessionBeanRemote emailSessionBeanRemote, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
         this();
+        this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
         this.currentAdminEntity = currentAdminEntity;
@@ -130,7 +134,7 @@ public class SystemAdministrationModule {
                     String appointmentNumber = appointmentEntity.getAppointmentNo();
                     System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
                 }
-            } catch (ServiceProviderNotFoundException ex) {
+            } catch (ServiceProviderNotFoundException | ServiceProviderBlockedException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             }
         } while (serviceProviderId != 0);
@@ -196,7 +200,7 @@ public class SystemAdministrationModule {
                     serviceProviderEntitySessionBeanRemote.approveServiceProvider(serviceProviderId);                
                     System.out.println(serviceProvider.getName() + "'s registration is approved.\n");
                 }
-            } catch (ServiceProviderNotFoundException ex) {
+            } catch (ServiceProviderNotFoundException | ServiceProviderBlockedException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             }
         } while (serviceProviderId != 0);
@@ -237,10 +241,16 @@ public class SystemAdministrationModule {
                 {
                     serviceProviderEntitySessionBeanRemote.blockServiceProvider(serviceProviderId);
                     System.out.println(serviceProviderEntity.getName() + " has been blocked.\n");
+                    List<AppointmentEntity> apptList = serviceProviderEntity.getAppointmentEntities();
+                    for (AppointmentEntity a: apptList)
+                    {
+                        String apptNo = a.getAppointmentNo();
+                        appointmentEntitySessionBeanRemote.cancelAppointment(apptNo);
+                    }
                 }
-            } catch (ServiceProviderNotFoundException ex) {
+            } catch (ServiceProviderNotFoundException | ServiceProviderBlockedException | AppointmentNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
-            }
+            } 
         } while (serviceProviderId != 0);
     }
 
