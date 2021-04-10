@@ -47,7 +47,7 @@ public class ServiceProviderEntity implements Serializable {
     private String password;
     
     @Column
-    private Long rating;
+    private Double rating;
     
     @Column(nullable = false)
     private int numberOfRatings;
@@ -77,7 +77,7 @@ public class ServiceProviderEntity implements Serializable {
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
         this.password = password;
-        this.rating = Long.valueOf(0);
+        this.rating = 0.0;
         this.numberOfRatings = 0;
         this.statusEnum = statusEnum;
         appointmentEntities = new ArrayList<>();
@@ -224,11 +224,11 @@ public class ServiceProviderEntity implements Serializable {
         this.password = password;
     }
 
-    public Long getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(Long rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 
