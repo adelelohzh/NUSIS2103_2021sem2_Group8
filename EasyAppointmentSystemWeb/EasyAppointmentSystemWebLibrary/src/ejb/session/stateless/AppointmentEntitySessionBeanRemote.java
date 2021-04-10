@@ -8,13 +8,14 @@ import util.exception.AppointmentNotFoundException;
 import util.exception.AppointmentNumberExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 
 public interface AppointmentEntitySessionBeanRemote 
 {
-    public Long createNewAppointment(Long customerId, Long serviceProviderId, AppointmentEntity newAppointmentEntity) throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, CustomerNotFoundException, ServiceProviderNotFoundException;
+    public Long createNewAppointment(Long customerId, Long serviceProviderId, AppointmentEntity newAppointmentEntity) throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, CustomerNotFoundException, ServiceProviderNotFoundException, ServiceProviderBlockedException;
 
     public AppointmentEntity retrieveAppointmentByCustomerID(Long customerID) throws AppointmentNotFoundException;
 

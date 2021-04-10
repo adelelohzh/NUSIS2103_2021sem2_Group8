@@ -21,6 +21,7 @@ import util.enumeration.StatusEnum;
 import util.exception.DeleteServiceProviderException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderEmailExistException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -117,7 +118,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     @Override
     public ServiceProviderEntity retrieveServiceProviderEntityByEmail(String email) throws ServiceProviderNotFoundException
     {   
-        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.emailAddress = :inEmail");
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.emailAddress = :inEmail and s.statusEnum = util.enumeration.StatusEnum.Approved");
         query.setParameter("inEmail", email);
 
         try
@@ -135,7 +136,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
      @Override
     public ServiceProviderEntity retrieveServiceProviderEntityByName(String name) throws ServiceProviderNotFoundException
     {   
-        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.name = :inName");
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.name = :inName and s.statusEnum = util.enumeration.StatusEnum.Approved");
         query.setParameter("inName", name);
         
         try
@@ -153,7 +154,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     @Override
     public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(String businessCategory, String city) throws ServiceProviderNotFoundException
     {   
-        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.city = :inCity and s.businessCategory = :inBusinessCategory");
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.city = :inCity and s.businessCategory = :inBusinessCategory and s.statusEnum = util.enumeration.StatusEnum.Approved");
         query.setParameter("inCity", city);
         query.setParameter("inBusinessCategory", businessCategory);
 
@@ -163,7 +164,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     
     
     @Override
-    public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException
+    public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException
     {   
         ServiceProviderEntity serviceProviderEntity = em.find(ServiceProviderEntity.class, serviceProviderId);
 
@@ -172,7 +173,10 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
             serviceProviderEntity.getAppointmentEntities().size();
             return serviceProviderEntity;
         }
-        else
+        else if (serviceProviderEntity.getStatusEnum() == StatusEnum.Blocked)
+        {
+            throw new ServiceProviderBlockedException("Serivce Provider ID: " + serviceProviderId + " is blocked!");
+        }
         {
             throw new ServiceProviderNotFoundException("Serivce Provider ID: " + serviceProviderId + " does not exist!");
         }
@@ -222,7 +226,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException, DeleteServiceProviderException
+    public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException, DeleteServiceProviderException, ServiceProviderBlockedException
     {
         try
         {
@@ -244,7 +248,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public void approveServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException
+    public void approveServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException
     {   
         ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
         serviceProvider.setStatusEnum(StatusEnum.Approved);
@@ -252,10 +256,11 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public void blockServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException
+    public void blockServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException
     {   
         ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
         serviceProvider.setStatusEnum(StatusEnum.Blocked);
+        
 
     }
     
@@ -290,7 +295,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public void updateRating(double newRating, Long serviceProviderId) throws ServiceProviderNotFoundException
+    public void updateRating(double newRating, Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException
     {
         ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
         double currentRating = serviceProvider.getRating();
