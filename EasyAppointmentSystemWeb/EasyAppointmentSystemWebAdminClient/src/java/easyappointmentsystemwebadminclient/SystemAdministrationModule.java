@@ -60,9 +60,10 @@ public class SystemAdministrationModule {
         validator = validatorFactory.getValidator();
     }
 
-    public SystemAdministrationModule(AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, AdminEntity currentAdminEntity, EmailSessionBeanRemote emailSessionBeanRemote, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
+    public SystemAdministrationModule(AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, AdminEntity currentAdminEntity, EmailSessionBeanRemote emailSessionBeanRemote, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
         this();
         this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
+        this.businessCategoryEntitySessionBeanRemote = businessCategoryEntitySessionBeanRemote;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
         this.currentAdminEntity = currentAdminEntity;
@@ -274,7 +275,7 @@ public class SystemAdministrationModule {
         System.out.println("*** Admin terminal :: Add a Business category ***\n");
 
         do {
-            System.out.print("Enter 0 to go back to the previous menu.");
+            System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter a new business category> ");
             category = sc.nextLine().trim();
             if (category.equals("0")) {
@@ -282,23 +283,23 @@ public class SystemAdministrationModule {
             }
             System.out.println();
 
-            BusinessCategoryEntity businessCategory = businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesByName(category);
-            if (businessCategory != null)
+            try 
+            {
+                BusinessCategoryEntity businessCategory = businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesByName(category);
+                System.out.println("Business Category already exists!\n");
+            }
+            catch (BusinessCategoryNotFoundException ex)
             {
                 BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
                 newBusinessCategory.setCategory(category);
                 try {
                     businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
-                } catch (UnknownPersistenceException | InputDataValidationException ex) {
+                } catch (UnknownPersistenceException | InputDataValidationException exception) {
                     System.out.println("Business Category is not created!\n");
-                } catch (BusinessCategoryExistException ex) {
+                } catch (BusinessCategoryExistException exception) {
                     System.out.println("Business Category already exists!\n");
                 }
                 System.out.println("The business category \"\"" + category + "\" is added.");
-            }
-            else 
-            {
-               System.out.println("Business Category already exists!\n");
             }
                 
            
