@@ -112,6 +112,24 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
         }
     }
     
+    @Override
+    public BusinessCategoryEntity retrieveBusinessCategoriesById(Long businessCategoryId) throws BusinessCategoryNotFoundException {
+        
+        Query query = em.createQuery("SELECT b FROM BusinessCategoryEntity b WHERE b.businessCategoryId = :inBusinessCategoryId");
+        query.setParameter("inBusinessCategoryId", businessCategoryId);
+        
+        try
+        {
+            BusinessCategoryEntity businessCategory = (BusinessCategoryEntity)query.getSingleResult();
+            businessCategory.getServiceProviderEntities().size();
+            return businessCategory;
+        }
+        catch(NoResultException | NonUniqueResultException ex)
+        {
+            throw new BusinessCategoryNotFoundException("Business Category ID " + businessCategoryId + " does not exist!");
+        }
+    }
+    
     
 
     @Override

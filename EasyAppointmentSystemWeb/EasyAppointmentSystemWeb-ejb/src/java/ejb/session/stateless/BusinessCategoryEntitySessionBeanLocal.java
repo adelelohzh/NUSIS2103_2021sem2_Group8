@@ -19,5 +19,7 @@ public interface BusinessCategoryEntitySessionBeanLocal {
     public void deleteBusinessCategory(String businessCategory) throws BusinessCategoryNotFoundException;
 
     public BusinessCategoryEntity retrieveBusinessCategoriesByName(String name) throws BusinessCategoryNotFoundException;
+
+    public BusinessCategoryEntity retrieveBusinessCategoriesById(Long businessCategoryId) throws BusinessCategoryNotFoundException;
              
 }
