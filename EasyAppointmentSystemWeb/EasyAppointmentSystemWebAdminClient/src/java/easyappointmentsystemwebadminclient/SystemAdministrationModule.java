@@ -142,10 +142,10 @@ public class SystemAdministrationModule {
         System.out.println("*** Admin terminal :: View service providers ***\n");
 
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
-        System.out.printf("%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", "Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status");
+        System.out.printf("%-3s%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", "Id", "| Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status");
 
         for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
-            System.out.printf("%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", serviceProviderEntity.getName(), "| " + serviceProviderEntity.getBusinessCategory(), "| " + serviceProviderEntity.getBusinessRegistrationNumber(), "| " + serviceProviderEntity.getCity(), "| " + serviceProviderEntity.getBusinessAddress(), "| " + serviceProviderEntity.getEmailAddress(), "| " + serviceProviderEntity.getPhoneNumber(), "| " + serviceProviderEntity.getRating(), "| " + serviceProviderEntity.getStatusEnum());
+            System.out.printf("%-3s%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", serviceProviderEntity.getServiceProviderId(), "| " +serviceProviderEntity.getName(), "| " + serviceProviderEntity.getBusinessCategory(), "| " + serviceProviderEntity.getBusinessRegistrationNumber(), "| " + serviceProviderEntity.getCity(), "| " + serviceProviderEntity.getBusinessAddress(), "| " + serviceProviderEntity.getEmailAddress(), "| " + serviceProviderEntity.getPhoneNumber(), "| " + serviceProviderEntity.getRating(), "| " + serviceProviderEntity.getStatusEnum());
         }
 
         System.out.print("Press any key to continue...> ");
@@ -160,7 +160,7 @@ public class SystemAdministrationModule {
         Long serviceProviderId;
 
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
-        System.out.println("List of service providers with pending approval:");
+        System.out.println("List of service providers with pending approval:\n");
         System.out.printf("%-3s%-7s%-20s%-20s%-7s%-10s%-8s%-7s\n", "Id", "| Name", "| Business category", "| Business Reg. No.", "| City", "| Address", "| Email", "| Phone");
 
         for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
@@ -169,19 +169,33 @@ public class SystemAdministrationModule {
                 System.out.println();
             }
         }
+        
+        System.out.println();
 
         do {
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter service provider Id> ");
             serviceProviderId = sc.nextLong();
+            System.out.println();
             if (serviceProviderId == 0) {
                 break;
             }
 
             try {
                 ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
-                serviceProvider.setStatusEnum(StatusEnum.Approved);
-                System.out.println(serviceProvider.getName() + "'s registration is approved.");
+                if (serviceProvider.getStatusEnum() == StatusEnum.Approved)
+                {
+                    System.out.println("Service Provider is already approved!\n");
+                }
+                else if (serviceProvider.getStatusEnum() == StatusEnum.Blocked)
+                {
+                    System.out.println("Service Provider is blocked and cannot be approved!\n");
+                }
+                else
+                {
+                    serviceProviderEntitySessionBeanRemote.approveServiceProvider(serviceProviderId);                
+                    System.out.println(serviceProvider.getName() + "'s registration is approved.\n");
+                }
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             }
@@ -193,22 +207,37 @@ public class SystemAdministrationModule {
         Scanner sc = new Scanner(System.in);
 
         System.out.println("*** Admin terminal :: Block service provider ***\n");
+        System.out.println("List of service providers:\n");
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
-        viewServiceProviders();
+        System.out.printf("%-3s%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", "Id", "| Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status");
+        for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
+            System.out.printf("%-3s%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", serviceProviderEntity.getServiceProviderId(), "| " +serviceProviderEntity.getName(), "| " + serviceProviderEntity.getBusinessCategory(), "| " + serviceProviderEntity.getBusinessRegistrationNumber(), "| " + serviceProviderEntity.getCity(), "| " + serviceProviderEntity.getBusinessAddress(), "| " + serviceProviderEntity.getEmailAddress(), "| " + serviceProviderEntity.getPhoneNumber(), "| " + serviceProviderEntity.getRating(), "| " + serviceProviderEntity.getStatusEnum());
+        }
+        
+        System.out.println();
+
         Long serviceProviderId;
 
         do {
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter service provider Id> ");
             serviceProviderId = sc.nextLong();
+            System.out.println();
             if (serviceProviderId == 0) {
                 break;
             }
 
             try {
                 ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
-                serviceProviderEntity.setStatusEnum(StatusEnum.Blocked);
-                System.out.println(serviceProviderEntity.getName() + " has been blocked.");
+                if (serviceProviderEntity.getStatusEnum() == StatusEnum.Blocked)
+                {
+                    System.out.println("Service Provider is already blocked!\n");
+                }
+                else
+                {
+                    serviceProviderEntitySessionBeanRemote.blockServiceProvider(serviceProviderId);
+                    System.out.println(serviceProviderEntity.getName() + " has been blocked.\n");
+                }
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             }
