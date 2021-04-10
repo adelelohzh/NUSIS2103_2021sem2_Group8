@@ -90,8 +90,23 @@ public class DataInitializationSessionBean {
             businessCategoryEntitySessionBeanLocal.createNewBusinessCategoryEntity(new BusinessCategoryEntity("Health"));
             businessCategoryEntitySessionBeanLocal.createNewBusinessCategoryEntity(new BusinessCategoryEntity("Fashion"));
             businessCategoryEntitySessionBeanLocal.createNewBusinessCategoryEntity(new BusinessCategoryEntity("Education"));
-            serviceProviderEntitySessionBeanLocal.createNewServiceProvider(new ServiceProviderEntity("Kevin Peterson", "Health",  "1111001111", "Singapore", "13, Clementi Road", "kevin@nuh.com.sg", "93718799", "113322", StatusEnum.Approved));
-            serviceProviderEntitySessionBeanLocal.createNewServiceProvider(new ServiceProviderEntity("Christian Dior", "Fashion",  "1111001112", "Singapore", "15, Marina One Drive", "dior@gmail.com", "94827980", "113322", StatusEnum.Approved));
+            
+            ServiceProviderEntity newServiceProvider = new ServiceProviderEntity();
+            BusinessCategoryEntity bizCategoryEntity = businessCategoryEntitySessionBeanLocal.retrieveAllBusinessCategories().get(0);
+            newServiceProvider.setName("Kevin Peterson");
+            newServiceProvider.setBusinessCategory("Health");
+            newServiceProvider.setBusinessAddress("13, Clementi Road");
+            newServiceProvider.setCity("Singapore");
+            newServiceProvider.setBusinessRegistrationNumber("1111001111");
+            newServiceProvider.setEmailAddress("kevin@nuh.com.sg");
+            newServiceProvider.setPhoneNumber("93718799");
+            newServiceProvider.setPassword("113322");
+            newServiceProvider.setStatusEnum(StatusEnum.Approved);
+            newServiceProvider.setBusinessCategoryEntity(bizCategoryEntity);
+            serviceProviderEntitySessionBeanLocal.createNewServiceProvider(newServiceProvider);
+            
+            //serviceProviderEntitySessionBeanLocal.createNewServiceProvider(new ServiceProviderEntity("Kevin Peterson", "Health",  "1111001111", "Singapore", "13, Clementi Road", "kevin@nuh.com.sg", "93718799", "113322", StatusEnum.Approved));
+            //serviceProviderEntitySessionBeanLocal.createNewServiceProvider(new ServiceProviderEntity("Christian Dior", "Fashion",  "1111001112", "Singapore", "15, Marina One Drive", "dior@gmail.com", "94827980", "113322", StatusEnum.Approved));
 
             
             CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerEntityByCustomerId(1L);
@@ -99,7 +114,7 @@ public class DataInitializationSessionBean {
             BusinessCategoryEntity businessCategoryEntity = businessCategoryEntitySessionBeanLocal.retrieveAllBusinessCategories().get(0);
             BusinessCategoryEntity businessCategoryEntityTwo = businessCategoryEntitySessionBeanLocal.retrieveAllBusinessCategories().get(1);
             ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(1L);
-            ServiceProviderEntity serviceProviderEntityTwo = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(2L);
+            //ServiceProviderEntity serviceProviderEntityTwo = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(2L);
             
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             String currDate = "2021-04-12";
@@ -108,36 +123,36 @@ public class DataInitializationSessionBean {
 
             appointmentEntitySessionBeanLocal.createNewAppointment(1L, 1L, new AppointmentEntity("104120830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntity, serviceProviderEntity, businessCategoryEntity));
             appointmentEntitySessionBeanLocal.createNewAppointment(1L, 1L, new AppointmentEntity("104140830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntity, serviceProviderEntity, businessCategoryEntity));
-            appointmentEntitySessionBeanLocal.createNewAppointment(1L, 2L, new AppointmentEntity("204121130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntity, serviceProviderEntityTwo, businessCategoryEntity));
-            appointmentEntitySessionBeanLocal.createNewAppointment(1L, 2L, new AppointmentEntity("204141130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntity, serviceProviderEntityTwo, businessCategoryEntity));
+            //appointmentEntitySessionBeanLocal.createNewAppointment(1L, 2L, new AppointmentEntity("204121130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntity, serviceProviderEntityTwo, businessCategoryEntity));
+            //appointmentEntitySessionBeanLocal.createNewAppointment(1L, 2L, new AppointmentEntity("204141130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntity, serviceProviderEntityTwo, businessCategoryEntity));
             
             appointmentEntitySessionBeanLocal.createNewAppointment(2L, 1L, new AppointmentEntity("104121130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntityTwo, serviceProviderEntity, businessCategoryEntityTwo));
             appointmentEntitySessionBeanLocal.createNewAppointment(2L, 1L, new AppointmentEntity("104141130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntityTwo, serviceProviderEntity, businessCategoryEntityTwo));
-            appointmentEntitySessionBeanLocal.createNewAppointment(2L, 2L, new AppointmentEntity("204120830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntityTwo, serviceProviderEntityTwo, businessCategoryEntityTwo));
-            appointmentEntitySessionBeanLocal.createNewAppointment(2L, 2L, new AppointmentEntity("204140830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntityTwo, serviceProviderEntityTwo, businessCategoryEntityTwo));
+            //appointmentEntitySessionBeanLocal.createNewAppointment(2L, 2L, new AppointmentEntity("204120830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntityTwo, serviceProviderEntityTwo, businessCategoryEntityTwo));
+            //appointmentEntitySessionBeanLocal.createNewAppointment(2L, 2L, new AppointmentEntity("204140830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntityTwo, serviceProviderEntityTwo, businessCategoryEntityTwo));
             
             
             AppointmentEntity appointmentOne = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(1L);
             AppointmentEntity appointmentTwo = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(2L);
-            AppointmentEntity appointmentThree = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(3L);
-            AppointmentEntity appointmentFour = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(4L);
+            //AppointmentEntity appointmentThree = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(3L);
+            //AppointmentEntity appointmentFour = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(4L);
             
             AppointmentEntity appointmentFive = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(5L);
             AppointmentEntity appointmentSix = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(6L);
-            AppointmentEntity appointmentSeven = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(7L);
-            AppointmentEntity appointmentEight = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(8L);
+            //AppointmentEntity appointmentSeven = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(7L);
+            //AppointmentEntity appointmentEight = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(8L);
             
             List<AppointmentEntity> apptListOne = customerEntity.getAppointmentEntities();
             apptListOne.add(appointmentOne);
             apptListOne.add(appointmentTwo);
-            apptListOne.add(appointmentThree);
-            apptListOne.add(appointmentFour);
+            //apptListOne.add(appointmentThree);
+            //apptListOne.add(appointmentFour);
             
             List<AppointmentEntity> apptListTwo = customerEntityTwo.getAppointmentEntities();
             apptListTwo.add(appointmentFive);
             apptListTwo.add(appointmentSix);
-            apptListTwo.add(appointmentSeven);
-            apptListTwo.add(appointmentEight);
+            //apptListTwo.add(appointmentSeven);
+            //apptListTwo.add(appointmentEight);
             
             List<AppointmentEntity> apptListThree = serviceProviderEntity.getAppointmentEntities();
             apptListThree.add(appointmentOne);
@@ -145,26 +160,29 @@ public class DataInitializationSessionBean {
             apptListThree.add(appointmentFive);
             apptListThree.add(appointmentSix);
             
-            List<AppointmentEntity> apptListFour = serviceProviderEntityTwo.getAppointmentEntities();
+            /*List<AppointmentEntity> apptListFour = serviceProviderEntityTwo.getAppointmentEntities();
             apptListThree.add(appointmentThree);
             apptListThree.add(appointmentFour);
             apptListThree.add(appointmentSeven);
-            apptListThree.add(appointmentEight);
+            apptListThree.add(appointmentEight);*/
             
             customerEntity.setAppointmentEntities(apptListOne);
             customerEntityTwo.setAppointmentEntities(apptListTwo);
             serviceProviderEntity.setAppointmentEntities(apptListThree);
-            serviceProviderEntityTwo.setAppointmentEntities(apptListFour);
+            //serviceProviderEntityTwo.setAppointmentEntities(apptListFour);
+
             
         }
-        catch(AdminUsernameExistException |  CustomerEmailExistsException | BusinessCategoryExistException | ServiceProviderEmailExistException | UnknownPersistenceException | InputDataValidationException | CustomerNotFoundException | AppointmentNumberExistsException ex)
+        catch(AdminUsernameExistException |  CustomerEmailExistsException | BusinessCategoryExistException | UnknownPersistenceException | InputDataValidationException | CustomerNotFoundException | AppointmentNumberExistsException ex)
         {
             ex.printStackTrace();
         } catch (ServiceProviderNotFoundException ex) {
             Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (AppointmentNotFoundException ex) {
-            Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ServiceProviderBlockedException ex) {
+            Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ServiceProviderEmailExistException ex) {
+            Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (AppointmentNotFoundException ex) {
             Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } 
     }
