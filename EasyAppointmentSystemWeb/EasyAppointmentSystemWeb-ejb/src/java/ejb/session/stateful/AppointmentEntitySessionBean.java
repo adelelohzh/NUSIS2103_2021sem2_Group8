@@ -162,7 +162,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     @Override
     public List<AppointmentEntity> retrieveAppointmentsByDate(LocalDate date, String serviceProviderName)
     {
-        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.date = :inDate and a.serviceProviderEntity.name := inServiceProviderName");
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.date = :inDate and a.serviceProviderEntity.name = :inServiceProviderName");
         query.setParameter("inDate", date);
         query.setParameter("inServiceProviderName", serviceProviderName);
         
@@ -170,13 +170,11 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
-    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) throws ServiceProviderNotFoundException {
-        
-
-        ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(serviceProviderId);
-        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.scheduledDate = :inDate and a.serviceProviderEntity.serviceProviderId := inServiceProviderId ORDER BY a.scheduledTime");
-        query.setParameter("inScheduledDate", date);
-        query.setParameter("inServiceProvider", serviceProvider);
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) 
+    {
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.scheduledDate = :inDate and a.serviceProviderEntity.serviceProviderId = :inServiceProviderId ORDER BY a.scheduledTime");
+        query.setParameter("inDate", date);
+        query.setParameter("inServiceProviderId", serviceProviderId);
         
         return query.getResultList();
     }

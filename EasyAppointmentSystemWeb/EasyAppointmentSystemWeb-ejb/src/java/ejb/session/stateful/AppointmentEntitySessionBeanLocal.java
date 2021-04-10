@@ -23,7 +23,7 @@ public interface AppointmentEntitySessionBeanLocal {
 
     public List<AppointmentEntity> retrieveAppointmentsByDate(LocalDate date, String serviceProviderName);
     
-    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) throws ServiceProviderNotFoundException;
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId);
     
     public AppointmentEntity retrieveAppointmentByAppointmentNumber(String appointmentNo) throws AppointmentNotFoundException;
 
