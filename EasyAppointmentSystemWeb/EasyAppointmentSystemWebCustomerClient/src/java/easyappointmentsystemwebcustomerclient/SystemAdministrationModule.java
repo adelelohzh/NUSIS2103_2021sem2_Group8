@@ -130,7 +130,7 @@ public class SystemAdministrationModule {
                     }
                 }
             } catch (ServiceProviderNotFoundException ex) {
-                
+
                 System.out.println("Service Provider cannot be found!");
             }
             System.out.println("Enter 0 to go back to the previous menu.");
@@ -164,14 +164,13 @@ public class SystemAdministrationModule {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate date = LocalDate.parse(currentDate, formatter);
             String day = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US);
-            
+
             System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
 
             if (!day.equals("Sunday")) { //insert invalid add appt
 
                 try {
                     List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
-                    
 
                     for (ServiceProviderEntity s : serviceProviders) {
                         List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, s.getServiceProviderId());
@@ -185,14 +184,19 @@ public class SystemAdministrationModule {
                         String firstAvailableTime = "";
                         int i = 0;
                         for (AppointmentEntity appointment : appointmentEntities) {
-                            if (!appointment.getScheduledTime().equals(timeSlots.get(i)) | appointment.getIsCancelled().equals(Boolean.TRUE)) {
+                            if (!appointment.getScheduledTime().toString().equals(timeSlots.get(i)) | appointment.getIsCancelled().equals(Boolean.TRUE)) {
                                 firstAvailableTime = timeSlots.get(i);
                                 break; //found the index
                             }
                             i++;
                         }
 
-                        System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + s.getRating());
+                        Double rating = s.getRating();
+                        if (rating == null) {
+                            System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| N.A");
+                        } else {
+                            System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + rating);
+                        }
 
                     }
 
@@ -206,42 +210,30 @@ public class SystemAdministrationModule {
                 Long serviceProviderId = Long.parseLong(response);
 
                 List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, serviceProviderId);
-                List<String> availableTimings = new ArrayList<>();
+                List<String> availableTimings = new ArrayList<String>();
+
+                //want to find out when he is not available
+                //for each appointment, get the scheduled time. he is not available
+                List<String> timeslots2 = new ArrayList<String>();
+                timeslots2.addAll(times);
+
                 int index = 0;
-                
-                for (AppointmentEntity a : appointmentEntities)
-                {
-                    while (!a.getScheduledTime().equals(times.get(index)) | (a.getIsCancelled().equals(Boolean.TRUE) && a.getScheduledTime().equals(times.get(index))))
-                    {
-                        availableTimings.add(times.get(index));
-                        index++;
-                        if (index == 11)
-                        {
-                            break;
+                for (AppointmentEntity a : appointmentEntities) {
+                    String scheduledTime = a.getScheduledTime().toString();
+                    if (a.getIsCancelled().equals(Boolean.FALSE)) {
+                        if (timeslots2.contains(scheduledTime) && !timeslots2.isEmpty()) {
+                            index = timeslots2.indexOf(scheduledTime);
+                            System.out.println("Index is " + index + " Timing is " + scheduledTime);
+                            timeslots2.remove(index);
                         }
                     }
-                    if (index == 11)
-                        {
-                            break;
-                        }
                 }
-                
-                if (index != 10)
-                {
-                    while (index < 10)
-                    {
-                        availableTimings.add(times.get(index));
-                        index++;
-                    }
-                }
-                
-                System.out.println("Available Appointment Slots:");   
-                
-                for (String timings: availableTimings)
-                {
+
+                System.out.println("Available Appointment Slots:");
+
+                for (String timings : timeslots2) {
                     System.out.print(timings + " | ");
                 }
-               
 
                 System.out.println("Enter 0 to go back to the previous menu.");
                 System.out.print("Enter Time> ");
@@ -292,7 +284,7 @@ public class SystemAdministrationModule {
                         appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
                         currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
                         serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
-                        
+
                     } catch (CustomerNotFoundException ex) {
                         System.out.println("Customer with customer id " + currentCustomerEntity.getCustomerId() + " not found");
                     } catch (ServiceProviderNotFoundException ex) {
@@ -309,7 +301,8 @@ public class SystemAdministrationModule {
 
             }
 
-        } while (!response.equals(0));
+        } while (!response.equals(
+                0));
     }
 
     public void viewAppointments() {
@@ -325,12 +318,12 @@ public class SystemAdministrationModule {
         System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
 
         for (AppointmentEntity appointment : appointments) {
-            if (appointment.getIsCancelled() == false)
-            System.out.printf("%-15s%-13s%-8s%-15s\n", currentCustomerEntity.getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
+            if (appointment.getIsCancelled() == false) {
+                System.out.printf("%-15s%-13s%-8s%-15s\n", currentCustomerEntity.getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
+            }
         }
 
-        while (!response.equals("0")) 
-        {
+        while (!response.equals("0")) {
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print(">");
             response = sc.nextLine().trim();
@@ -343,15 +336,14 @@ public class SystemAdministrationModule {
         System.out.println("*** Customer terminal :: Cancel Appointment ***\n");
         String response;
 
-
         List<AppointmentEntity> appointmentEntities = currentCustomerEntity.getAppointmentEntities();
         System.out.println("Appointments: ");
         System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
 
-        for (AppointmentEntity appointment : appointmentEntities) 
-        {
-            if (appointment.getIsCancelled() == false)
-            System.out.printf("%-15s%-13s%-8s%-15s\n", currentCustomerEntity.getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
+        for (AppointmentEntity appointment : appointmentEntities) {
+            if (appointment.getIsCancelled() == false) {
+                System.out.printf("%-15s%-13s%-8s%-15s\n", currentCustomerEntity.getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
+            }
         }
 
         System.out.println("Enter 0 to go back to the previous menu.");
@@ -360,13 +352,11 @@ public class SystemAdministrationModule {
         System.out.println();
         String appointmentNo = response;
 
-        while (!response.equals("0"))
-        {
+        while (!response.equals("0")) {
             try {
                 AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentNumber(appointmentNo);
 
-                if (appointmentEntity.getIsCancelled() == false)
-                {
+                if (appointmentEntity.getIsCancelled() == false) {
                     LocalDate todayDate = LocalDate.now();
                     LocalDate appointmentDate = appointmentEntity.getScheduledDate();
 
@@ -387,18 +377,13 @@ public class SystemAdministrationModule {
                         System.out.println("Appointment cannot be deleted!");
                     }
 
-
-                }
-                else
-                {
+                } else {
                     System.out.println("Appointment is already cancelled!");
                 }
 
-            response = sc.nextLine().trim();
+                response = sc.nextLine().trim();
 
-            }
-            catch (AppointmentNotFoundException ex) 
-            {
+            } catch (AppointmentNotFoundException ex) {
                 System.out.println("Appointment with id: " + appointmentNo + " does not exist!");
             }
         }
@@ -419,8 +404,7 @@ public class SystemAdministrationModule {
             System.out.print("Enter rating> ");
             double rating = sc.nextDouble();
             sc.nextLine();
-            if (rating != 0)
-            {
+            if (rating != 0) {
                 if (rating > 5.0 | rating < 0.0) {
                     System.out.println("Please enter a number between 0.0 to 5.0!");
                 } else {
@@ -428,13 +412,11 @@ public class SystemAdministrationModule {
                     System.out.println("Rating successfully submitted!");
                 }
             }
-            do 
-            {
+            do {
                 System.out.println("Enter 0 to go back to the previous menu.");
                 System.out.print(">");
-                response = sc.nextLine().trim();      
-            } 
-            while (!response.equals("0"));
+                response = sc.nextLine().trim();
+            } while (!response.equals("0"));
         } catch (ServiceProviderNotFoundException ex) {
             System.out.println("Service Provider does not exist!");
         } catch (InputMismatchException ex) {
