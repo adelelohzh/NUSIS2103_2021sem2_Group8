@@ -40,8 +40,6 @@ public class BusinessCategoryEntity implements Serializable {
     {
     }
     
-    
-
     public BusinessCategoryEntity(String category) 
     {
         this();

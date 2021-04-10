@@ -184,14 +184,29 @@ public class MainApp {
                 
                 Long serviceProviderId = serviceProviderEntitySessionBeanRemote.createNewServiceProvider(serviceProviderEntity);
                 System.out.println("You have been registered successfully!\n");
+                System.out.println();
 
-                System.out.println("Enter 0 to go back to the previous menu.\n");
-                System.out.print(">");
-                
-                input = sc.nextLine().trim();
             }
-        } catch (InputMismatchException | ServiceProviderEmailExistException | UnknownPersistenceException | InputDataValidationException ex) {
-            System.out.println(ex.getMessage());
-        } while (!input.equals("0"));
+        } 
+        catch (InputMismatchException ex) 
+        {
+            System.out.println("Please input correct values!");
+        } 
+        catch (ServiceProviderEmailExistException ex)
+        {
+            System.out.println("This email is already in use!");
+        } 
+        catch (UnknownPersistenceException | InputDataValidationException ex)
+        {
+            System.out.println(ex.getMessage() + "\n");  
+        } 
+        
+        do 
+        {
+            System.out.println("Enter 0 to go back to the previous menu.\n");
+            System.out.print(">");
+            input = sc.nextLine().trim();
+        }
+        while (!input.equals("0"));
     }
 }
