@@ -1,6 +1,6 @@
 package ejb.session.singleton;
 
-import ejb.session.stateful.AppointmentEntitySessionBeanLocal;
+import ejb.session.stateless.AppointmentEntitySessionBeanLocal;
 import ejb.session.stateless.AdminEntitySessionBeanLocal;
 import ejb.session.stateless.BusinessCategoryEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
