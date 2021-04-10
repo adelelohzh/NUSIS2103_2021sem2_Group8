@@ -281,6 +281,9 @@ public class SystemAdministrationModule {
                         appointmentEntity.setScheduledTime(time);
                         appointmentEntity.setScheduledDate(date);
                         appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
+                        currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
+                        serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
+                        
                     } catch (CustomerNotFoundException ex) {
                         System.out.println("Customer with customer id " + currentCustomerEntity.getCustomerId() + " not found");
                     } catch (ServiceProviderNotFoundException ex) {
@@ -331,18 +334,28 @@ public class SystemAdministrationModule {
         System.out.println("*** Customer terminal :: Cancel Appointment ***\n");
         String response;
 
-        do {
-            List<AppointmentEntity> appointmentEntities = currentCustomerEntity.getAppointmentEntities();
-            
-            System.out.print("Enter 0 to go back to the previous menu.");
-            System.out.print("Enter Appointment Id to cancel>");
-            response = sc.nextLine().trim();
-            System.out.println();
-            String appointmentNo = response;
 
+        List<AppointmentEntity> appointmentEntities = currentCustomerEntity.getAppointmentEntities();
+        System.out.println("Appointments: ");
+        System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
+
+        for (AppointmentEntity appointment : appointmentEntities) 
+        {
+            if (appointment.getIsCancelled() == false)
+            System.out.printf("%-15s%-13s%-8s%-15s\n", currentCustomerEntity.getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
+        }
+
+        System.out.println("Enter 0 to go back to the previous menu.");
+        System.out.print("Enter Appointment Id to cancel>");
+        response = sc.nextLine().trim();
+        System.out.println();
+        String appointmentNo = response;
+
+        while (!response.equals("0"))
+        {
             try {
                 AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentNumber(appointmentNo);
-                
+
                 if (appointmentEntity.getIsCancelled() == false)
                 {
                     LocalDate todayDate = LocalDate.now();
@@ -365,20 +378,21 @@ public class SystemAdministrationModule {
                         System.out.println("Appointment cannot be deleted!");
                     }
 
-                    
+
                 }
                 else
                 {
                     System.out.println("Appointment is already cancelled!");
                 }
-                
+
             response = sc.nextLine().trim();
 
-            } catch (AppointmentNotFoundException ex) {
+            }
+            catch (AppointmentNotFoundException ex) 
+            {
                 System.out.println("Appointment with id: " + appointmentNo + " does not exist!");
             }
-
-        } while (!response.equals(0));
+        }
     }
 
     public void rateServiceProvider() {
