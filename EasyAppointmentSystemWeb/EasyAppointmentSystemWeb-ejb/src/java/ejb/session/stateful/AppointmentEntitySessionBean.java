@@ -156,6 +156,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         }
     }
     
+    
     @Override
     public List<AppointmentEntity> retrieveAppointmentsByDate(LocalDate date, String serviceProviderName)
     {

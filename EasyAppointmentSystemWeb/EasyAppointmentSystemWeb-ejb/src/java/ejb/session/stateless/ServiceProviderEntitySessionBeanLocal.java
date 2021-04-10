@@ -34,7 +34,7 @@ public interface ServiceProviderEntitySessionBeanLocal
 
     public ServiceProviderEntity retrieveServiceProviderEntityByName(String name) throws ServiceProviderNotFoundException;
 
-    public void updateRating(Long newRating, Long serviceProviderId) throws ServiceProviderNotFoundException;
+    public void updateRating(double newRating, Long serviceProviderId) throws ServiceProviderNotFoundException;
 
     
 }

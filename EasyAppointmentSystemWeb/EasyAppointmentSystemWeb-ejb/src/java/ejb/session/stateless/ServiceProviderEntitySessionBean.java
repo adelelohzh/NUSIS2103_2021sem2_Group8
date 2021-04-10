@@ -160,6 +160,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         return query.getResultList();    
     }
     
+    
     @Override
     public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException
     {   
@@ -272,13 +273,13 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public void updateRating(Long newRating, Long serviceProviderId) throws ServiceProviderNotFoundException
+    public void updateRating(double newRating, Long serviceProviderId) throws ServiceProviderNotFoundException
     {
         ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
-        Long currentRating = serviceProvider.getRating();
+        double currentRating = serviceProvider.getRating();
         int numberOfRatings = serviceProvider.getNumberOfRatings();
-        Long rating = (currentRating * numberOfRatings + newRating)/(numberOfRatings+1);
-        serviceProvider.setNumberOfRatings(numberOfRatings);
+        double rating = (double)(currentRating * numberOfRatings + newRating)/(numberOfRatings+1);
+        serviceProvider.setNumberOfRatings(numberOfRatings+1);
         serviceProvider.setRating(rating);
     }
      
