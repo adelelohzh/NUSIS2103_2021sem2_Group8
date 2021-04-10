@@ -155,6 +155,12 @@ public class MainApp {
                         break;
                     }
                 }
+                
+                if (response == 6) 
+                {
+                    break;
+                }
+                
             }
             catch (ParseException | UnknownPersistenceException | InputDataValidationException | AppointmentNumberExistsException ex)
             {
