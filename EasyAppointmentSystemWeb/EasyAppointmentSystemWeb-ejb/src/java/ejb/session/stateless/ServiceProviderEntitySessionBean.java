@@ -248,6 +248,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     {   
         ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
         serviceProvider.setStatusEnum(StatusEnum.Approved);
+
     }
     
     @Override
@@ -255,6 +256,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     {   
         ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
         serviceProvider.setStatusEnum(StatusEnum.Blocked);
+
     }
     
     public void registerServiceProvider(String name, int category, String businessRegNumber, String city, String phone, String addr, String email, String password) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException
