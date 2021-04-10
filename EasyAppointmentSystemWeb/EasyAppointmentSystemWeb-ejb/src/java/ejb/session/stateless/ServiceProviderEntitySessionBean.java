@@ -17,6 +17,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.StatusEnum;
 import util.exception.DeleteServiceProviderException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
@@ -240,6 +241,20 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         {
             System.out.println("Service Provider Record cannot be found!");
         }
+    }
+    
+    @Override
+    public void approveServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException
+    {   
+        ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
+        serviceProvider.setStatusEnum(StatusEnum.Approved);
+    }
+    
+    @Override
+    public void blockServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException
+    {   
+        ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
+        serviceProvider.setStatusEnum(StatusEnum.Blocked);
     }
     
     public void registerServiceProvider(String name, int category, String businessRegNumber, String city, String phone, String addr, String email, String password) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException

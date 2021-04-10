@@ -35,4 +35,7 @@ public interface ServiceProviderEntitySessionBeanRemote
 
     public void updateRating(double newRating, Long serviceProviderId) throws ServiceProviderNotFoundException;
 
+    public void approveServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException;
+
+    public void blockServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException;
 }
