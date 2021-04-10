@@ -2,7 +2,7 @@ package easyappointmentsystemwebadminclient;
 
 import javax.ejb.EJB;
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
-import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
+import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.EmailSessionBeanRemote;

@@ -35,34 +35,20 @@ public class BusinessCategoryEntity implements Serializable {
     
     @OneToMany(mappedBy = "businessCategoryEntity")
     private List<ServiceProviderEntity> serviceProviderEntities;
-    
-    @OneToMany(mappedBy = "businessCategoryEntity")
-    private List<AppointmentEntity> appointmentEntities;
 
     public BusinessCategoryEntity() 
     {
     }
     
-    
-
     public BusinessCategoryEntity(String category) 
     {
         this();
         this.category = category;
         this.serviceProviderEntities = new ArrayList<>();
-        this.appointmentEntities = new ArrayList<>();
     }
     
     public Long getBusinessCategoryId() {
         return businessCategoryId;
-    }
-
-    public List<AppointmentEntity> getAppointmentEntities() {
-        return appointmentEntities;
-    }
-
-    public void setAppointmentEntities(List<AppointmentEntity> appointmentEntities) {
-        this.appointmentEntities = appointmentEntities;
     }
     
     public String getCategory() {

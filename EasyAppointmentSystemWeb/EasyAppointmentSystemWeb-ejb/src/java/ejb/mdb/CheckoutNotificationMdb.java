@@ -5,7 +5,7 @@
  */
 package ejb.mdb;
 
-import ejb.session.stateful.AppointmentEntitySessionBeanLocal;
+import ejb.session.stateless.AppointmentEntitySessionBeanLocal;
 import ejb.session.stateless.EmailSessionBeanLocal;
 import entity.AppointmentEntity;
 import java.util.logging.Level;

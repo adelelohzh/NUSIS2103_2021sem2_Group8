@@ -1,19 +1,11 @@
-package ejb.session.stateful;
+package ejb.session.stateless;
 
-import ejb.session.stateful.AppointmentEntitySessionBeanLocal;
-import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
-import ejb.session.stateless.CustomerEntitySessionBeanLocal;
-import ejb.session.stateless.ServiceProviderEntitySessionBeanLocal;
 import entity.AppointmentEntity;
 import entity.CustomerEntity;
 import entity.ServiceProviderEntity;
-import java.sql.Time;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -37,11 +29,10 @@ import util.exception.UnknownPersistenceException;
 
 
 @Stateless
-@Local(AppointmentEntitySessionBeanLocal.class)
-@Remote(AppointmentEntitySessionBeanRemote.class)
+@Local(ejb.session.stateless.AppointmentEntitySessionBeanLocal.class)
+@Remote(ejb.session.stateless.AppointmentEntitySessionBeanRemote.class)
 public class AppointmentEntitySessionBean implements AppointmentEntitySessionBeanRemote, AppointmentEntitySessionBeanLocal 
 {
-
     @EJB
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
     @EJB
@@ -219,3 +210,4 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         em.merge(appointmentEntity);
     }
 }
+
