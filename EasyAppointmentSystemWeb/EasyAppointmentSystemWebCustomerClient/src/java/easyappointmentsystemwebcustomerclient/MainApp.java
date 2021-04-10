@@ -11,6 +11,8 @@ import util.exception.InvalidLoginCredentialException;
 import entity.CustomerEntity;
 import java.text.ParseException;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
 import javax.validation.ConstraintViolation;
@@ -20,6 +22,7 @@ import javax.validation.ValidatorFactory;
 import util.exception.AppointmentNumberExistsException;
 import util.exception.CustomerEmailExistsException;
 import util.exception.InputDataValidationException;
+import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 public class MainApp {
@@ -162,7 +165,7 @@ public class MainApp {
                 }
                 
             }
-            catch (ParseException | UnknownPersistenceException | InputDataValidationException | AppointmentNumberExistsException ex)
+            catch (ParseException | UnknownPersistenceException | InputDataValidationException | AppointmentNumberExistsException | ServiceProviderNotFoundException ex)
             {
                 System.out.println("parseException!");
             }
