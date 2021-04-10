@@ -25,6 +25,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import util.enumeration.StatusEnum;
+import util.exception.BusinessCategoryNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderEmailExistException;
 import util.exception.UnknownPersistenceException;
@@ -59,7 +60,7 @@ public class MainApp {
         this.queueCheckoutNotificationFactory = queueCheckoutNotificationFactory;
     }
 
-    public void runApp() {
+    public void runApp() throws BusinessCategoryNotFoundException {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         while (true) {
@@ -116,7 +117,7 @@ public class MainApp {
         }
     }
 
-    private void registerServiceProvider() {
+    private void registerServiceProvider() throws BusinessCategoryNotFoundException {
         Scanner sc = new Scanner(System.in);
 
         ServiceProviderEntity newServiceProviderEntity = new ServiceProviderEntity();
@@ -182,7 +183,7 @@ public class MainApp {
                 serviceProviderEntity.setBusinessCategory(businessCategoryEntity.getCategory());
            
                 
-                Long serviceProviderId = serviceProviderEntitySessionBeanRemote.createNewServiceProvider(serviceProviderEntity);
+                Long serviceProviderId = serviceProviderEntitySessionBeanRemote.createNewServiceProvider(businessCategoryEntity.getCategory(), serviceProviderEntity);
                 System.out.println("You have been registered successfully!\n");
                 System.out.println();
 
