@@ -5,7 +5,7 @@
  */
 package ejb.session.ws;
 
-import ejb.session.stateful.AppointmentEntitySessionBeanLocal;
+import ejb.session.stateless.AppointmentEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import entity.AppointmentEntity;
 import entity.CustomerEntity;
