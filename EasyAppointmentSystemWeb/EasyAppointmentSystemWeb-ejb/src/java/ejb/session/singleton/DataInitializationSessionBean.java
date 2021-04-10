@@ -29,6 +29,7 @@ import util.exception.AdminUsernameExistException;
 import util.exception.AppointmentNotFoundException;
 import util.exception.AppointmentNumberExistsException;
 import util.exception.BusinessCategoryExistException;
+import util.exception.BusinessCategoryNotFoundException;
 import util.exception.CustomerEmailExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
@@ -79,7 +80,7 @@ public class DataInitializationSessionBean {
     }
 
     
-    private void initializeData()
+    private void initializeData() 
     {
         try
         {
@@ -103,7 +104,7 @@ public class DataInitializationSessionBean {
             newServiceProvider.setPassword("113322");
             newServiceProvider.setStatusEnum(StatusEnum.Approved);
             newServiceProvider.setBusinessCategoryEntity(bizCategoryEntity);
-            serviceProviderEntitySessionBeanLocal.createNewServiceProvider(newServiceProvider);
+            serviceProviderEntitySessionBeanLocal.createNewServiceProvider(bizCategoryEntity.getCategory(), newServiceProvider);
             
             ServiceProviderEntity newServiceProvider2 = new ServiceProviderEntity();
             BusinessCategoryEntity bizCategoryEntity2 = businessCategoryEntitySessionBeanLocal.retrieveAllBusinessCategories().get(1);
@@ -117,7 +118,7 @@ public class DataInitializationSessionBean {
             newServiceProvider2.setPassword("113322");
             newServiceProvider2.setStatusEnum(StatusEnum.Approved);
             newServiceProvider2.setBusinessCategoryEntity(bizCategoryEntity2);
-            serviceProviderEntitySessionBeanLocal.createNewServiceProvider(newServiceProvider2);
+            serviceProviderEntitySessionBeanLocal.createNewServiceProvider(bizCategoryEntity.getCategory(), newServiceProvider2);
             //serviceProviderEntitySessionBeanLocal.createNewServiceProvider(new ServiceProviderEntity("Kevin Peterson", "Health",  "1111001111", "Singapore", "13, Clementi Road", "kevin@nuh.com.sg", "93718799", "113322", StatusEnum.Approved));
             //serviceProviderEntitySessionBeanLocal.createNewServiceProvider(new ServiceProviderEntity("Christian Dior", "Fashion",  "1111001112", "Singapore", "15, Marina One Drive", "dior@gmail.com", "94827980", "113322", StatusEnum.Approved));
 
@@ -197,7 +198,9 @@ public class DataInitializationSessionBean {
             Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } catch (AppointmentNotFoundException ex) {
             Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        } catch (BusinessCategoryNotFoundException ex) {
+            Logger.getLogger(DataInitializationSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
 
