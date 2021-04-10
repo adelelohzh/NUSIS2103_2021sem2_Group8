@@ -85,7 +85,7 @@ public class MainApp {
                     try {
                         CustomerEntity currentCustomerEntity = doLogin();
                         System.out.println("Login successful!\n");
-                        systemAdministrationModule = new SystemAdministrationModule(currentCustomerEntity, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentCustomerEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
+                        systemAdministrationModule = new SystemAdministrationModule(currentCustomerEntity, appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentCustomerEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
                         menuMain(currentCustomerEntity);
                     } catch (InvalidLoginCredentialException ex) {
                         System.out.println("Invalid login credential: " + ex.getMessage() + "\n");

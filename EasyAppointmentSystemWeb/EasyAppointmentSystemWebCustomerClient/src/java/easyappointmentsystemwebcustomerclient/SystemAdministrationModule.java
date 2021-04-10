@@ -71,11 +71,13 @@ public class SystemAdministrationModule {
         validator = validatorFactory.getValidator();
     }
 
-    public SystemAdministrationModule(CustomerEntity customerEntity, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, CustomerEntity currentCustomerEntity, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
+    public SystemAdministrationModule(CustomerEntity customerEntity, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, CustomerEntity currentCustomerEntity, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
         this();
         this.currentCustomerEntity = customerEntity;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
+        this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
+        this.businessCategoryEntitySessionBeanRemote = businessCategoryEntitySessionBeanRemote;
         this.currentAdminEntity = currentAdminEntity;
         this.queueCheckoutNotification = queueCheckoutNotification;
         this.queueCheckoutNotificationFactory = queueCheckoutNotificationFactory;
@@ -124,7 +126,7 @@ public class SystemAdministrationModule {
                             i++;
                         }
 
-                        System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", +s.getServiceProviderId() + " " + s.getName() + " " + firstAvailableTime + " " + s.getBusinessAddress() + " " + s.getRating());
+                        System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + s.getRating());
                     }
                 }
             } catch (ServiceProviderNotFoundException ex) {
@@ -162,13 +164,13 @@ public class SystemAdministrationModule {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate date = LocalDate.parse(currentDate, formatter);
             String day = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US);
+            
+            System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
 
-            if (day.equals("Sunday")) { //insert invalid add appt
+            if (!day.equals("Sunday")) { //insert invalid add appt
 
                 try {
                     List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory, city);
-
-                    System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
                     
 
                     for (ServiceProviderEntity s : serviceProviders) {
@@ -214,6 +216,10 @@ public class SystemAdministrationModule {
                     {
                         availableTimings.add(times.get(index));
                         index++;
+                        if (index == 10)
+                        {
+                            break;
+                        }
                     }
                 }
                 
