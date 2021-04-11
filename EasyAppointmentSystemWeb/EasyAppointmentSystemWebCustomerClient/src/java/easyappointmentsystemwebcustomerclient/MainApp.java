@@ -249,7 +249,7 @@ public class MainApp {
                 showInputDataValidationErrorsForCustomerEntity(constraintViolations);
             }
         } catch (CustomerEmailExistsException ex) {
-            System.out.println("An error has occurred while creating the new customer!: The username already exists\n");
+            System.out.println("An error has occurred while creating the new customer!: The email already exists\n");
         } catch (UnknownPersistenceException ex) {
             System.out.println("An unknown error has occurred while creating the new customer!: " + ex.getMessage() + "\n");
         } catch (InputDataValidationException ex) {
