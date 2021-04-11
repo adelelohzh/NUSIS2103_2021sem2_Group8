@@ -324,14 +324,23 @@ public class SystemAdministrationModule {
                             System.out.println("Here now is it valid: " + validTime);
                             if (validTime == Boolean.TRUE) {
                                 try {
+                                    System.out.println("Entering this loop");
                                     AppointmentEntity appointmentEntity = new AppointmentEntity();
-                                    String serviceProviderUIN = String.valueOf(serviceProviderId);
-                                    String appointmentNumber = serviceProviderUIN + response + currentDate;
+                                    String serviceProviderUIN = serviceProviderId.toString();
+                                    System.out.println("Entering this loop 1 " + serviceProviderUIN);
+                                    String appointmentNumber = serviceProviderUIN + Integer.toString(appointmentDate.getMonthValue()) + appointmentDate.getDayOfMonth();
+                                    int hour  = appointmentTime.getHour();
+                                    int minute = appointmentTime.getMinute();
+                                    appointmentNumber += Integer.toString(hour) + Integer.toString(minute);
+                                    
+                                    System.out.println("Entering this loop 2 " + appointmentNumber);
                                     appointmentEntity.setAppointmentNo(appointmentNumber);
                                     appointmentEntity.setScheduledTime(time);
                                     appointmentEntity.setScheduledDate(date);
                                     appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
+                                    System.out.println("Entering this loop 3");
                                     currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
+                                    System.out.println("Entering this loop 4");
                                     serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
 
                                 } catch (CustomerNotFoundException ex) {
