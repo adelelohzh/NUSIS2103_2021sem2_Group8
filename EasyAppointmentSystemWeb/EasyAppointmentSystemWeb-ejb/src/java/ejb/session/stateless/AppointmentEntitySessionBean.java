@@ -238,17 +238,17 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         // are there any exception cases?
     }
     
-    @Override
-    public void cancelAppointment(String appointmentNo) throws AppointmentNotFoundException
-    {
-
-        AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
-        appointmentEntity.setIsCancelled(Boolean.TRUE);
-        appointmentEntity.getCustomerEntity().getAppointmentEntities().size();
-        appointmentEntity.getServiceProviderEntity().getAppointmentEntities().size();
-        em.merge(appointmentEntity);
-        em.flush();
-    }
+//    @Override
+//    public void cancelAppointment(String appointmentNo) throws AppointmentNotFoundException
+//    {
+//
+//        AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
+//        appointmentEntity.setIsCancelled(Boolean.TRUE);
+//        appointmentEntity.getCustomerEntity().getAppointmentEntities().size();
+//        appointmentEntity.getServiceProviderEntity().getAppointmentEntities().size();
+//        em.merge(appointmentEntity);
+//        em.flush();
+//    }
     
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<AppointmentEntity>>constraintViolations)
     {
