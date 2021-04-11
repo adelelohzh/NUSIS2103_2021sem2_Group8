@@ -33,4 +33,7 @@ public interface AppointmentEntitySessionBeanRemote
 
     public void updateAppointmentEntity(AppointmentEntity appointmentEntity);
     
+    public List<AppointmentEntity> retrieveAppointmentByCustomer(Long customerId, Long serviceProviderId);
+
+    
 }

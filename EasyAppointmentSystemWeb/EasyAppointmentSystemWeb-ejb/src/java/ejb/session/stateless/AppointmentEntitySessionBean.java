@@ -191,6 +191,23 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         }
         return apptList;
     }
+    
+    @Override
+    public List<AppointmentEntity> retrieveAppointmentByCustomer(Long customerId, Long serviceProviderId) 
+    {
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.customerEntity.customerId = :inCustomerId and a.serviceProviderEntity.serviceProviderId = :inServiceProviderId ORDER BY a.scheduledDate");
+        query.setParameter("inCustomerId", customerId);
+        query.setParameter("inServiceProviderId", serviceProviderId);
+        
+        List<AppointmentEntity> apptList = query.getResultList();
+        for (AppointmentEntity a : apptList)
+        {
+            a.getCustomerEntity();
+            a.getBusinessCategoryEntity();
+            a.getServiceProviderEntity();
+        }
+        return apptList;
+    }
 
 
     @Override
@@ -211,6 +228,11 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
 
         AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
         appointmentEntity.setIsCancelled(Boolean.TRUE);
+        em.merge(appointmentEntity);
+        em.flush();
+        appointmentEntity.getCustomerEntity().getAppointmentEntities().size();
+        appointmentEntity.getServiceProviderEntity().getAppointmentEntities().size();
+
         
     }
     

@@ -35,5 +35,7 @@ public interface AppointmentEntitySessionBeanLocal {
     public void cancelAppointment(String appointmentNo) throws AppointmentNotFoundException;
 
     public void updateAppointmentEntity(AppointmentEntity appointmentEntity);
+
+    public List<AppointmentEntity> retrieveAppointmentByCustomer(Long customerId, Long serviceProviderId);
     
 }
