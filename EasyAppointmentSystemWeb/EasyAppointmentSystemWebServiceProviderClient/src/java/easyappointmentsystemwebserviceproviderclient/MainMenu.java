@@ -181,19 +181,16 @@ public class MainMenu {
     public void viewAppointment() {
         Scanner sc = new Scanner(System.in);
         String response = "";
-        
+
         System.out.println("*** Service provider terminal :: View Appointments ***\n");
         System.out.println("Appointments: \n");
         System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.\n");
-        
-        try
-        {
+
+        try {
             List<AppointmentEntity> appointments = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(currentServiceProviderEntity.getServiceProviderId()).getAppointmentEntities();
 
             for (AppointmentEntity appointment : appointments) {
-                if (appointment.getIsCancelled() == false) {
-                    System.out.printf("%-15s%-13s%-8s%-15s\n", appointment.getCustomerEntity().getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
-                }
+                System.out.printf("%-15s%-13s%-8s%-15s\n", appointment.getCustomerEntity().getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
             }
 
             System.out.println();
@@ -222,9 +219,7 @@ public class MainMenu {
         System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.\n");
 
         for (AppointmentEntity appointment : appointments) {
-            if (appointment.getIsCancelled() == false) {
-                System.out.printf("%-15s%-13s%-8s%-15s\n", appointment.getCustomerEntity().getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
-            }
+            System.out.printf("%-15s%-13s%-8s%-15s\n", appointment.getCustomerEntity().getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
         }
 
         System.out.println();
@@ -240,13 +235,12 @@ public class MainMenu {
             System.out.println();
 
             if (!response.equals("0")) {
-                
-                try {
-                appointmentNo = response;
-                List<AppointmentEntity> appointmentEntities = currentServiceProviderEntity.getAppointmentEntities();
-                AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentNumber(appointmentNo);
 
-                if (appointmentEntity.getIsCancelled() == false) {
+                try {
+                    appointmentNo = response;
+                    List<AppointmentEntity> appointmentEntities = currentServiceProviderEntity.getAppointmentEntities();
+                    AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentNumber(appointmentNo);
+
                     LocalDate todayDate = LocalDate.now();
                     System.out.println("Today's date is " + todayDate.toString());
                     LocalDate appointmentDate = appointmentEntity.getScheduledDate();
@@ -273,15 +267,12 @@ public class MainMenu {
                         //check whether it is one day from today, if it is check time, else no need do anything
                         if (apptYear > currYear || apptMonth > currMonth || apptDay - currDay > 1) {
                             AppointmentEntity toCancelAppointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentNumber(appointmentNo);
-                            toCancelAppointmentEntity.setIsCancelled(Boolean.TRUE);
-                            appointmentEntitySessionBeanRemote.cancelAppointment(appointmentNo);
+                            appointmentEntitySessionBeanRemote.deleteAppointment(appointmentNo);
                             System.out.println("Appointment successfully cancelled!\n");
                         } else if (apptDay - currDay == 1) {
                             if (compare >= 0) {
                                 AppointmentEntity toCancelAppointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentNumber(appointmentNo);
-                                toCancelAppointmentEntity.setIsCancelled(Boolean.TRUE);
-                                appointmentEntitySessionBeanRemote.cancelAppointment(appointmentNo);
-                                appointmentEntitySessionBeanRemote.cancelAppointment(appointmentNo);
+                                appointmentEntitySessionBeanRemote.deleteAppointment(appointmentNo);
                                 System.out.println("Appointment successfully cancelled!\n");
                             } else {
                                 System.out.println("Appointment cannot be cancelled!\n");
@@ -289,15 +280,14 @@ public class MainMenu {
                         } else {
                             System.out.println("Appointment cannot be cancelled!\n");
                         }
+
+                    } else {
+                        System.out.println("Appointment is already cancelled!\n");
                     }
 
-                } else {
-                    System.out.println("Appointment is already cancelled!\n");
+                } catch (AppointmentNotFoundException ex) {
+                    System.out.println("Appointment with id: " + appointmentNo + " does not exist!\n");
                 }
-
-            } catch (AppointmentNotFoundException ex) {
-                System.out.println("Appointment with id: " + appointmentNo + " does not exist!\n");
-            }
 
             } else {
                 break;
