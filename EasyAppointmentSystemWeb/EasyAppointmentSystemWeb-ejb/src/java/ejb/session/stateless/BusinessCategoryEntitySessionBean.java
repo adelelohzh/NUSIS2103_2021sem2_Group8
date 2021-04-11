@@ -134,9 +134,9 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
     
 
     @Override
-    public void deleteBusinessCategory(String category) throws DeleteBusinessCategoryException, BusinessCategoryNotFoundException {
+    public void deleteBusinessCategory(Long businessCategoryId) throws DeleteBusinessCategoryException, BusinessCategoryNotFoundException {
 
-        BusinessCategoryEntity currentBusinessCategory = retrieveBusinessCategoriesByName(category);
+        BusinessCategoryEntity currentBusinessCategory = retrieveBusinessCategoriesById(businessCategoryId);
         if (currentBusinessCategory.getServiceProviderEntities().isEmpty())
         {
             em.remove(currentBusinessCategory);
@@ -144,7 +144,7 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
         }
         else
         {
-            throw new DeleteBusinessCategoryException("Business Category Id " + category + " is associated with existing Service Providers record(s) and cannot be deleted!");
+            throw new DeleteBusinessCategoryException("Business Category Id " + businessCategoryId + " is associated with existing Service Providers record(s) and cannot be deleted!");
         }
         
     }
