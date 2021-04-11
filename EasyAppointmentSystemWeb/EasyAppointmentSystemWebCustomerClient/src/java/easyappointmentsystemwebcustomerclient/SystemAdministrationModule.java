@@ -168,7 +168,7 @@ public class SystemAdministrationModule {
         } while (!response.equals("0"));
     }
 
-    public void addAppointment() throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, ServiceProviderNotFoundException {
+    public void addAppointment() throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, ServiceProviderNotFoundException, AppointmentNotFoundException {
 
         Scanner sc = new Scanner(System.in);
         List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17:30", "18:30");
@@ -324,17 +324,22 @@ public class SystemAdministrationModule {
                                     String chosenDate = appointmentDate.toString();
                                     String appointmentNumber = serviceProviderUIN + chosenDate.substring(5, 7) + chosenDate.substring(8, 10);
                                     appointmentNumber += appointmentTime.toString().substring(0, 2) + appointmentTime.toString().substring(3, 5);
-                                    appointmentEntity.setAppointmentNo(appointmentNumber);
-                                    appointmentEntity.setScheduledTime(appointmentTime);
-                                    appointmentEntity.setScheduledDate(appointmentDate);
-                                    appointmentEntity.setCustomerEntity(currentCustomerEntity);
-                                    appointmentEntity.setServiceProviderEntity(serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId));
-                                    appointmentEntity.setBusinessCategoryEntity(businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));
-                                    appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
+                                     // bookingSessionBean 
+                                    bookingSessionBeanRemote.addAppointment(appointmentNumber, appointmentTime, appointmentDate, currentCustomerEntity, serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId), businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));
+                                    
+                                    Long newAppointmentEntityId = bookingSessionBeanRemote.doBooking(currentCustomerEntity.getCustomerId(), serviceProviderId);
+                                    appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentId(newAppointmentEntityId);
+//                                    appointmentEntity.setAppointmentNo(appointmentNumber);
+//                                    appointmentEntity.setScheduledTime(appointmentTime);
+//                                    appointmentEntity.setScheduledDate(appointmentDate);
+//                                    appointmentEntity.setCustomerEntity(currentCustomerEntity);
+//                                    appointmentEntity.setServiceProviderEntity(serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId));
+//                                    appointmentEntity.setBusinessCategoryEntity(businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));    
+//                                    appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
 
                                     //currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
                                     //serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
-                                    System.out.println("Appointment " + appointmentNumber + " added successfully!");
+                                    System.out.println("Appointment " + appointmentEntity.getAppointmentNo() + " added successfully!");
 
                                 } catch (CustomerNotFoundException ex) {
                                     System.out.println("Customer with customer id " + currentCustomerEntity.getCustomerId() + " not found");
