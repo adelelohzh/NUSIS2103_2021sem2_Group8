@@ -355,7 +355,10 @@ public class SystemAdministrationModule {
                                 } catch (AppointmentNotFoundException ex) {
                                     Logger.getLogger(SystemAdministrationModule.class.getName()).log(Level.SEVERE, null, ex);
                                 }
+                                
+                                bookingSessionBeanRemote.clearAppointmentCart();
                             }
+                            
                             // if timeslot exists, confirm appointment
                             // System.out.println("The appointment with " + serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getName() + " at " + time + " on " + currentDate + " is confirmed.");
                             System.out.println("Enter 0 to go back to the previous menu.");
