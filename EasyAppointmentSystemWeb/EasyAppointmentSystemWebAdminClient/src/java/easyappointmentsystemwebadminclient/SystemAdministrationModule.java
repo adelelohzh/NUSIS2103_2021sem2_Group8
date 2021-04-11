@@ -1,5 +1,6 @@
 package easyappointmentsystemwebadminclient;
 
+import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.EmailSessionBeanRemote;
@@ -9,6 +10,9 @@ import entity.AppointmentEntity;
 import entity.BusinessCategoryEntity;
 import entity.CustomerEntity;
 import entity.ServiceProviderEntity;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Future;
@@ -25,11 +29,12 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.StatusEnum;
+import util.exception.AppointmentNotFoundException;
 import util.exception.BusinessCategoryExistException;
 import util.exception.BusinessCategoryNotFoundException;
-import util.exception.CreateNewBusinessCategoryException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.thread.RunnableNotification;
@@ -42,6 +47,7 @@ public class SystemAdministrationModule {
     private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
     private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
     private BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote;
+    private AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
     private EmailSessionBeanRemote emailSessionBeanRemote;
 
     private AdminEntity currentAdminEntity;
@@ -54,13 +60,16 @@ public class SystemAdministrationModule {
         validator = validatorFactory.getValidator();
     }
 
-    public SystemAdministrationModule(CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, AdminEntity currentAdminEntity, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
+    public SystemAdministrationModule(AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, AdminEntity currentAdminEntity, EmailSessionBeanRemote emailSessionBeanRemote, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
         this();
+        this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
+        this.businessCategoryEntitySessionBeanRemote = businessCategoryEntitySessionBeanRemote;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
         this.currentAdminEntity = currentAdminEntity;
         this.queueCheckoutNotification = queueCheckoutNotification;
         this.queueCheckoutNotificationFactory = queueCheckoutNotificationFactory;
+        this.emailSessionBeanRemote = emailSessionBeanRemote;
     }
 
     public void viewCustomerAppointments() {
@@ -76,18 +85,33 @@ public class SystemAdministrationModule {
             try {
                 CustomerEntity customerEntity = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(customerId);
                 //retrieve appointments
+
                 List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
                 //print appointments
                 System.out.println("Appointments:");
-                System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
-                for (AppointmentEntity appointmentEntity : appointmentEntities) {
-                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", customerEntity.getFullName(), "| " + appointmentEntity.getBusinessCategoryEntity(), "| " + appointmentEntity.getScheduledDate(), "| " + appointmentEntity.getScheduledTime(), "| " + appointmentEntity.getAppointmentNo());
+
+                if (appointmentEntities.size() != 0) {
+                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
+                    String name = customerEntity.getFullName();
+                    for (AppointmentEntity appointmentEntity : appointmentEntities) {
+                        String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
+                        String scheduledDate = appointmentEntity.getScheduledDate().toString();
+                        String scheduledTime = appointmentEntity.getScheduledTime().toString();
+                        String appointmentNumber = appointmentEntity.getAppointmentNo();
+                        System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
+                    }
+                } else {
+                    throw new AppointmentNotFoundException("No appointments found for customer with customer id " + customerEntity.getCustomerId());
                 }
             } catch (CustomerNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving customer: " + ex.getMessage() + "\n");
+            } catch (AppointmentNotFoundException ex) {
+                System.out.println("No appointments found for customer with customer");
             }
 
             System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            customerId = sc.nextLong();
         } while (customerId != 0);
     }
 
@@ -105,12 +129,20 @@ public class SystemAdministrationModule {
                 System.out.println("Appointments:");
                 System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.");
 
+                String name = serviceProviderEntity.getName();
                 for (AppointmentEntity appointmentEntity : appointmentEntities) {
-                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", serviceProviderEntity.getName(), "| " + appointmentEntity.getBusinessCategoryEntity(), "| " + appointmentEntity.getScheduledDate(), "| " + appointmentEntity.getScheduledTime(), "| " + appointmentEntity.getAppointmentNo());
+                    String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
+                    String scheduledDate = appointmentEntity.getScheduledDate().toString();
+                    String scheduledTime = appointmentEntity.getScheduledTime().toString();
+                    String appointmentNumber = appointmentEntity.getAppointmentNo();
+                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
                 }
-            } catch (ServiceProviderNotFoundException ex) {
+            } catch (ServiceProviderNotFoundException | ServiceProviderBlockedException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             }
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            serviceProviderId = sc.nextLong();
         } while (serviceProviderId != 0);
     }
 
@@ -120,10 +152,10 @@ public class SystemAdministrationModule {
         System.out.println("*** Admin terminal :: View service providers ***\n");
 
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
-        System.out.printf("%-15s%-20s%-15s%-20s%-15s\n", "Name", "| Business category", "| City", "| Overall Rating", "| Status");
+        System.out.printf("%-3s%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", "Id", "| Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status");
 
         for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
-            System.out.printf("%-15s%-20s%-15s%-20s%-15s\n", serviceProviderEntity.getName(), "| " + serviceProviderEntity.getBusinessCategory(), "| " + serviceProviderEntity.getCity(), "| " + serviceProviderEntity.getRating(), "| " + serviceProviderEntity.getStatusEnum());
+            System.out.printf("%-3s%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", serviceProviderEntity.getServiceProviderId(), "| " +serviceProviderEntity.getName(), "| " + serviceProviderEntity.getBusinessCategory(), "| " + serviceProviderEntity.getBusinessRegistrationNumber(), "| " + serviceProviderEntity.getCity(), "| " + serviceProviderEntity.getBusinessAddress(), "| " + serviceProviderEntity.getEmailAddress(), "| " + serviceProviderEntity.getPhoneNumber(), "| " + serviceProviderEntity.getRating(), "| " + serviceProviderEntity.getStatusEnum());
         }
 
         System.out.print("Press any key to continue...> ");
@@ -138,7 +170,7 @@ public class SystemAdministrationModule {
         Long serviceProviderId;
 
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
-        System.out.println("List of service providers with pending approval:");
+        System.out.println("List of service providers with pending approval:\n");
         System.out.printf("%-3s%-7s%-20s%-20s%-7s%-10s%-8s%-7s\n", "Id", "| Name", "| Business category", "| Business Reg. No.", "| City", "| Address", "| Email", "| Phone");
 
         for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
@@ -147,22 +179,39 @@ public class SystemAdministrationModule {
                 System.out.println();
             }
         }
+        
+        System.out.println();
 
         do {
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter service provider Id> ");
             serviceProviderId = sc.nextLong();
+            System.out.println();
             if (serviceProviderId == 0) {
                 break;
             }
 
             try {
                 ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
-                serviceProvider.setStatusEnum(StatusEnum.Approved);
-                System.out.println(serviceProvider.getName() + "'s registration is approved.");
-            } catch (ServiceProviderNotFoundException ex) {
+                if (serviceProvider.getStatusEnum() == StatusEnum.Approved)
+                {
+                    System.out.println("Service Provider is already approved!\n");
+                }
+                else if (serviceProvider.getStatusEnum() == StatusEnum.Blocked)
+                {
+                    System.out.println("Service Provider is blocked and cannot be approved!\n");
+                }
+                else
+                {
+                    serviceProviderEntitySessionBeanRemote.approveServiceProvider(serviceProviderId);                
+                    System.out.println(serviceProvider.getName() + "'s registration is approved.\n");
+                }
+            } catch (ServiceProviderNotFoundException | ServiceProviderBlockedException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             }
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            serviceProviderId = sc.nextLong();
         } while (serviceProviderId != 0);
     }
 
@@ -171,29 +220,53 @@ public class SystemAdministrationModule {
         Scanner sc = new Scanner(System.in);
 
         System.out.println("*** Admin terminal :: Block service provider ***\n");
+        System.out.println("List of service providers:\n");
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
-        viewServiceProviders();
+        System.out.printf("%-3s%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", "Id", "| Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status");
+        for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
+            System.out.printf("%-3s%-15s%-20s%-30s%-15s%-15s%-15s%-20s%-20s%-15s\n", serviceProviderEntity.getServiceProviderId(), "| " +serviceProviderEntity.getName(), "| " + serviceProviderEntity.getBusinessCategory(), "| " + serviceProviderEntity.getBusinessRegistrationNumber(), "| " + serviceProviderEntity.getCity(), "| " + serviceProviderEntity.getBusinessAddress(), "| " + serviceProviderEntity.getEmailAddress(), "| " + serviceProviderEntity.getPhoneNumber(), "| " + serviceProviderEntity.getRating(), "| " + serviceProviderEntity.getStatusEnum());
+        }
+        
+        System.out.println();
+
         Long serviceProviderId;
 
         do {
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter service provider Id> ");
             serviceProviderId = sc.nextLong();
+            System.out.println();
             if (serviceProviderId == 0) {
                 break;
             }
 
             try {
                 ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
-                serviceProviderEntity.setStatusEnum(StatusEnum.Blocked);
-                System.out.println(serviceProviderEntity.getName() + " has been blocked.");
-            } catch (ServiceProviderNotFoundException ex) {
+                if (serviceProviderEntity.getStatusEnum() == StatusEnum.Blocked)
+                {
+                    System.out.println("Service Provider is already blocked!\n");
+                }
+                else
+                {
+                    serviceProviderEntitySessionBeanRemote.blockServiceProvider(serviceProviderId);
+                    System.out.println(serviceProviderEntity.getName() + " has been blocked.\n");
+                    List<AppointmentEntity> apptList = serviceProviderEntity.getAppointmentEntities();
+                    for (AppointmentEntity a: apptList)
+                    {
+                        String apptNo = a.getAppointmentNo();
+                        appointmentEntitySessionBeanRemote.cancelAppointment(apptNo);
+                    }
+                }
+            } catch (ServiceProviderNotFoundException | ServiceProviderBlockedException | AppointmentNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
-            }
+            } 
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            serviceProviderId = sc.nextLong();
         } while (serviceProviderId != 0);
     }
 
-    public void addBusinessCategory() throws BusinessCategoryExistException, CreateNewBusinessCategoryException {
+    public void addBusinessCategory() {
 
         Scanner sc = new Scanner(System.in);
         boolean contains = false;
@@ -202,31 +275,38 @@ public class SystemAdministrationModule {
         System.out.println("*** Admin terminal :: Add a Business category ***\n");
 
         do {
-            System.out.print("Enter 0 to go back to the previous menu.");
+            System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter a new business category> ");
             category = sc.nextLine().trim();
-            if (category.equals(0)) {
+            if (category.equals("0")) {
                 break;
             }
             System.out.println();
 
-            List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
-
-            for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
-
-                if (businessCategory.getCategory().equals(category)) {
-                    contains = true;
-                    throw new BusinessCategoryExistException("Business Category " + category + " already exists!");
-                }
+            try 
+            {
+                BusinessCategoryEntity businessCategory = businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesByName(category);
+                System.out.println("Business Category already exists!\n");
             }
-            if (!contains) {
+            catch (BusinessCategoryNotFoundException ex)
+            {
                 BusinessCategoryEntity newBusinessCategory = new BusinessCategoryEntity();
                 newBusinessCategory.setCategory(category);
-                businessCategoryEntities.add(newBusinessCategory);
-                businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
+                try {
+                    businessCategoryEntitySessionBeanRemote.createNewBusinessCategoryEntity(newBusinessCategory);
+                } catch (UnknownPersistenceException | InputDataValidationException exception) {
+                    System.out.println("Business Category is not created!\n");
+                } catch (BusinessCategoryExistException exception) {
+                    System.out.println("Business Category already exists!\n");
+                }
                 System.out.println("The business category \"\"" + category + "\" is added.");
             }
-        } while (!category.equals(0));
+                
+           
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter service provider Id> ");
+            category = sc.nextLine().trim();
+        } while (!category.equals("0"));
     }
 
     public void removeBusinessCategory() {
@@ -239,10 +319,10 @@ public class SystemAdministrationModule {
             System.out.print("Enter 0 to go back to the previous menu.");
             System.out.print("Enter a business category to remove> ");
             category = sc.nextLine().trim();
-            if (category.equals(0)) {
+            if (category.equals("0")) {
                 break;
             }
-            
+
             try {
                 businessCategoryEntitySessionBeanRemote.deleteBusinessCategory(category);
             } catch (BusinessCategoryNotFoundException ex) {
@@ -250,13 +330,14 @@ public class SystemAdministrationModule {
             }
             //throw new BusinessCategoryNotFoundException("Business Category " + category + " does not exist!");
             System.out.println();
-
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter a business category to remove> ");
+            category = sc.nextLine().trim();
             // method to be added into SessionBean
-            
-        } while (!category.equals(0));
+        } while (!category.equals("0"));
     }
 
-    private void sendJMSMessageToQueueCheckoutNotification(Long customerEntityId, String fromEmailAddress, String toEmailAddress) throws JMSException {
+    private void sendJMSMessageToQueueCheckoutNotification(Long appointmentEntityId, String fromEmailAddress, String toEmailAddress) throws JMSException {
         Connection connection = null;
         Session session = null;
         try {
@@ -266,7 +347,7 @@ public class SystemAdministrationModule {
             MapMessage mapMessage = session.createMapMessage();
             mapMessage.setString("fromEmailAddress", fromEmailAddress);
             mapMessage.setString("toEmailAddress", toEmailAddress);
-            mapMessage.setLong("customerEntityId", customerEntityId);
+            mapMessage.setLong("appointmentEntityId", appointmentEntityId);
             MessageProducer messageProducer = session.createProducer(queueCheckoutNotification);
             messageProducer.send(mapMessage);
         } finally {
@@ -290,36 +371,75 @@ public class SystemAdministrationModule {
         Long customerId;
 
         do {
-            System.out.print("Enter 0 to go back to the previous menu.");
+            
             System.out.print("Enter customer Id> ");
             customerId = sc.nextLong();
 
             try {
                 CustomerEntity currentCustomerEntity = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(customerId);
                 List<AppointmentEntity> customerAppointmentEntities = currentCustomerEntity.getAppointmentEntities();
+                //the above list will retrieve all the previous and upcoming
+
+                LocalDate todayDate = LocalDate.now();
+
+                String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+                LocalTime currTime = LocalTime.parse(time);
+
 
                 if (customerAppointmentEntities.isEmpty()) {
-                    System.out.println("There are no new appointments to " + currentCustomerEntity.getFullName());
+                    throw new AppointmentNotFoundException("There are no new appointments to " + currentCustomerEntity.getFullName());
                 } else {
 
                     String toEmailAddress = currentCustomerEntity.getEmailAddress();
-                    //List<AppointmentEntity> appointmentEntities = customerEntitySessionBeanRemote.getAppointmentEntities();
-                    //if (appointmentEntities.length() == 0) {
-
+                    //get the upcoming one
+                    
+                    int index = 0;
+                    for (AppointmentEntity appointmentEntity : customerAppointmentEntities) {
+                        LocalDate appointmentDate = appointmentEntity.getScheduledDate();
+                        if (appointmentDate.compareTo(todayDate) < 0) { //previous appointment
+                            index++;
+                            continue;
+                        } else if (appointmentDate.compareTo(todayDate) == 0) {
+                            LocalTime appointmentTime = appointmentEntity.getScheduledTime();
+                            if (appointmentTime.compareTo(currTime) <= 0) {
+                                index++;
+                                continue;
+                            } else {
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    AppointmentEntity currentAppointment = customerAppointmentEntities.get(index);
+                    System.out.println("Current Appointment Entity is " + currentAppointment);
                     //}
                     // 01 - Synchronous Session Bean Invocation
-                    emailSessionBeanRemote.emailCheckoutNotificationSync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
+                    String sendTo = "valencia.teh00@gmail.com";
+                    try {
+                        emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Valencia Teh<vtjw1000@gmail.com>", sendTo); //testing with my email first
+                    
+                    
                     // 02 - Asynchronous Session Bean Invocation
-                    Future<Boolean> asyncResult = emailSessionBeanRemote.emailCheckoutNotificationAsync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
-                    RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
+                    //Future<Boolean> asyncResult = emailSessionBeanRemote.emailCheckoutNotificationAsync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
+                    //RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
                     //runnableNotification.start();
                     // 03 - JMS Messaging with Message Driven Bean
-                    sendJMSMessageToQueueCheckoutNotification(customerAppointmentEntities.get(0).getCustomerEntity().getCustomerId(), "Name <name@comp.nus.edu.sg>", toEmailAddress);
-                    System.out.println("Reminder email sent successfully!\n");
+                        //sendJMSMessageToQueueCheckoutNotification(currentAppointment.getAppointmentId(), "Valencia Teh<vtjw1000@gmail.com>", toEmailAddress);
+                        System.out.println("Reminder email sent successfully!\n");
+                    
+                    }
+                    catch (Exception ex) {
+                        System.out.println("An error has occurred while sending the checkout notification email: " + ex.getMessage() + "\n");
+                    }
                 }
-            } catch (InterruptedException | JMSException | CustomerNotFoundException ex) {
+            } catch (CustomerNotFoundException ex) {
                 System.out.println("An error has occurred while sending the reminder email: " + ex.getMessage() + "\n");
+            } catch (AppointmentNotFoundException ex) {
+                System.out.println("There are no appointments to send a reminder email for!");
             }
+            System.out.println("Enter 0 to go back to the previous menu.");
+            System.out.print("Enter customer Id> ");
+            customerId = sc.nextLong();
 
         } while (customerId != 0);
 

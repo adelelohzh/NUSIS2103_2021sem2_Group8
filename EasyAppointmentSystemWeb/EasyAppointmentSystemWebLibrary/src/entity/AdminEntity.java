@@ -13,7 +13,7 @@ import javax.persistence.OneToMany;
 @Entity
 public class AdminEntity implements Serializable {
 
-    private static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long adminId;
@@ -32,10 +32,11 @@ public class AdminEntity implements Serializable {
     {
     }
 
-    public AdminEntity(String email, String password) 
+    public AdminEntity(String name, String email, String password) 
     { 
         this();
         
+        this.name = name;
         this.email = email;
         this.password = password;
     }

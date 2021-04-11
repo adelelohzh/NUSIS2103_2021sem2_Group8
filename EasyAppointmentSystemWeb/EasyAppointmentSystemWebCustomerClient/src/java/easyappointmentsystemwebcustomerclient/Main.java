@@ -1,15 +1,19 @@
 package easyappointmentsystemwebcustomerclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
-import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
+import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.EmailSessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
+import java.text.ParseException;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
+import util.exception.AppointmentNumberExistsException;
+import util.exception.InputDataValidationException;
+import util.exception.UnknownPersistenceException;
 
 
 public class Main {
@@ -37,7 +41,7 @@ public class Main {
     @Resource(mappedName = "jms/queueCheckoutNotificationFactory")
     private static ConnectionFactory queueCheckoutNotificationFactory;
     
-    public static void main(String[] args) 
+    public static void main(String[] args) throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException 
     {
         MainApp mainApp = new MainApp(adminEntitySessionBeanRemote, appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, emailSessionBeanRemote, queueCheckoutNotification, queueCheckoutNotificationFactory);
         mainApp.runApp();

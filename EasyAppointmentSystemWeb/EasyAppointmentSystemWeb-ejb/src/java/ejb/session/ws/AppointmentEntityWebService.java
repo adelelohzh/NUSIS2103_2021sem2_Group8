@@ -5,7 +5,7 @@
  */
 package ejb.session.ws;
 
-import ejb.session.stateful.AppointmentEntitySessionBeanLocal;
+import ejb.session.stateless.AppointmentEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import entity.AppointmentEntity;
 import entity.CustomerEntity;
@@ -19,6 +19,7 @@ import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import util.exception.AppointmentNotFoundException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.ServiceProviderNotFoundException;
 
 /**
  *
@@ -37,11 +38,11 @@ public class AppointmentEntityWebService
     
 
     @WebMethod(operationName = "retrieveSortedAppointmentsByDate")
-    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(@WebParam(name = "username") String emailAddr,
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(@WebParam(name = "email") String emailAddr,
                                                                         @WebParam(name = "password") String password,
                                                                         @WebParam(name = "date") LocalDate date,
                                                                         @WebParam(name = "serviceProviderId") Long serviceProviderId)                                                      
-                                                    throws InvalidLoginCredentialException
+                                                    throws InvalidLoginCredentialException, ServiceProviderNotFoundException
     {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.retrieveSortedAppointmentsByDate(): Customer " 
@@ -52,7 +53,7 @@ public class AppointmentEntityWebService
     }
     
     @WebMethod(operationName = "retrieveAppointmentByAppointmentNumber")
-    public AppointmentEntity retrieveAppointmentByAppointmentNumber(@WebParam(name = "username") String emailAddr,
+    public AppointmentEntity retrieveAppointmentByAppointmentNumber(@WebParam(name = "email") String emailAddr,
                                                                         @WebParam(name = "password") String password,
                                                                         @WebParam(name = "appointmentNumber") String apptNo)                                                 
                                 throws InvalidLoginCredentialException, AppointmentNotFoundException

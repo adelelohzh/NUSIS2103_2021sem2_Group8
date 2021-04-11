@@ -7,8 +7,8 @@ import java.util.concurrent.Future;
 
 public interface EmailSessionBeanLocal {
     
-    public Boolean emailCheckoutNotificationSync(List<AppointmentEntity> customerAppointmentEntities, String name_namecompnusedusg, String toEmailAddress);
+    public Boolean emailCheckoutNotificationSync(AppointmentEntity appointmentEntity, String fromEmailAddress, String toEmailAddress);
 
-    public Future<Boolean> emailCheckoutNotificationAsync(List<AppointmentEntity> appointmentEntities, String fromEmailAddress, String toEmailAddress) throws InterruptedException;
+    public Future<Boolean> emailCheckoutNotificationAsync(AppointmentEntity appointmentEntity, String fromEmailAddress, String toEmailAddress) throws InterruptedException;
     
 }

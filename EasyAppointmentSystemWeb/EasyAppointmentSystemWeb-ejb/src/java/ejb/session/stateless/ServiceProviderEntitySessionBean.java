@@ -1,9 +1,13 @@
 package ejb.session.stateless;
 
+import entity.BusinessCategoryEntity;
 import entity.ServiceProviderEntity;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -17,9 +21,12 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.StatusEnum;
+import util.exception.BusinessCategoryNotFoundException;
 import util.exception.DeleteServiceProviderException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderEmailExistException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -30,6 +37,10 @@ import util.exception.UpdateServiceProviderException;
 @Remote(ServiceProviderEntitySessionBeanRemote.class)
 public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySessionBeanRemote, ServiceProviderEntitySessionBeanLocal 
 {
+
+    @EJB
+    private BusinessCategoryEntitySessionBeanLocal businessCategoryEntitySessionBeanLocal;
+    
     @PersistenceContext(unitName = "EasyAppointmentSystemWeb-ejbPU")
     private EntityManager em;
     
@@ -43,7 +54,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public Long createNewServiceProvider(ServiceProviderEntity newServiceProviderEntity) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException
+    public Long createNewServiceProvider(String businessCategoryName, ServiceProviderEntity newServiceProviderEntity) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException, BusinessCategoryNotFoundException
     {
        try
         {
@@ -51,6 +62,10 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         
             if(constraintViolations.isEmpty())
             {
+                BusinessCategoryEntity businessCategoryEntity = businessCategoryEntitySessionBeanLocal.retrieveBusinessCategoriesByName(businessCategoryName);
+                newServiceProviderEntity.setBusinessCategoryEntity(businessCategoryEntity);
+                businessCategoryEntity.getServiceProviderEntities().add(newServiceProviderEntity);
+
                 em.persist(newServiceProviderEntity);
                 em.flush();
 
@@ -116,56 +131,66 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     @Override
     public ServiceProviderEntity retrieveServiceProviderEntityByEmail(String email) throws ServiceProviderNotFoundException
     {   
-        ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, email);
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.emailAddress = :inEmail and s.statusEnum = util.enumeration.StatusEnum.Approved");
+        query.setParameter("inEmail", email);
 
-        if (serviceProvider != null)
+        try
         {
-            return serviceProvider;
+            ServiceProviderEntity serviceProviderEntity = (ServiceProviderEntity)query.getSingleResult();
+            serviceProviderEntity.getAppointmentEntities().size();
+            return serviceProviderEntity;
         }
-        else
+        catch(NoResultException | NonUniqueResultException ex)
         {
-            throw new ServiceProviderNotFoundException("Serivce Provider email: " + email + " does not exist!");
+            throw new ServiceProviderNotFoundException("Service Provider Email " + email + " does not exist!");
         }
     }
     
      @Override
     public ServiceProviderEntity retrieveServiceProviderEntityByName(String name) throws ServiceProviderNotFoundException
     {   
-        ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, name);
-
-        if (serviceProvider != null)
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.name = :inName and s.statusEnum = util.enumeration.StatusEnum.Approved");
+        query.setParameter("inName", name);
+        
+        try
         {
-            return serviceProvider;
+            ServiceProviderEntity serviceProviderEntity = (ServiceProviderEntity)query.getSingleResult();
+            serviceProviderEntity.getAppointmentEntities().size();
+            return serviceProviderEntity;
         }
-        else
+        catch(NoResultException | NonUniqueResultException ex)
         {
-            throw new ServiceProviderNotFoundException("Serivce Provider Name: " + name + " does not exist!");
+            throw new ServiceProviderNotFoundException("Service Provider Name " + name + " does not exist!");
         }
     }
     
     @Override
     public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(String businessCategory, String city) throws ServiceProviderNotFoundException
     {   
-        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.businessCategory := inBusinessCategory and s.city := inCity");
-        query.setParameter("inBusinessCategory", businessCategory);
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.city = :inCity and s.businessCategory = :inBusinessCategory and s.statusEnum = util.enumeration.StatusEnum.Approved");
         query.setParameter("inCity", city);
+        query.setParameter("inBusinessCategory", businessCategory);
+
         
         return query.getResultList();    
     }
     
+    
     @Override
-    public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException
+    public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException
     {   
-        ServiceProviderEntity serviceProvider = em.find(ServiceProviderEntity.class, serviceProviderId);
+        ServiceProviderEntity serviceProviderEntity = em.find(ServiceProviderEntity.class, serviceProviderId);
 
-        if (serviceProvider != null)
+        if (serviceProviderEntity != null)
         {
-            return serviceProvider;
+            serviceProviderEntity.getAppointmentEntities().size();
         }
-        else
+        else if (serviceProviderEntity.getStatusEnum().equals(StatusEnum.Blocked))
         {
-            throw new ServiceProviderNotFoundException("Serivce Provider ID: " + serviceProviderId + " does not exist!");
+            throw new ServiceProviderBlockedException("Serivce Provider ID: " + serviceProviderId + " is blocked!");
         }
+        
+        return serviceProviderEntity;
     }
     
     @Override
@@ -212,7 +237,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException, DeleteServiceProviderException
+    public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException, DeleteServiceProviderException, ServiceProviderBlockedException
     {
         try
         {
@@ -231,6 +256,23 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         {
             System.out.println("Service Provider Record cannot be found!");
         }
+    }
+    
+    @Override
+    public void approveServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException
+    {   
+        ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
+        serviceProvider.setStatusEnum(StatusEnum.Approved);
+
+    }
+    
+    @Override
+    public void blockServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException
+    {   
+        ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
+        serviceProvider.setStatusEnum(StatusEnum.Blocked);
+        
+
     }
     
     public void registerServiceProvider(String name, int category, String businessRegNumber, String city, String phone, String addr, String email, String password) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException
@@ -260,17 +302,21 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
         newServiceProvider.setEmailAddress(email);
         newServiceProvider.setPassword(password);
         
-        createNewServiceProvider(newServiceProvider);
+        try {
+            createNewServiceProvider(businessCategory, newServiceProvider);
+        } catch (BusinessCategoryNotFoundException ex) {
+            Logger.getLogger(ServiceProviderEntitySessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Override
-    public void updateRating(Long newRating, Long serviceProviderId) throws ServiceProviderNotFoundException
+    public void updateRating(double newRating, Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException
     {
         ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serviceProviderId);
-        Long currentRating = serviceProvider.getRating();
+        double currentRating = serviceProvider.getRating();
         int numberOfRatings = serviceProvider.getNumberOfRatings();
-        Long rating = (currentRating * numberOfRatings + newRating)/(numberOfRatings+1);
-        serviceProvider.setNumberOfRatings(numberOfRatings);
+        double rating = (double)(currentRating * numberOfRatings + newRating)/(numberOfRatings+1);
+        serviceProvider.setNumberOfRatings(numberOfRatings+1);
         serviceProvider.setRating(rating);
     }
      

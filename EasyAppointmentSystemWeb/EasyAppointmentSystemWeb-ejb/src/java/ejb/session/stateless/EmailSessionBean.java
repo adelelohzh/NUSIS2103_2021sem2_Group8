@@ -18,15 +18,15 @@ import util.email.EmailManager;
 
 public class EmailSessionBean implements EmailSessionBeanLocal, EmailSessionBeanRemote 
 {
-    private final String GMAIL_USERNAME = "<REPLACE_WITH_GMAIL_EMAIL>";
-    private final String GMAIL_PASSWORD = "<REPLACE_WITH_GMAIL_PASSWORD>";
+    private final String GMAIL_USERNAME = "vtjw1000@gmail.com";
+    private final String GMAIL_PASSWORD = "Valencia100!";
     
     
     @Override
-    public Boolean emailCheckoutNotificationSync(List<AppointmentEntity> appointmentEntities, String fromEmailAddress, String toEmailAddress)
+    public Boolean emailCheckoutNotificationSync(AppointmentEntity appointmentEntity, String fromEmailAddress, String toEmailAddress)
     {
         EmailManager emailManager = new EmailManager(GMAIL_USERNAME, GMAIL_PASSWORD);
-        Boolean result = emailManager.emailCheckoutNotification(appointmentEntities, fromEmailAddress, toEmailAddress);
+        Boolean result = emailManager.emailCheckoutNotification(appointmentEntity, fromEmailAddress, toEmailAddress);
         
         return result;
     } 
@@ -34,10 +34,10 @@ public class EmailSessionBean implements EmailSessionBeanLocal, EmailSessionBean
     
     
     @Asynchronous
-    public Future<Boolean> emailCheckoutNotificationAsync(List<AppointmentEntity> appointmentEntities, String fromEmailAddress, String toEmailAddress) throws InterruptedException
+    public Future<Boolean> emailCheckoutNotificationAsync(AppointmentEntity appointmentEntity, String fromEmailAddress, String toEmailAddress) throws InterruptedException
     {        
         EmailManager emailManager = new EmailManager(GMAIL_USERNAME, GMAIL_PASSWORD);
-        Boolean result = emailManager.emailCheckoutNotification(appointmentEntities, fromEmailAddress, toEmailAddress);
+        Boolean result = emailManager.emailCheckoutNotification(appointmentEntity, fromEmailAddress, toEmailAddress);
         
         return new AsyncResult<>(result);
     }

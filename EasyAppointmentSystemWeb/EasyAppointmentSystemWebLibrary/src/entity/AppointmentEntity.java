@@ -20,18 +20,16 @@ public class AppointmentEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long appointmentId;
     
     @Column(nullable = false, length = 32)
     private String appointmentNo;
     
     @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalTime scheduledTime;
     
     @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDate scheduledDate;
     
     @ManyToOne(optional = false)
@@ -45,16 +43,29 @@ public class AppointmentEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private BusinessCategoryEntity businessCategoryEntity;
+    
+    @Column(nullable = false)
+    private Boolean isCancelled = false;
 
     public AppointmentEntity() 
     {
     }
 
-    public AppointmentEntity(LocalTime scheduledTime) {
-        LocalTime time=LocalTime.parse(scheduledTime.toString(), DateTimeFormatter.ofPattern("HH:mm"));
+    public AppointmentEntity(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate) {
+        //LocalTime time = LocalTime.parse(scheduledTime.toString(), DateTimeFormatter.ofPattern("HH:mm"));
+        this.scheduledDate = scheduledDate;
         this.scheduledTime = scheduledTime;
+        this.appointmentNo = appointmentNo;
     }
 
+    public AppointmentEntity(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity) {
+        this.appointmentNo = appointmentNo;
+        this.scheduledTime = scheduledTime;
+        this.scheduledDate = scheduledDate;
+        this.customerEntity = customerEntity;
+        this.serviceProviderEntity = serviceProviderEntity;
+        this.businessCategoryEntity = businessCategoryEntity;
+    }
     
     public Long getAppointmentId() {
         return appointmentId;
@@ -130,20 +141,7 @@ public class AppointmentEntity implements Serializable {
     }
 
     public void setBusinessCategoryEntity(BusinessCategoryEntity businessCategoryEntity) {
-        if(this.businessCategoryEntity != null)
-        {
-            this.businessCategoryEntity.getAppointmentEntities().remove(this);
-        }
-        
         this.businessCategoryEntity = businessCategoryEntity;
-        
-        if(this.businessCategoryEntity != null)
-        {
-            if(!this.businessCategoryEntity.getAppointmentEntities().contains(this))
-            {
-                this.businessCategoryEntity.getAppointmentEntities().add(this);
-            }
-        }
     }
 
     public String getAppointmentNo() {
@@ -153,6 +151,17 @@ public class AppointmentEntity implements Serializable {
     public void setAppointmentNo(String appointmentNo) {
         this.appointmentNo = appointmentNo;
     }
+    
+    
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+
+    public void setIsCancelled(Boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+    
     
 
     @Override
@@ -179,5 +188,6 @@ public class AppointmentEntity implements Serializable {
     public String toString() {
         return "entity.AppointmentEntity[ id=" + appointmentId + " ]";
     }
-    
+
+
 }

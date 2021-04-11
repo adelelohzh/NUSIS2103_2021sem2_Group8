@@ -1,7 +1,7 @@
 package easyappointmentsystemwebcustomerclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
-import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
+import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.EmailSessionBeanRemote;
@@ -9,15 +9,20 @@ import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
 import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
 import entity.CustomerEntity;
+import java.text.ParseException;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import util.exception.CustomerUsernameExistException;
+import util.exception.AppointmentNumberExistsException;
+import util.exception.CustomerEmailExistsException;
 import util.exception.InputDataValidationException;
+import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 public class MainApp {
@@ -58,7 +63,7 @@ public class MainApp {
         this.queueCheckoutNotificationFactory = queueCheckoutNotificationFactory;
     }
 
-    public void runApp() {
+    public void runApp() throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         while (true) {
@@ -80,7 +85,7 @@ public class MainApp {
                     try {
                         CustomerEntity currentCustomerEntity = doLogin();
                         System.out.println("Login successful!\n");
-                        systemAdministrationModule = new SystemAdministrationModule(currentCustomerEntity, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentCustomerEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
+                        systemAdministrationModule = new SystemAdministrationModule(currentCustomerEntity, appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentCustomerEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
                         menuMain(currentCustomerEntity);
                     } catch (InvalidLoginCredentialException ex) {
                         System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
@@ -133,30 +138,36 @@ public class MainApp {
             System.out.println("6: Logout\n");
             response = 0;
 
-            while (response < 1 || response > 6) {
-                System.out.print("> ");
+            try
+            {
+                while (response < 1 || response > 6) {
+                    System.out.print("> ");
 
-                response = scanner.nextInt();
-
-                if (response == 1) {
-                    // search operation
-                } else if (response == 2) {
-                    // add appt
-                } else if (response == 3) {
-                    // view appt
-                } else if (response == 4) {
-                    // cancel appt
-                } else if (response == 5) {
-                    // rate service provider
-                } else if (response == 6) {
-                    break;
-                } else {
-                    System.out.println("Invalid option, please try again!\n");
+                    response = scanner.nextInt();
+                    if (response == 1) {
+                        systemAdministrationModule.searchOperation();
+                    } else if (response == 2) {
+                        systemAdministrationModule.addAppointment();
+                    } else if (response == 3) {
+                        systemAdministrationModule.viewAppointments();
+                    } else if (response == 4) {
+                        systemAdministrationModule.cancelAppointment();
+                    } else if (response == 5) {
+                        systemAdministrationModule.rateServiceProvider();
+                    } else if (response == 6) {
+                        break;
+                    }
                 }
+                
+                if (response == 6) 
+                {
+                    break;
+                }
+                
             }
-
-            if (response == 6) {
-                break;
+            catch (ParseException | UnknownPersistenceException | InputDataValidationException | AppointmentNumberExistsException | ServiceProviderNotFoundException ex)
+            {
+                System.out.println("parseException!");
             }
         }
     }
@@ -182,6 +193,7 @@ public class MainApp {
 
         System.out.print("Enter Age> ");
         Integer age = scanner.nextInt();
+        scanner.nextLine();
 
         System.out.print("Enter Phone number> ");
         String phoneNumber = scanner.nextLine().trim();
@@ -192,7 +204,7 @@ public class MainApp {
         System.out.print("Enter City> ");
         String city = scanner.nextLine().trim();
 
-        System.out.print("Enter Email address ");
+        System.out.print("Enter Email address> ");
         String email = scanner.nextLine().trim();
 
         CustomerEntity customerEntity = new CustomerEntity();
@@ -216,7 +228,7 @@ public class MainApp {
                 Long newCustomerId = customerEntitySessionBeanRemote.createNewCustomer(customerEntity);
                 System.out.println("New customer created successfully!: " + newCustomerId + "\n");
             }
-            catch(CustomerUsernameExistException ex)
+            catch(CustomerEmailExistsException ex)
             {
                 System.out.println("An error has occurred while creating the new customer!: The username already exists\n");
             }

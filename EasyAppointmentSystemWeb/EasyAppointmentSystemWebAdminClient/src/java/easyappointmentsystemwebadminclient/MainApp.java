@@ -1,7 +1,7 @@
 package easyappointmentsystemwebadminclient;
 
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
-import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
+import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.ServiceProviderEntitySessionBeanRemote;
@@ -69,7 +69,7 @@ public class MainApp
                     {
                         doLogin();
                         System.out.println("Login successful!\n");
-                        systemAdministrationModule = new SystemAdministrationModule(customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentAdminEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
+                        systemAdministrationModule = new SystemAdministrationModule(appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentAdminEntity, emailSessionBeanRemote, queueCheckoutNotification, queueCheckoutNotificationFactory);
                         menuMain();
                     }
                     catch(InvalidLoginCredentialException ex) 
@@ -97,18 +97,18 @@ public class MainApp
     private void doLogin() throws InvalidLoginCredentialException
     {
         Scanner scanner = new Scanner(System.in);
-        String username = "";
+        String email = "";
         String password = "";
         
         System.out.println("*** Admin terminal :: Login ***\n");
         System.out.print("Enter Email Address> ");
-        username = scanner.nextLine().trim();
+        email = scanner.nextLine().trim();
         System.out.print("Enter Password> ");
         password = scanner.nextLine().trim();
         
-        if(username.length() > 0 && password.length() > 0)
+        if(email.length() > 0 && password.length() > 0)
         {
-            currentAdminEntity = adminEntitySessionBeanRemote.adminLogin(username, password);      
+            currentAdminEntity = adminEntitySessionBeanRemote.adminLogin(email, password);      
         }
         else
         {
@@ -124,7 +124,7 @@ public class MainApp
         while(true)
         {
             System.out.println("*** Admin terminal :: Main ***\n");
-            System.out.println("You are login as " + currentAdminEntity.getAdminId()+ "\n");
+            System.out.println("You are login as " + currentAdminEntity.getName()+ "\n");
             System.out.println("1: View Appointments for customers");
             System.out.println("2: View Appointments for service providers");
             System.out.println("3: View service providers");
@@ -164,7 +164,7 @@ public class MainApp
                 }
                 else if(response == 6)
                 {
-                    //systemAdministrationModule.addBusinessCategory();
+                    systemAdministrationModule.addBusinessCategory();
                 }
                 else if(response == 7)
                 {

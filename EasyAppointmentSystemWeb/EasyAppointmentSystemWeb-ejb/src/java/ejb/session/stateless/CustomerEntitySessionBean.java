@@ -18,7 +18,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.CustomerDeletionException;
 import util.exception.CustomerNotFoundException;
-import util.exception.CustomerUsernameExistException;
+import util.exception.CustomerEmailExistsException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
@@ -42,7 +42,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
     }
     
     @Override
-    public Long createNewCustomer(CustomerEntity newCustomerEntity) throws CustomerUsernameExistException, UnknownPersistenceException, InputDataValidationException
+    public Long createNewCustomer(CustomerEntity newCustomerEntity) throws CustomerEmailExistsException, UnknownPersistenceException, InputDataValidationException
     {
         try
         {
@@ -66,7 +66,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
             {
                 if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
                 {
-                    throw new CustomerUsernameExistException();
+                    throw new CustomerEmailExistsException();
                 }
                 else
                 {
@@ -83,11 +83,12 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
     @Override
     public CustomerEntity retrieveCustomerEntityByCustomerId(Long customerId) throws CustomerNotFoundException
     {   
-        CustomerEntity customer = em.find(CustomerEntity.class, customerId);
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
 
-        if (customer != null)
+        if (customerEntity != null)
         {
-            return customer;
+            customerEntity.getAppointmentEntities().size();
+            return customerEntity;
         }
         else
         {
@@ -98,12 +99,14 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
     @Override
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException
     {
-        Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.email = :inEmail");
+        Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.emailAddress = :inEmail");
         query.setParameter("inEmail", email);
         
         try
         {
-            return (CustomerEntity)query.getSingleResult();
+            CustomerEntity customerEntity = (CustomerEntity)query.getSingleResult();
+            customerEntity.getAppointmentEntities().size();
+            return customerEntity;
         }
         catch(NoResultException | NonUniqueResultException ex)
         {

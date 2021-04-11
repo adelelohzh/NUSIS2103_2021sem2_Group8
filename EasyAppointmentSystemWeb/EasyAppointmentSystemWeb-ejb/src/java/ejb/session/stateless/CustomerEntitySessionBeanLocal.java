@@ -4,7 +4,7 @@ import entity.CustomerEntity;
 import java.util.List;
 import util.exception.CustomerDeletionException;
 import util.exception.CustomerNotFoundException;
-import util.exception.CustomerUsernameExistException;
+import util.exception.CustomerEmailExistsException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
@@ -15,7 +15,7 @@ public interface CustomerEntitySessionBeanLocal {
 
     public CustomerEntity retrieveCustomerEntityByCustomerId(Long customerId) throws CustomerNotFoundException;
 
-    public Long createNewCustomer(CustomerEntity newCustomerEntity) throws CustomerUsernameExistException, UnknownPersistenceException, InputDataValidationException;
+    public Long createNewCustomer(CustomerEntity newCustomerEntity) throws CustomerEmailExistsException, UnknownPersistenceException, InputDataValidationException;
     
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
 
