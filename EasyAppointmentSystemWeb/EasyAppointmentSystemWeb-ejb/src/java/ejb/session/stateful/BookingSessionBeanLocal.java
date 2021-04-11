@@ -43,6 +43,8 @@ public interface BookingSessionBeanLocal {
     public BusinessCategoryEntity getBusinessCategoryEntity();
 
     public void setBusinessCategoryEntity(BusinessCategoryEntity businessCategoryEntity);
+
+    public void addAppointment(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity);
     
     
 }

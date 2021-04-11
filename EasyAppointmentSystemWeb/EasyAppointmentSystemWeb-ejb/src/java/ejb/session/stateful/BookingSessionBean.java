@@ -45,7 +45,16 @@ public class BookingSessionBean implements BookingSessionBeanRemote, BookingSess
         initialiseState();
     }
     
-    
+    @Override
+    public void addAppointment(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity)
+    {
+        this.appointmentNo = appointmentNo;
+        this.scheduledTime = scheduledTime;
+        this.scheduledDate = scheduledDate;
+        this.customerEntity = customerEntity;
+        this.serviceProviderEntity = serviceProviderEntity;
+        this.businessCategoryEntity = businessCategoryEntity;
+    }
     
     @Remove
     public void remove()
