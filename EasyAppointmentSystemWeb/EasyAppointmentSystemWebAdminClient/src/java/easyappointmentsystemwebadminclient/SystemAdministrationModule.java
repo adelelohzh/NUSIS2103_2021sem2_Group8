@@ -98,14 +98,11 @@ public class SystemAdministrationModule {
                     System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.\n");
                     String name = customerEntity.getFullName();
                     for (AppointmentEntity appointmentEntity : appointmentEntities) {
-                        if (appointmentEntity.getIsCancelled().equals(Boolean.FALSE))
-                        {
-                            String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
-                            String scheduledDate = appointmentEntity.getScheduledDate().toString();
-                            String scheduledTime = appointmentEntity.getScheduledTime().toString();
-                            String appointmentNumber = appointmentEntity.getAppointmentNo();
-                            System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
-                        }
+                        String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
+                        String scheduledDate = appointmentEntity.getScheduledDate().toString();
+                        String scheduledTime = appointmentEntity.getScheduledTime().toString();
+                        String appointmentNumber = appointmentEntity.getAppointmentNo();
+                        System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
                     }
                     System.out.println();
                 } else {
@@ -146,14 +143,11 @@ public class SystemAdministrationModule {
                     
                     String name = serviceProviderEntity.getName();
                     for (AppointmentEntity appointmentEntity : appointmentEntities) {
-                        if (appointmentEntity.getIsCancelled().equals(Boolean.FALSE))
-                        {
-                            String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
-                            String scheduledDate = appointmentEntity.getScheduledDate().toString();
-                            String scheduledTime = appointmentEntity.getScheduledTime().toString();
-                            String appointmentNumber = appointmentEntity.getAppointmentNo();
-                            System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
-                        }
+                        String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
+                        String scheduledDate = appointmentEntity.getScheduledDate().toString();
+                        String scheduledTime = appointmentEntity.getScheduledTime().toString();
+                        String appointmentNumber = appointmentEntity.getAppointmentNo();
+                        System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
                     }
                 } else {
                     throw new AppointmentNotFoundException("No appointments found for Service Provider with service provider id " + serviceProviderEntity.getServiceProviderId() + "\n");
@@ -295,7 +289,7 @@ public class SystemAdministrationModule {
                             List<AppointmentEntity> apptList = serviceProviderEntity.getAppointmentEntities();
                             for (AppointmentEntity a : apptList) {
                                 String apptNo = a.getAppointmentNo();
-                                appointmentEntitySessionBeanRemote.cancelAppointment(apptNo);
+                                appointmentEntitySessionBeanRemote.deleteAppointment(apptNo);
                             }
                         }
                     } catch (ServiceProviderNotFoundException | ServiceProviderBlockedException | AppointmentNotFoundException ex) {
