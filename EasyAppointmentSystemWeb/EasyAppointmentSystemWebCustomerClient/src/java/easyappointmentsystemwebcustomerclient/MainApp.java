@@ -10,6 +10,7 @@ import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
 import entity.CustomerEntity;
 import java.text.ParseException;
+import java.util.InputMismatchException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,32 +74,37 @@ public class MainApp {
             System.out.println("3: Exit\n");
             response = 0;
 
-            while (response < 1 || response > 3) {
-                System.out.print("> ");
+            try
+            {
+                while (response < 1 || response > 3) {
+                    System.out.print("> ");
 
-                response = scanner.nextInt();
+                    response = scanner.nextInt();
 
-                if (response == 1) {
-                    doRegister();
+                    if (response == 1) {
+                        doRegister();
 
-                } else if (response == 2) {
-                    try {
-                        CustomerEntity currentCustomerEntity = doLogin();
-                        System.out.println("Login successful!\n");
-                        systemAdministrationModule = new SystemAdministrationModule(currentCustomerEntity, appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentCustomerEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
-                        menuMain(currentCustomerEntity);
-                    } catch (InvalidLoginCredentialException ex) {
-                        System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
+                    } else if (response == 2) {
+                        try {
+                            CustomerEntity currentCustomerEntity = doLogin();
+                            System.out.println("Login successful!\n");
+                            systemAdministrationModule = new SystemAdministrationModule(currentCustomerEntity, appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentCustomerEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
+                            menuMain(currentCustomerEntity);
+                        } catch (InvalidLoginCredentialException ex) {
+                            System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
+                        }
+                    } else if (response == 3) {
+                        break;
+                    } else {
+                        System.out.println("Invalid option, please try again!\n");
                     }
-                } else if (response == 3) {
-                    break;
-                } else {
-                    System.out.println("Invalid option, please try again!\n");
                 }
-            }
 
-            if (response == 3) {
-                break;
+                if (response == 3) {
+                    break;
+                }
+            } catch (InputMismatchException ex) {
+                System.out.println("Invalid option, please try again!\n");
             }
         }
     }
@@ -156,6 +162,8 @@ public class MainApp {
                         systemAdministrationModule.rateServiceProvider();
                     } else if (response == 6) {
                         break;
+                    } else {
+                        System.out.println("Invalid option, please try again!\n");
                     }
                 }
                 
@@ -168,6 +176,8 @@ public class MainApp {
             catch (ParseException | UnknownPersistenceException | InputDataValidationException | AppointmentNumberExistsException | ServiceProviderNotFoundException ex)
             {
                 System.out.println("parseException!");
+            } catch (InputMismatchException ex) {
+                System.out.println("Invalid option, please try again!\n");
             }
         }
     }
@@ -175,75 +185,76 @@ public class MainApp {
     private void doRegister() {
 
         Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter Identity Number(NRIC or Passport)> ");
-        String identityNumber = scanner.nextLine().trim();
-
-        System.out.print("Enter Password> ");
-        String password = scanner.nextLine().trim();
-
-        System.out.print("Enter First Name> ");
-        String firstName = scanner.nextLine().trim();
-
-        System.out.print("Enter Last Name> ");
-        String lastName = scanner.nextLine().trim();
-
-        System.out.print("Enter Gender> ");
-        Character gender = scanner.nextLine().trim().charAt(0);
-
-        System.out.print("Enter Age> ");
-        Integer age = scanner.nextInt();
-        scanner.nextLine();
-
-        System.out.print("Enter Phone number> ");
-        String phoneNumber = scanner.nextLine().trim();
-
-        System.out.print("Enter Address> ");
-        String address = scanner.nextLine().trim();
-
-        System.out.print("Enter City> ");
-        String city = scanner.nextLine().trim();
-
-        System.out.print("Enter Email address> ");
-        String email = scanner.nextLine().trim();
-
         CustomerEntity customerEntity = new CustomerEntity();
-        customerEntity.setIdentityNumber(identityNumber);
-        customerEntity.setPassword(password);
-        customerEntity.setFirstName(firstName);
-        customerEntity.setLastName(lastName);
-        customerEntity.setGender(gender);
-        customerEntity.setAge(age);
-        customerEntity.setPhoneNumber(phoneNumber);
-        customerEntity.setAddress(address);
-        customerEntity.setCity(city);
-        customerEntity.setEmailAddress(email);
-        
-        Set<ConstraintViolation<CustomerEntity>>constraintViolations = validator.validate(customerEntity);
-        
-        if(constraintViolations.isEmpty())
-        {
-            try
-            {
+
+        try {
+            System.out.print("Enter Identity Number(NRIC or Passport)> ");
+            String identityNumber = scanner.nextLine().trim();
+
+            System.out.print("Enter Password> ");
+            String password = scanner.nextLine().trim();
+
+            System.out.print("Enter First Name> ");
+            String firstName = scanner.nextLine().trim();
+
+            System.out.print("Enter Last Name> ");
+            String lastName = scanner.nextLine().trim();
+
+            System.out.print("Enter Gender> ");
+            Character gender = scanner.nextLine().trim().charAt(0);
+
+            while (!gender.equals('M') && !gender.equals('F') && !gender.equals('m') && !gender.equals('f')) {
+                System.out.print("Enter Gender> ");
+                gender = scanner.nextLine().trim().charAt(0);
+            }
+
+            System.out.print("Enter Age> ");
+            Integer age = scanner.nextInt();
+            scanner.nextLine();
+
+            System.out.print("Enter Phone number> ");
+            String phoneNumber = scanner.nextLine().trim();
+
+            System.out.print("Enter Address> ");
+            String address = scanner.nextLine().trim();
+
+            System.out.print("Enter City> ");
+            String city = scanner.nextLine().trim();
+
+            System.out.print("Enter Email address> ");
+            String email = scanner.nextLine().trim();
+
+            customerEntity.setIdentityNumber(identityNumber);
+            customerEntity.setPassword(password);
+            customerEntity.setFirstName(firstName);
+            customerEntity.setLastName(lastName);
+            customerEntity.setGender(gender);
+            customerEntity.setAge(age);
+            customerEntity.setPhoneNumber(phoneNumber);
+            customerEntity.setAddress(address);
+            customerEntity.setCity(city);
+            customerEntity.setEmailAddress(email);
+
+            Set<ConstraintViolation<CustomerEntity>> constraintViolations = validator.validate(customerEntity);
+
+            if (constraintViolations.isEmpty()) {
                 Long newCustomerId = customerEntitySessionBeanRemote.createNewCustomer(customerEntity);
                 System.out.println("New customer created successfully!: " + newCustomerId + "\n");
+            } else {
+                showInputDataValidationErrorsForCustomerEntity(constraintViolations);
             }
-            catch(CustomerEmailExistsException ex)
-            {
-                System.out.println("An error has occurred while creating the new customer!: The username already exists\n");
-            }
-            catch(UnknownPersistenceException ex)
-            {
-                System.out.println("An unknown error has occurred while creating the new customer!: " + ex.getMessage() + "\n");
-            }
-            catch(InputDataValidationException ex)
-            {
-                System.out.println(ex.getMessage() + "\n");
-            }
-        }
-        else
-        {
-            showInputDataValidationErrorsForCustomerEntity(constraintViolations);
+        } catch (CustomerEmailExistsException ex) {
+            System.out.println("An error has occurred while creating the new customer!: The username already exists\n");
+        } catch (UnknownPersistenceException ex) {
+            System.out.println("An unknown error has occurred while creating the new customer!: " + ex.getMessage() + "\n");
+        } catch (InputDataValidationException ex) {
+            System.out.println(ex.getMessage() + "\n");
+
+        } catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException ex) {
+            System.out.println("Character fields cannot be empty!");
+
+        } catch (InputMismatchException ex) {
+            System.out.println("Please enter a valid age value!");
         }
 
     }
