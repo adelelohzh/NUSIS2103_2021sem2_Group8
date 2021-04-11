@@ -37,5 +37,7 @@ public interface AppointmentEntitySessionBeanLocal {
     public void updateAppointmentEntity(AppointmentEntity appointmentEntity);
 
     public List<AppointmentEntity> retrieveAppointmentByCustomer(Long customerId, Long serviceProviderId);
+
+    public List<AppointmentEntity> retrieveAppointmentsByServiceProviderId(Long serviceProviderId);
     
 }
