@@ -369,6 +369,7 @@ public class SystemAdministrationModule {
                 System.out.println("Please input a valid date in YYYY-MM-DD, and a valid time in HH-MM.\n");
             } catch (InputMismatchException ex) {
                 System.out.println("Please input a valid Business Category Id!\n");
+                sc.next();
             }
         } while (!response.equals("0"));
     }
