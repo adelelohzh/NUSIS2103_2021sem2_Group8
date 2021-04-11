@@ -319,8 +319,9 @@ public class SystemAdministrationModule {
                                     appointmentEntity.setServiceProviderEntity(serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId));
                                     appointmentEntity.setBusinessCategoryEntity(businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));
                                     appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
-                                    currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
-                                    serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
+                                    
+                                    //currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
+                                    //serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
 
                                     System.out.println("Appointment " + appointmentNumber + " added successfully!");
                                     
