@@ -50,7 +50,7 @@ public class CustomerEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String city;
     
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, unique = true, length = 32)
     private String emailAddress;
     
     @OneToMany(mappedBy = "customerEntity")

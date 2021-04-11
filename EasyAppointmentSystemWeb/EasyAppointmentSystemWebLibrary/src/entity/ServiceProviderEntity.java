@@ -28,7 +28,7 @@ public class ServiceProviderEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String businessCategory;
     
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, unique = true, length = 32)
     private String businessRegistrationNumber;
     
     @Column(nullable = false, length = 32)
@@ -37,7 +37,7 @@ public class ServiceProviderEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String businessAddress;
     
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, unique = true, length = 32)
     private String emailAddress;
     
     @Column(nullable = false, length = 32)
