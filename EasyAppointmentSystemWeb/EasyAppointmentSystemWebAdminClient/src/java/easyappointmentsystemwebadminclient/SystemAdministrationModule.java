@@ -92,9 +92,9 @@ public class SystemAdministrationModule {
 
                 List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
                 //print appointments
-                System.out.println("Appointments: \n");
 
                 if (appointmentEntities.size() != 0) {
+                    System.out.println("Appointments: \n");
                     System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.\n");
                     String name = customerEntity.getFullName();
                     for (AppointmentEntity appointmentEntity : appointmentEntities) {
@@ -114,7 +114,7 @@ public class SystemAdministrationModule {
             } catch (CustomerNotFoundException ex) {
                 System.out.println("An error has occurred while retrieving customer: " + ex.getMessage() + "\n");
             } catch (AppointmentNotFoundException ex) {
-                System.out.println("No appointments found for customer with customer\n");
+                System.out.println("No appointments found for customer: " + ex.getMessage() + "\n");
             } catch (InputMismatchException | NumberFormatException ex) {
                 System.out.println("Please input a valid Customer ID!");
             }
@@ -139,25 +139,32 @@ public class SystemAdministrationModule {
                 Long serviceProviderId = Long.parseLong(response);
                 ServiceProviderEntity serviceProviderEntity = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
                 List<AppointmentEntity> appointmentEntities = serviceProviderEntity.getAppointmentEntities();
-                System.out.println("Appointments: \n");
-                System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.\n");
-
-                String name = serviceProviderEntity.getName();
-                for (AppointmentEntity appointmentEntity : appointmentEntities) {
-                    if (appointmentEntity.getIsCancelled().equals(Boolean.FALSE))
-                    {
-                        String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
-                        String scheduledDate = appointmentEntity.getScheduledDate().toString();
-                        String scheduledTime = appointmentEntity.getScheduledTime().toString();
-                        String appointmentNumber = appointmentEntity.getAppointmentNo();
-                        System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
+                
+                if (appointmentEntities.size() != 0) {
+                    System.out.println("Appointments: \n");
+                    System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", "Name", "| Business Category", "| Date", "| Time", "| Appointment No.\n");
+                    
+                    String name = serviceProviderEntity.getName();
+                    for (AppointmentEntity appointmentEntity : appointmentEntities) {
+                        if (appointmentEntity.getIsCancelled().equals(Boolean.FALSE))
+                        {
+                            String businessCategory = appointmentEntity.getBusinessCategoryEntity().getCategory();
+                            String scheduledDate = appointmentEntity.getScheduledDate().toString();
+                            String scheduledTime = appointmentEntity.getScheduledTime().toString();
+                            String appointmentNumber = appointmentEntity.getAppointmentNo();
+                            System.out.printf("%-15s%-20s%-13s%-8s%-15s\n", name, "| " + businessCategory, "| " + scheduledDate, "| " + scheduledTime, "| " + appointmentNumber);
+                        }
                     }
+                } else {
+                    throw new AppointmentNotFoundException("No appointments found for Service Provider with service provider id " + serviceProviderEntity.getServiceProviderId() + "\n");
                 }
-                System.out.println();
+                    System.out.println();
             } catch (ServiceProviderNotFoundException | ServiceProviderBlockedException ex) {
                 System.out.println("An error has occurred while retrieving service provider: " + ex.getMessage() + "\n");
             } catch (NumberFormatException ex) {
                 System.out.println("Please enter a valid Service Provider Id!");
+            } catch (AppointmentNotFoundException ex) {
+                System.out.println("No appointments found for Service Provider: " + ex.getMessage() + "\n");
             }
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter service provider Id> ");
@@ -166,18 +173,24 @@ public class SystemAdministrationModule {
         } while (!response.equals("0"));
     }
 
-    public void viewServiceProviders() {
+    public void viewServiceProviders() throws ServiceProviderNotFoundException {
 
         Scanner sc = new Scanner(System.in);
         String response = "";
         System.out.println("*** Admin terminal :: View service providers ***\n");
 
         List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
-        System.out.printf("%-3s%-25s%-20s%-30s%-15s%-30s%-20s%-20s%-20s%-15s\n", "Id", "| Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status\n");
-
-        for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
-            System.out.printf("%-3s%-25s%-20s%-30s%-15s%-30s%-20s%-20s%-20s%-15s\n", serviceProviderEntity.getServiceProviderId(), "| " +serviceProviderEntity.getName(), "| " + serviceProviderEntity.getBusinessCategory(), "| " + serviceProviderEntity.getBusinessRegistrationNumber(), "| " + serviceProviderEntity.getCity(), "| " + serviceProviderEntity.getBusinessAddress(), "| " + serviceProviderEntity.getEmailAddress(), "| " + serviceProviderEntity.getPhoneNumber(), "| " + serviceProviderEntity.getRating(), "| " + serviceProviderEntity.getStatusEnum());
+        
+        if (serviceProviderEntities.size() != 0) 
+        {
+            System.out.printf("%-3s%-25s%-20s%-30s%-15s%-30s%-20s%-20s%-20s%-15s\n", "Id", "| Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status\n");
+            for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
+                System.out.printf("%-3s%-25s%-20s%-30s%-15s%-30s%-20s%-20s%-20s%-15s\n", serviceProviderEntity.getServiceProviderId(), "| " +serviceProviderEntity.getName(), "| " + serviceProviderEntity.getBusinessCategory(), "| " + serviceProviderEntity.getBusinessRegistrationNumber(), "| " + serviceProviderEntity.getCity(), "| " + serviceProviderEntity.getBusinessAddress(), "| " + serviceProviderEntity.getEmailAddress(), "| " + serviceProviderEntity.getPhoneNumber(), "| " + serviceProviderEntity.getRating(), "| " + serviceProviderEntity.getStatusEnum());
+            }
+        } else {
+            throw new ServiceProviderNotFoundException("There are currently no service providers.\n");
         }
+        
         
         while (!response.equals("0"))
         {
