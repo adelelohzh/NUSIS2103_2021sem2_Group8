@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 
 @Entity
@@ -20,15 +22,19 @@ public class CustomerEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
     
+    @NotNull
     @Column(nullable = false, length = 32)
     private String identityNumber;
     
+    @NotNull
     @Column(nullable = false, length = 32)
     private String password;
     
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String firstName;
     
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String lastName;
     
@@ -41,15 +47,19 @@ public class CustomerEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private Integer age;
     
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String phoneNumber;
     
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String address;
     
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String city;
     
+    @NotEmpty
     @Column(nullable = false, unique = true, length = 32)
     private String emailAddress;
     
