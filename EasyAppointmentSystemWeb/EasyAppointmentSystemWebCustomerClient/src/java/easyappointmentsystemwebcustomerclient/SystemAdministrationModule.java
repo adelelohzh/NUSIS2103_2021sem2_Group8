@@ -156,7 +156,7 @@ public class SystemAdministrationModule {
         } while (!response.equals("0"));
     }
 
-    public void addAppointment() throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, ServiceProviderNotFoundException {
+    public void addAppointment() throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, ServiceProviderNotFoundException {
 
         Scanner sc = new Scanner(System.in);
         List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17.30", "18.30");
@@ -269,28 +269,21 @@ public class SystemAdministrationModule {
                         if (!response.equals("0")) {
                             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");          
                             LocalTime time = LocalTime.parse(response, fmt);
-                            System.out.println("Formatted time is now " + time.toString());
 
                             // check whether at least 2 hours before appointment first
                             String currDate = LocalDate.now().toString();
                             LocalDate todayDate = LocalDate.parse(currDate, formatter);
-                            System.out.println("I think this is the error 1");
                             LocalDate appointmentDate = date;  //date of appointment to be scheduled
 
-                            System.out.println("Testing this now: ");
                             String currentTime = LocalTime.now().format(fmt);
-                            System.out.println("Current time is " + currentTime);
                             LocalTime todayTime = LocalTime.parse(currentTime, fmt);
-                            System.out.println("I think this is the error: " + todayTime.toString());
                             LocalTime appointmentTime = time; //what they have inputted
 
                             int comparison = appointmentDate.compareTo(todayDate);
-                            System.out.println("Comparison for Date " + comparison);
                             int compare = appointmentTime.compareTo(todayTime);
-                            System.out.println("Comparison for Time " + comparison);
 
-                            if (comparison == 0) { // same day
-                                if (compare < 2) { //cannot
+                            if (comparison == 0) { 
+                                if (compare < 2) {
                                     System.out.println("Appointment cannot be made!");
                                     return;
                                 }
@@ -312,37 +305,25 @@ public class SystemAdministrationModule {
                                 validTime = false;
                             }
                             
-                            /* for (AppointmentEntity appointment : appointmentEntities) {
-                                LocalTime scheduledTime = appointment.getScheduledTime();
-                                if (appointment.getScheduledTime().toString().equals(time.toString())) {
-                                    System.out.println("Time slot is already full!");
-                                    validTime = false;
-                                    break;
-                                }
-                            } */
-                            
-                            System.out.println("Here now is it valid: " + validTime);
                             if (validTime == Boolean.TRUE) {
                                 try {
-                                    System.out.println("Entering this loop");
                                     AppointmentEntity appointmentEntity = new AppointmentEntity();
                                     String serviceProviderUIN = serviceProviderId.toString();
-                                    System.out.println("Entering this loop 1 " + serviceProviderUIN);
-                                    String appointmentNumber = serviceProviderUIN + Integer.toString(appointmentDate.getMonthValue()) + appointmentDate.getDayOfMonth();
-                                    int hour  = appointmentTime.getHour();
-                                    int minute = appointmentTime.getMinute();
-                                    appointmentNumber += Integer.toString(hour) + Integer.toString(minute);
-                                    
-                                    System.out.println("Entering this loop 2 " + appointmentNumber);
+                                    String chosenDate = appointmentDate.toString();
+                                    String appointmentNumber = serviceProviderUIN + chosenDate.substring(5, 7) + chosenDate.substring(8, 10);
+                                    appointmentNumber += appointmentTime.toString().substring(0, 2) + appointmentTime.toString().substring(3, 5);
                                     appointmentEntity.setAppointmentNo(appointmentNumber);
-                                    appointmentEntity.setScheduledTime(time);
-                                    appointmentEntity.setScheduledDate(date);
+                                    appointmentEntity.setScheduledTime(appointmentTime);
+                                    appointmentEntity.setScheduledDate(appointmentDate);
+                                    appointmentEntity.setCustomerEntity(currentCustomerEntity);
+                                    appointmentEntity.setServiceProviderEntity(serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId));
+                                    appointmentEntity.setBusinessCategoryEntity(businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));
                                     appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
-                                    System.out.println("Entering this loop 3");
                                     currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
-                                    System.out.println("Entering this loop 4");
                                     serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
 
+                                    System.out.println("Appointment " + appointmentNumber + " added successfully!");
+                                    
                                 } catch (CustomerNotFoundException ex) {
                                     System.out.println("Customer with customer id " + currentCustomerEntity.getCustomerId() + " not found");
                                 } catch (ServiceProviderNotFoundException ex) {
@@ -455,7 +436,7 @@ public class SystemAdministrationModule {
 
             } catch (AppointmentNotFoundException ex) {
                 System.out.println("Appointment with id: " + appointmentNo + " does not exist!\n");
-            }
+            } 
 
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter Appointment Id to cancel> ");
