@@ -54,34 +54,34 @@ public class MainApp {
             System.out.println("2: Exit\n");
             response = 0;
 
-            while (response < 1 || response > 2) {
+            try {
+                while (response < 1 || response > 2) {
                     System.out.print("> ");
 
-                    try {
-                        response = scanner.nextInt();
+                    response = scanner.nextInt();
 
-                        if (response == 1) {
-                            try {
-                                doLogin();
-                                System.out.println("Login successful!\n");
-                                systemAdministrationModule = new SystemAdministrationModule(appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentAdminEntity, emailSessionBeanRemote, queueCheckoutNotification, queueCheckoutNotificationFactory);
-                                menuMain();
-                            } catch (InvalidLoginCredentialException ex) {
-                                System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
-                            }
-                        } else if (response == 2) {
-                            break;
-                        } else {
-                            System.out.println("Invalid option, please try again!\n");
+                    if (response == 1) {
+                        try {
+                            doLogin();
+                            System.out.println("Login successful!\n");
+                            systemAdministrationModule = new SystemAdministrationModule(appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentAdminEntity, emailSessionBeanRemote, queueCheckoutNotification, queueCheckoutNotificationFactory);
+                            menuMain();
+                        } catch (InvalidLoginCredentialException ex) {
+                            System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
                         }
-                    } catch (InputMismatchException ex) {
-                        System.out.println("Please enter a valid number!");
-                        scanner.next();
+                    } else if (response == 2) {
+                        break;
+                    } else {
+                        System.out.println("Invalid option, please try again!\n");
                     }
-            }
+                }
 
-            if (response == 2) {
-                break;
+                if (response == 2) {
+                    break;
+                }
+            } catch (InputMismatchException ex) {
+                System.out.println("Please enter a valid number!");
+                scanner.next();
             }
 
         }
