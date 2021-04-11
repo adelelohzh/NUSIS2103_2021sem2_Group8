@@ -168,7 +168,7 @@ public class SystemAdministrationModule {
         } while (!response.equals("0"));
     }
 
-    public void addAppointment() throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, ServiceProviderNotFoundException, AppointmentNotFoundException {
+    public void addAppointment() throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, ServiceProviderNotFoundException {
 
         Scanner sc = new Scanner(System.in);
         List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17:30", "18:30");
@@ -243,6 +243,7 @@ public class SystemAdministrationModule {
 
                     if (!response.equals("0")) {
                         Long serviceProviderId = Long.parseLong(response);
+                        
 
                         List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, serviceProviderId);
                         List<String> availableTimings = new ArrayList<String>();
@@ -318,6 +319,7 @@ public class SystemAdministrationModule {
                             }
 
                             if (validTime == Boolean.TRUE) {
+                      
                                 try {
                                     AppointmentEntity appointmentEntity = new AppointmentEntity();
                                     String serviceProviderUIN = serviceProviderId.toString();
@@ -347,6 +349,8 @@ public class SystemAdministrationModule {
                                     System.out.println("Service with service provider id " + serviceProviderId + " not found");
                                 } catch (ServiceProviderBlockedException ex) {
                                     System.out.println("Service with service provider id " + serviceProviderId + " is blocked!");
+                                } catch (AppointmentNotFoundException ex) {
+                                    Logger.getLogger(SystemAdministrationModule.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                             }
                             // if timeslot exists, confirm appointment
@@ -365,6 +369,7 @@ public class SystemAdministrationModule {
                 System.out.println("Please input a valid date in YYYY-MM-DD, and a valid time in HH-MM.\n");
             } catch (InputMismatchException ex) {
                 System.out.println("Please input a valid Business Category Id!\n");
+                sc.next();
             }
         } while (!response.equals("0"));
     }

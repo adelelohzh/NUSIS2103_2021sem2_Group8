@@ -27,6 +27,7 @@ import javax.naming.NamingException;
 import util.enumeration.StatusEnum;
 import util.exception.BusinessCategoryNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderEmailExistException;
 import util.exception.UnknownPersistenceException;
 
@@ -61,7 +62,7 @@ public class MainApp {
     }
 
     public void runApp() throws BusinessCategoryNotFoundException {
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         Integer response = 0;
         while (true) {
             System.out.println("*** Welcome to Service Provider terminal ***\n");
@@ -71,31 +72,38 @@ public class MainApp {
             response = 0;
 
             while (response < 1 || response > 3) {
-                System.out.print("> ");
 
-                response = scanner.nextInt();
+                try {
+                    System.out.print("> ");
 
-                if (response == 1) {
-                    registerServiceProvider();
-                } else if (response == 2) {
-                    try {
-                        doLogin();
-                        System.out.println("Login successful!\n");
-                        MainMenu mainMenu = new MainMenu(serviceProviderEntitySessionBeanRemote, currentServiceProvider, appointmentEntitySessionBeanRemote);
-                        mainMenu.menu();
-                    } catch (InvalidLoginCredentialException ex) {
-                        System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
+                    response = sc.nextInt();
+
+                    if (response == 1) {
+                        registerServiceProvider();
+                    } else if (response == 2) {
+                        try {
+                            doLogin();
+                            System.out.println("Login successful!\n");
+                            MainMenu mainMenu = new MainMenu(serviceProviderEntitySessionBeanRemote, currentServiceProvider, appointmentEntitySessionBeanRemote);
+                            mainMenu.menu();
+                        } catch (InvalidLoginCredentialException ex) {
+                            System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
+                        } 
+                    } else if (response == 3) {
+                        break;
+                    } else {
+                        System.out.println("Invalid option, please try again!\n");
                     }
-                } else if (response == 3) {
-                    break;
-                } else {
-                    System.out.println("Invalid option, please try again!\n");
+                } catch (InputMismatchException ex) {
+                    System.out.println("Please enter a valid number!");
+                    sc.next();
                 }
             }
 
             if (response == 3) {
                 break;
             }
+
         }
     }
 
@@ -111,8 +119,17 @@ public class MainApp {
         password = sc.nextLine().trim();
 
         if (email.length() > 0 && password.length() > 0) {
-            currentServiceProvider = serviceProviderEntitySessionBeanRemote.doServiceProviderLogin(email, password);
+            try 
+            {
+                currentServiceProvider = serviceProviderEntitySessionBeanRemote.doServiceProviderLogin(email, password);
+            }
+            catch (ServiceProviderBlockedException ex)
+            {
+               System.out.println("Blocked.");
+               throw new InvalidLoginCredentialException("Service Provider is blocked!");
+            }
         } else {
+            
             throw new InvalidLoginCredentialException("Missing login credential!");
         }
     }
@@ -125,7 +142,7 @@ public class MainApp {
         System.out.println("*** Service Provider terminal :: Registration Operation ***\n");
 
         String input = "";
-        
+
         try // is this how to catch?
         {
             System.out.print("Enter Name> ");
@@ -135,10 +152,10 @@ public class MainApp {
 
             //System.out.print("1 Health | 2 Fashion | 3 Education\n");
             List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
-            
+
             int i = 0;
             int max = businessCategoryEntities.size();
-            for (BusinessCategoryEntity businessCategoryEntity: businessCategoryEntities) {
+            for (BusinessCategoryEntity businessCategoryEntity : businessCategoryEntities) {
                 i++;
                 if (i < max) {
                     System.out.print(businessCategoryEntity.getBusinessCategoryId() + " " + businessCategoryEntity.getCategory() + " | ");
@@ -146,12 +163,12 @@ public class MainApp {
                     System.out.print(businessCategoryEntity.getBusinessCategoryId() + " " + businessCategoryEntity.getCategory() + "\n");
                 }
             }
-            
+
             System.out.print("Enter Business Category> ");
             int number = sc.nextInt();
-            
+
             sc.nextLine();
-            
+
             if (number < 1 || number > max) {
                 System.out.println("Invalid option!");
             } else {
@@ -178,36 +195,27 @@ public class MainApp {
                 serviceProviderEntity.setEmailAddress(email);
                 serviceProviderEntity.setPassword(password);
                 serviceProviderEntity.setStatusEnum(StatusEnum.Pending);
-                
-                BusinessCategoryEntity businessCategoryEntity = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories().get(number-1);
+
+                BusinessCategoryEntity businessCategoryEntity = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories().get(number - 1);
                 serviceProviderEntity.setBusinessCategory(businessCategoryEntity.getCategory());
-           
-                
+
                 Long serviceProviderId = serviceProviderEntitySessionBeanRemote.createNewServiceProvider(businessCategoryEntity.getCategory(), serviceProviderEntity);
                 System.out.println("You have been registered successfully!\n");
                 System.out.println();
 
             }
-        } 
-        catch (InputMismatchException ex) 
-        {
+        } catch (InputMismatchException ex) {
             System.out.println("Please input correct values!");
-        } 
-        catch (ServiceProviderEmailExistException ex)
-        {
+        } catch (ServiceProviderEmailExistException ex) {
             System.out.println("This email is already in use!");
-        } 
-        catch (UnknownPersistenceException | InputDataValidationException ex)
-        {
-            System.out.println(ex.getMessage() + "\n");  
-        } 
-        
-        do 
-        {
+        } catch (UnknownPersistenceException | InputDataValidationException ex) {
+            System.out.println(ex.getMessage() + "\n");
+        }
+
+        do {
             System.out.println("Enter 0 to go back to the previous menu.\n");
             System.out.print(">");
             input = sc.nextLine().trim();
-        }
-        while (!input.equals("0"));
+        } while (!input.equals("0"));
     }
 }
