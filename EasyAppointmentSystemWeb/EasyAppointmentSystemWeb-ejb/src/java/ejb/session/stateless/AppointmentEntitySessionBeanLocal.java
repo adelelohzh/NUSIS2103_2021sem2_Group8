@@ -32,7 +32,7 @@ public interface AppointmentEntitySessionBeanLocal {
 
     public void deleteAppointment(String appointmentNo) throws AppointmentNotFoundException;
 
-    public void cancelAppointment(String appointmentNo) throws AppointmentNotFoundException;
+    // public void cancelAppointment(String appointmentNo) throws AppointmentNotFoundException;
 
     public void updateAppointmentEntity(AppointmentEntity appointmentEntity);
 
