@@ -30,15 +30,5 @@ public class EmailSessionBean implements EmailSessionBeanLocal, EmailSessionBean
         
         return result;
     } 
-    
-    
-    
-    @Asynchronous
-    public Future<Boolean> emailCheckoutNotificationAsync(AppointmentEntity appointmentEntity, String fromEmailAddress, String toEmailAddress) throws InterruptedException
-    {        
-        EmailManager emailManager = new EmailManager(GMAIL_USERNAME, GMAIL_PASSWORD);
-        Boolean result = emailManager.emailCheckoutNotification(appointmentEntity, fromEmailAddress, toEmailAddress);
-        
-        return new AsyncResult<>(result);
-    }
+
 }
