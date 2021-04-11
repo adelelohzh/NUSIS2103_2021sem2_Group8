@@ -65,14 +65,13 @@ public class BookingSessionBean implements BookingSessionBeanRemote, BookingSess
     
     private void initialiseState()
     {
-        
+        this.appointmentNo = "";
+        this.scheduledTime = null;
+        this.scheduledDate = null;
+        this.customerEntity = new CustomerEntity();
+        this.serviceProviderEntity = new ServiceProviderEntity();
+        this.businessCategoryEntity = new BusinessCategoryEntity();
     }
-    
-   // @Override
-   // public Integer addAppointment(AppointmentEntity appointmentEntity)
-   // {
-        
-   // }
     
     @Override
     public Long doBooking(Long customerId, Long serviceProviderId) throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, CustomerNotFoundException, ServiceProviderNotFoundException, ServiceProviderBlockedException

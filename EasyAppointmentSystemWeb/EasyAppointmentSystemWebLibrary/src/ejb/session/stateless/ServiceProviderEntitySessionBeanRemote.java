@@ -3,6 +3,7 @@ package ejb.session.stateless;
 import entity.ServiceProviderEntity;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.PersistenceException;
 import util.exception.BusinessCategoryNotFoundException;
 import util.exception.DeleteServiceProviderException;
 import util.exception.InputDataValidationException;
@@ -10,12 +11,13 @@ import util.exception.InvalidLoginCredentialException;
 import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderEmailExistException;
 import util.exception.ServiceProviderNotFoundException;
+import util.exception.ServiceProviderNotUniqueException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateServiceProviderException;
 
 public interface ServiceProviderEntitySessionBeanRemote 
 {
-    public Long createNewServiceProvider(String businessCategoryName, ServiceProviderEntity newServiceProviderEntity) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException, BusinessCategoryNotFoundException;
+    public Long createNewServiceProvider(String businessCategoryName, ServiceProviderEntity newServiceProviderEntity) throws UnknownPersistenceException, InputDataValidationException, BusinessCategoryNotFoundException, ServiceProviderNotUniqueException;
     
     public ServiceProviderEntity doServiceProviderLogin(String email, String password) throws InvalidLoginCredentialException, ServiceProviderBlockedException;
 
@@ -25,7 +27,7 @@ public interface ServiceProviderEntitySessionBeanRemote
 
     public ServiceProviderEntity retrieveServiceProviderEntityById(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException;
 
-    public void updateServiceProvider(ServiceProviderEntity serviceProviderEntity) throws UpdateServiceProviderException, ServiceProviderNotFoundException, InputDataValidationException;
+    public void updateServiceProvider(ServiceProviderEntity serviceProviderEntity) throws ServiceProviderBlockedException, UpdateServiceProviderException, ServiceProviderNotFoundException, InputDataValidationException, ServiceProviderNotUniqueException, UnknownPersistenceException ;
      
     public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException, DeleteServiceProviderException, ServiceProviderBlockedException;
 
@@ -40,4 +42,5 @@ public interface ServiceProviderEntitySessionBeanRemote
     public void approveServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException;
 
     public void blockServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException;
+    
 }

@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package ejb.session.ws;
 
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
@@ -51,6 +47,47 @@ public class ServiceProviderWebService
         return serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityByName(name);
     }
     
+    @WebMethod(operationName = "retrieveServiceProviderEntityByEmail")
+    public ServiceProviderEntity retrieveServiceProviderEntityByEmail(@WebParam(name = "email") String emailAddr,
+                                                                      @WebParam(name = "password") String password,
+                                                                      @WebParam(name = "serviceProviderEmail") String email) 
+                                                            throws InvalidLoginCredentialException, ServiceProviderNotFoundException
+    {
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.retrieveServiceProviderEntityByEmail(): Customer " 
+                            + customerEntity.getEmailAddress() 
+                            + " login remotely via web service");
+        
+        return serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityByEmail(email);
+    }
+    
+    @WebMethod(operationName = "retrieveServiceProviderEntityById")
+    public ServiceProviderEntity retrieveServiceProviderEntityById(@WebParam(name = "email") String emailAddr,
+                                                                   @WebParam(name = "password") String password,
+                                                                   @WebParam(name = "serviceProviderId") Long serviceProviderId) 
+                                                            throws InvalidLoginCredentialException, ServiceProviderNotFoundException, ServiceProviderBlockedException
+    {
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.retrieveServiceProviderEntityById(): Customer " 
+                            + customerEntity.getEmailAddress() 
+                            + " login remotely via web service");
+        
+        return serviceProviderEntitySessionBeanLocal.retrieveServiceProviderEntityById(serviceProviderId);
+    }
+    
+    @WebMethod(operationName = "retrieveAllServiceProviderEntity")
+    public List<ServiceProviderEntity> retrieveAllServiceProviderEntity(@WebParam(name = "email") String emailAddr,
+                                                                        @WebParam(name = "password") String password) 
+                                                            throws InvalidLoginCredentialException
+    {
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.retrieveAllServiceProviderEntity(): Customer " 
+                            + customerEntity.getEmailAddress() 
+                            + " login remotely via web service");
+        
+        return serviceProviderEntitySessionBeanLocal.retrieveAllServiceProviderEntity();
+    }
+    
     @WebMethod(operationName = "retrieveServiceProviderEntityBySearch")
     public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(@WebParam(name = "email") String emailAddr,
                                                                              @WebParam(name = "password") String password,
@@ -80,6 +117,4 @@ public class ServiceProviderWebService
         
         serviceProviderEntitySessionBeanLocal.updateRating(rating, serviceProviderId);
     }
-    
-    
 }

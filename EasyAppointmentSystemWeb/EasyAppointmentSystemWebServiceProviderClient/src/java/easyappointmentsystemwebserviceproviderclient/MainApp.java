@@ -24,11 +24,13 @@ import javax.jms.Queue;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.PersistenceException;
 import util.enumeration.StatusEnum;
 import util.exception.BusinessCategoryNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderEmailExistException;
+import util.exception.ServiceProviderNotUniqueException;
 import util.exception.UnknownPersistenceException;
 
 public class MainApp {
@@ -125,7 +127,6 @@ public class MainApp {
             }
             catch (ServiceProviderBlockedException ex)
             {
-               System.out.println("Blocked.");
                throw new InvalidLoginCredentialException("Service Provider is blocked!");
             }
         } else {
@@ -142,8 +143,10 @@ public class MainApp {
         System.out.println("*** Service Provider terminal :: Registration Operation ***\n");
 
         String input = "";
+        
+        boolean businessRegNumberExists = false;
 
-        try // is this how to catch?
+        try
         {
             System.out.print("Enter Name> ");
             String name = sc.nextLine().trim();
@@ -185,6 +188,18 @@ public class MainApp {
                 System.out.print("Enter Password> ");
                 String password = sc.nextLine().trim();
                 System.out.println();
+                
+                
+                List<ServiceProviderEntity> serviceProviderList = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
+                for (ServiceProviderEntity s: serviceProviderList)
+                {
+                    if (s.getBusinessRegistrationNumber().equals(businessRegNumber))
+                    {
+                        businessRegNumberExists = true;
+                        break;
+                    }
+               }
+
 
                 ServiceProviderEntity serviceProviderEntity = new ServiceProviderEntity();
                 serviceProviderEntity.setName(name);
@@ -202,20 +217,27 @@ public class MainApp {
                 Long serviceProviderId = serviceProviderEntitySessionBeanRemote.createNewServiceProvider(businessCategoryEntity.getCategory(), serviceProviderEntity);
                 System.out.println("You have been registered successfully!\n");
                 System.out.println();
-
             }
         } catch (InputMismatchException ex) {
-            System.out.println("Please input correct values!");
-        } catch (ServiceProviderEmailExistException ex) {
-            System.out.println("This email is already in use!");
+            System.out.print("Please input correct values!\n");
+        } catch (ServiceProviderNotUniqueException ex) {
+            if (businessRegNumberExists == true) 
+            {
+                System.out.println("Registration failed: Business Registration Number already exists!\n");
+            } 
+            else
+            {
+                System.out.print("Registration failed: This email is already in use!\n");
+            }
         } catch (UnknownPersistenceException | InputDataValidationException ex) {
-            System.out.println(ex.getMessage() + "\n");
-        }
+            System.out.print(ex.getMessage() + "\n");
+        } 
 
-        do {
-            System.out.println("Enter 0 to go back to the previous menu.\n");
+        while (!input.equals("0")) {
+            System.out.println();
+            System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print(">");
             input = sc.nextLine().trim();
-        } while (!input.equals("0"));
+        }
     }
 }

@@ -21,6 +21,8 @@ import util.exception.AppointmentNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderNotFoundException;
+import util.exception.ServiceProviderNotUniqueException;
+import util.exception.UnknownPersistenceException;
 import util.exception.UpdateServiceProviderException;
 
 public class MainMenu {
@@ -163,6 +165,12 @@ public class MainMenu {
                 System.out.print("Profile has NOT been updated!\n");
             } catch (InputDataValidationException ex) {
                 System.out.print(ex.getMessage() + "\n");
+            } catch (ServiceProviderNotUniqueException ex) {
+                System.out.print("This email is already in use!\n");
+            } catch (UnknownPersistenceException ex) {
+                System.out.print(ex.getMessage() + "\n");
+            } catch (ServiceProviderBlockedException ex) {
+                System.out.print("Service Provider is blocked!\n");
             }
         } else {
             showInputDataValidationErrorsForServiceProviderEntity(constraintViolations);
@@ -187,8 +195,11 @@ public class MainMenu {
         System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.\n");
 
         try {
-            List<AppointmentEntity> appointments = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(currentServiceProviderEntity.getServiceProviderId()).getAppointmentEntities();
+//            List<AppointmentEntity> appointments = appointmentEntitySessionBeanRemote.retrieveAppointmentsByServiceProviderId(currentServiceProviderEntity.getServiceProviderId());
 
+            List<AppointmentEntity> appointments = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(currentServiceProviderEntity.getServiceProviderId()).getAppointmentEntities();
+            appointments.size();
+            
             for (AppointmentEntity appointment : appointments) {
                 System.out.printf("%-15s%-13s%-8s%-15s\n", appointment.getCustomerEntity().getFullName(), "| " + appointment.getScheduledDate(), "| " + appointment.getScheduledTime(), "| " + appointment.getAppointmentNo());
             }
@@ -211,8 +222,12 @@ public class MainMenu {
     public void cancelAppointment() {
         Scanner sc = new Scanner(System.in);
         String response = "";
+        
+        try 
+        {
 
-        List<AppointmentEntity> appointments = appointmentEntitySessionBeanRemote.retrieveAppointmentsByServiceProviderId(currentServiceProviderEntity.getServiceProviderId());
+//        List<AppointmentEntity> appointments = appointmentEntitySessionBeanRemote.retrieveAppointmentsByServiceProviderId(currentServiceProviderEntity.getServiceProviderId());
+        List<AppointmentEntity> appointments = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(currentServiceProviderEntity.getServiceProviderId()).getAppointmentEntities();
 
         System.out.println("*** Service provider terminal :: Delete Appointments ***\n");
         System.out.println("Appointments: \n");
@@ -292,6 +307,11 @@ public class MainMenu {
             } else {
                 break;
             }
+        }
+        } catch (ServiceProviderNotFoundException ex) {
+            System.out.println("Service Provider Id : " + currentServiceProviderEntity.getServiceProviderId() + " not found");
+        } catch (ServiceProviderBlockedException ex) {
+            System.out.println("Service Provider Id : " + currentServiceProviderEntity.getServiceProviderId() + " is blocked!");
         }
         System.out.println();
     }
