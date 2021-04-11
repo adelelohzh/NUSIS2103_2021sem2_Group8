@@ -1,5 +1,6 @@
 package easyappointmentsystemwebcustomerclient;
 
+import ejb.session.stateful.BookingSessionBeanRemote;
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
 import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
@@ -19,6 +20,9 @@ import util.exception.UnknownPersistenceException;
 public class Main {
 
     @EJB
+    private static BookingSessionBeanRemote bookingSessionBean;
+
+    @EJB
     private static ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
 
     @EJB
@@ -36,6 +40,8 @@ public class Main {
     @EJB
     private static AdminEntitySessionBeanRemote adminEntitySessionBeanRemote;
     
+    
+    
     @Resource(mappedName = "jms/queueCheckoutNotification")
     private static Queue queueCheckoutNotification;
     @Resource(mappedName = "jms/queueCheckoutNotificationFactory")
@@ -43,7 +49,7 @@ public class Main {
     
     public static void main(String[] args) throws ParseException, UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException 
     {
-        MainApp mainApp = new MainApp(adminEntitySessionBeanRemote, appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, emailSessionBeanRemote, queueCheckoutNotification, queueCheckoutNotificationFactory);
+        MainApp mainApp = new MainApp(adminEntitySessionBeanRemote, appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, bookingSessionBean, emailSessionBeanRemote, queueCheckoutNotification, queueCheckoutNotificationFactory);
         mainApp.runApp();
     }
     
