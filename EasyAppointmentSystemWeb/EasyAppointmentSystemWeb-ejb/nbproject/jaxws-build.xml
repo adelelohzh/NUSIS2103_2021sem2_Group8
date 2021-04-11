@@ -17,7 +17,7 @@
             <classpath path="${j2ee.platform.wsgen.classpath}"/>
         </taskdef>
     </target>
-    <target name="wsgen-compile" depends="wsgen-ServiceProviderWebService, wsgen-BusinessCategoryEntityWebService, wsgen-AppointmentEntityWebService, wsgen-EmailWebService">
+    <target name="wsgen-compile" depends="wsgen-BusinessCategoryEntityWebService, wsgen-EmailWebService, wsgen-AppointmentEntityWebService, wsgen-ServiceProviderWebService">
         <ejbjarproject2:javac srcdir="${build.generated.sources.dir}/jax-ws" classpath="${j2ee.platform.wsgen.classpath}:${javac.classpath}" destdir="${classes.dir}"/>
     </target>
     <target name="wsgen-BusinessCategoryEntityWebService" depends="wsgen-init, -do-compile">

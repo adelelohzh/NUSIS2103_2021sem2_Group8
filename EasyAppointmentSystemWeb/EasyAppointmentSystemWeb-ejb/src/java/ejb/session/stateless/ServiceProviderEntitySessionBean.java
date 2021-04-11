@@ -220,7 +220,10 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     public void deleteServiceProvider(Long serivceProviderId) throws ServiceProviderNotFoundException, DeleteServiceProviderException, ServiceProviderBlockedException {
         try {
             ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serivceProviderId);
-            if (serviceProvider.getAppointmentEntities().isEmpty()) {
+            if (serviceProvider.getAppointmentEntities().isEmpty())
+            {
+                BusinessCategoryEntity businessCategoryEntity = serviceProvider.getBusinessCategoryEntity();
+                businessCategoryEntity.getServiceProviderEntities().remove(serviceProvider);
                 em.remove(serviceProvider);
                 em.flush();
             } else {

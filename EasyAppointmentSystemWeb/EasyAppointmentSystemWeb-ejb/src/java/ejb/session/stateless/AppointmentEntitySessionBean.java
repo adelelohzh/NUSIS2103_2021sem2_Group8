@@ -233,8 +233,11 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
 
         em.remove(appointmentEntity);
+        CustomerEntity customerEntity = appointmentEntity.getCustomerEntity();
+        ServiceProviderEntity serviceProviderEntity = appointmentEntity.getServiceProviderEntity();
+        serviceProviderEntity.getAppointmentEntities().remove(appointmentEntity);
+        customerEntity.getAppointmentEntities().remove(appointmentEntity);
         em.flush();
-        
         // are there any exception cases?
     }
     
