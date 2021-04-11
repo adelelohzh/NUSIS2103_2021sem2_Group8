@@ -5,6 +5,7 @@
  */
 package easyappointmentsystemwebcustomerclient;
 
+import ejb.session.stateful.BookingSessionBeanRemote;
 import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
@@ -62,6 +63,7 @@ public class SystemAdministrationModule {
     private BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote;
     private EmailSessionBeanRemote emailSessionBeanRemote;
     private AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
+    private BookingSessionBeanRemote bookingSessionBeanRemote;
 
     private AdminEntity currentAdminEntity;
 
@@ -73,14 +75,17 @@ public class SystemAdministrationModule {
         validator = validatorFactory.getValidator();
     }
 
-    public SystemAdministrationModule(CustomerEntity customerEntity, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, CustomerEntity currentCustomerEntity, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
+    public SystemAdministrationModule(CustomerEntity customerEntity, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, BookingSessionBeanRemote bookingSessionBeanRemote, CustomerEntity currentCustomerEntity, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
         this();
         this.currentCustomerEntity = customerEntity;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
         this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
         this.businessCategoryEntitySessionBeanRemote = businessCategoryEntitySessionBeanRemote;
+        this.bookingSessionBeanRemote = bookingSessionBeanRemote;
+        
         this.currentAdminEntity = currentAdminEntity;
+        
         this.queueCheckoutNotification = queueCheckoutNotification;
         this.queueCheckoutNotificationFactory = queueCheckoutNotificationFactory;
     }
