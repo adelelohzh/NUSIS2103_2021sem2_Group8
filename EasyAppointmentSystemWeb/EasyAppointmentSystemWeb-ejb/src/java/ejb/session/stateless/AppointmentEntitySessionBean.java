@@ -193,6 +193,22 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
+    public List<AppointmentEntity> retrieveAppointmentsByServiceProviderId(Long serviceProviderId) 
+    {
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.serviceProviderEntity.serviceProviderId = :inServiceProviderId ORDER BY a.scheduledDate");
+        query.setParameter("inServiceProviderId", serviceProviderId);
+        
+        List<AppointmentEntity> apptList = query.getResultList();
+        for (AppointmentEntity a : apptList)
+        {
+            a.getCustomerEntity();
+            a.getBusinessCategoryEntity();
+            a.getServiceProviderEntity();
+        }
+        return apptList;
+    }
+    
+    @Override
     public List<AppointmentEntity> retrieveAppointmentByCustomer(Long customerId, Long serviceProviderId) 
     {
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.customerEntity.customerId = :inCustomerId and a.serviceProviderEntity.serviceProviderId = :inServiceProviderId ORDER BY a.scheduledDate");
@@ -228,12 +244,10 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
 
         AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
         appointmentEntity.setIsCancelled(Boolean.TRUE);
-        em.merge(appointmentEntity);
-        em.flush();
         appointmentEntity.getCustomerEntity().getAppointmentEntities().size();
         appointmentEntity.getServiceProviderEntity().getAppointmentEntities().size();
-
-        
+        em.merge(appointmentEntity);
+        em.flush();
     }
     
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<AppointmentEntity>>constraintViolations)

@@ -18,7 +18,7 @@ public interface ServiceProviderEntitySessionBeanLocal
 
     public Long createNewServiceProvider(String businessCategoryName, ServiceProviderEntity newServiceProviderEntity) throws ServiceProviderEmailExistException, UnknownPersistenceException, InputDataValidationException, BusinessCategoryNotFoundException;
     
-    public ServiceProviderEntity doServiceProviderLogin(String email, String password) throws InvalidLoginCredentialException;
+    public ServiceProviderEntity doServiceProviderLogin(String email, String password) throws InvalidLoginCredentialException, ServiceProviderBlockedException;
 
     public List<ServiceProviderEntity> retrieveAllServiceProviderEntity();
 

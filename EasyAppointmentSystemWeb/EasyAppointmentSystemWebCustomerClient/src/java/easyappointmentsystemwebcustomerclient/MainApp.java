@@ -1,5 +1,6 @@
 package easyappointmentsystemwebcustomerclient;
 
+import ejb.session.stateful.BookingSessionBeanRemote;
 import ejb.session.stateless.AdminEntitySessionBeanRemote;
 import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.BusinessCategoryEntitySessionBeanRemote;
@@ -33,6 +34,7 @@ public class MainApp {
     private BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote;
     private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
     private ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote;
+    private BookingSessionBeanRemote bookingSessionBeanRemote;
     private EmailSessionBeanRemote emailSessionBeanRemote;
 
     private Queue queueCheckoutNotification;
@@ -51,13 +53,14 @@ public class MainApp {
         validator = validatorFactory.getValidator();
     }
 
-    public MainApp(AdminEntitySessionBeanRemote adminEntitySessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, EmailSessionBeanRemote emailSessionBeanRemote, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
+    public MainApp(AdminEntitySessionBeanRemote adminEntitySessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, BusinessCategoryEntitySessionBeanRemote businessCategoryEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ServiceProviderEntitySessionBeanRemote serviceProviderEntitySessionBeanRemote, BookingSessionBeanRemote bookingSessionBeanRemote, EmailSessionBeanRemote emailSessionBeanRemote, Queue queueCheckoutNotification, ConnectionFactory queueCheckoutNotificationFactory) {
         this();
         this.adminEntitySessionBeanRemote = adminEntitySessionBeanRemote;
         this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
         this.businessCategoryEntitySessionBeanRemote = businessCategoryEntitySessionBeanRemote;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.serviceProviderEntitySessionBeanRemote = serviceProviderEntitySessionBeanRemote;
+        this.bookingSessionBeanRemote = bookingSessionBeanRemote;
         this.emailSessionBeanRemote = emailSessionBeanRemote;
 
         this.queueCheckoutNotification = queueCheckoutNotification;
@@ -88,7 +91,7 @@ public class MainApp {
                         try {
                             CustomerEntity currentCustomerEntity = doLogin();
                             System.out.println("Login successful!\n");
-                            systemAdministrationModule = new SystemAdministrationModule(currentCustomerEntity, appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, currentCustomerEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
+                            systemAdministrationModule = new SystemAdministrationModule(currentCustomerEntity, appointmentEntitySessionBeanRemote, businessCategoryEntitySessionBeanRemote, customerEntitySessionBeanRemote, serviceProviderEntitySessionBeanRemote, bookingSessionBeanRemote, currentCustomerEntity, queueCheckoutNotification, queueCheckoutNotificationFactory);
                             menuMain(currentCustomerEntity);
                         } catch (InvalidLoginCredentialException ex) {
                             System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
