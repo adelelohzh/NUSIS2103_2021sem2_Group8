@@ -39,5 +39,7 @@ public interface AppointmentEntitySessionBeanLocal {
     public List<AppointmentEntity> retrieveAppointmentByCustomer(Long customerId, Long serviceProviderId);
 
     public List<AppointmentEntity> retrieveAppointmentsByServiceProviderId(Long serviceProviderId);
+
+    public List<AppointmentEntity> retrieveAppointmentsByCustomerEntityId(Long customerId);
     
 }

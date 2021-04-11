@@ -33,6 +33,9 @@ public class AppointmentEntity implements Serializable {
     @Column(nullable = false)
     private LocalDate scheduledDate;
     
+    @Column(nullable = false)
+    private Boolean hasRating = Boolean.FALSE;
+    
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private CustomerEntity customerEntity;
@@ -175,6 +178,20 @@ public class AppointmentEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.AppointmentEntity[ id=" + appointmentId + " ]";
+    }
+
+    /**
+     * @return the hasRating
+     */
+    public Boolean getHasRating() {
+        return hasRating;
+    }
+
+    /**
+     * @param hasRating the hasRating to set
+     */
+    public void setHasRating(Boolean hasRating) {
+        this.hasRating = hasRating;
     }
 
 

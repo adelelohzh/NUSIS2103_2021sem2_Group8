@@ -56,15 +56,14 @@ public class ServiceProviderEntity implements Serializable {
     @Column(nullable = false, length = 32)
     private String password;
     
-    @NotEmpty
     @Column(nullable = false)
     private Double rating = 0.0;
     
-    @NotEmpty
+
     @Column(nullable = false)
     private int numberOfRatings;
     
-    @NotEmpty
+
     @Column(nullable = false)
     private StatusEnum statusEnum;
     
