@@ -173,25 +173,27 @@ public class SystemAdministrationModule {
         } while (!response.equals("0"));
     }
 
-    public void viewServiceProviders() throws ServiceProviderNotFoundException {
+    public void viewServiceProviders() {
 
         Scanner sc = new Scanner(System.in);
         String response = "";
         System.out.println("*** Admin terminal :: View service providers ***\n");
-
-        List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
         
-        if (serviceProviderEntities.size() != 0) 
-        {
-            System.out.printf("%-3s%-25s%-20s%-30s%-15s%-30s%-20s%-20s%-20s%-15s\n", "Id", "| Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status\n");
-            for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
+        try {
+            List<ServiceProviderEntity> serviceProviderEntities = serviceProviderEntitySessionBeanRemote.retrieveAllServiceProviderEntity();
+            if (serviceProviderEntities.size() != 0) 
+            {
+                System.out.printf("%-3s%-25s%-20s%-30s%-15s%-30s%-20s%-20s%-20s%-15s\n", "Id", "| Name", "| Business category", "| Business Registration Number", "| City", "| Address", "| Email", "| Phone Number", "| Overall Rating", "| Status\n");
+                for (ServiceProviderEntity serviceProviderEntity : serviceProviderEntities) {
                 System.out.printf("%-3s%-25s%-20s%-30s%-15s%-30s%-20s%-20s%-20s%-15s\n", serviceProviderEntity.getServiceProviderId(), "| " +serviceProviderEntity.getName(), "| " + serviceProviderEntity.getBusinessCategory(), "| " + serviceProviderEntity.getBusinessRegistrationNumber(), "| " + serviceProviderEntity.getCity(), "| " + serviceProviderEntity.getBusinessAddress(), "| " + serviceProviderEntity.getEmailAddress(), "| " + serviceProviderEntity.getPhoneNumber(), "| " + serviceProviderEntity.getRating(), "| " + serviceProviderEntity.getStatusEnum());
+                }
+            } else {
+                throw new ServiceProviderNotFoundException("There are currently no service providers.\n");
             }
-        } else {
-            throw new ServiceProviderNotFoundException("There are currently no service providers.\n");
+        } catch (ServiceProviderNotFoundException ex) {
+                System.out.println("There are currently no service providers: " + ex.getMessage() + "\n");
         }
-        
-        
+
         while (!response.equals("0"))
         {
             System.out.println();
@@ -200,7 +202,6 @@ public class SystemAdministrationModule {
             response = sc.nextLine();
             System.out.println();
         }
-
     }
 
     public void approveServiceProviders() {
