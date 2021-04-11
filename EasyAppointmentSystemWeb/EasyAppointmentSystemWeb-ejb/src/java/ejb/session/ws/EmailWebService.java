@@ -41,20 +41,4 @@ public class EmailWebService {
        return emailSessionBeanLocal.emailCheckoutNotificationSync(appointmentEntity, fromEmailAddress, toEmailAddress);
    }
     
-    @WebMethod(operationName = "emailCheckoutNotificationAsync") 
-    public Future<Boolean> emailCheckoutNotificationAsync(@WebParam(name = "email") String emailAddr,
-                                                 @WebParam(name = "password") String password,
-                                                 @WebParam(name = "appointmentEntity") AppointmentEntity appointmentEntity,
-                                                 @WebParam(name = "fromEmailAddress") String fromEmailAddress,
-                                                 @WebParam(name = "toEmailAddress") String toEmailAddress)                                                 
-                                        throws InvalidLoginCredentialException, InterruptedException
-   {
-       
-       CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
-       System.out.println("********** EasyAppointmentSystem.emailCheckoutNotificationAsync(): Customer " 
-                            + customerEntity.getEmailAddress() 
-                            + " login remotely via web service");
-       
-       return emailSessionBeanLocal.emailCheckoutNotificationAsync(appointmentEntity, fromEmailAddress, toEmailAddress);
-   }  
 }
