@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlTransient;
 import util.enumeration.StatusEnum;
 
 
@@ -130,6 +131,7 @@ public class ServiceProviderEntity implements Serializable {
     /**
      * @return the businessCategory
      */
+    @XmlTransient
     public String getBusinessCategory() {
         return businessCategory;
     }
