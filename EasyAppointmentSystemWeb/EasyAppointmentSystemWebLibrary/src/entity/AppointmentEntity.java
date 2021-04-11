@@ -44,9 +44,6 @@ public class AppointmentEntity implements Serializable {
     @JoinColumn(nullable = false)
     private BusinessCategoryEntity businessCategoryEntity;
     
-    @Column(nullable = false)
-    private Boolean isCancelled = false;
-
     public AppointmentEntity() 
     {
     }
@@ -151,18 +148,6 @@ public class AppointmentEntity implements Serializable {
     public void setAppointmentNo(String appointmentNo) {
         this.appointmentNo = appointmentNo;
     }
-    
-    
-    public Boolean getIsCancelled() {
-        return isCancelled;
-    }
-
-
-    public void setIsCancelled(Boolean isCancelled) {
-        this.isCancelled = isCancelled;
-    }
-    
-    
 
     @Override
     public int hashCode() {
