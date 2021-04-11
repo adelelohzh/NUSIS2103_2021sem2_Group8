@@ -259,6 +259,8 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
             ServiceProviderEntity serviceProvider = retrieveServiceProviderEntityById(serivceProviderId);
             if (serviceProvider.getAppointmentEntities().isEmpty())
             {
+                BusinessCategoryEntity businessCategoryEntity = serviceProvider.getBusinessCategoryEntity();
+                businessCategoryEntity.getServiceProviderEntities().remove(serviceProvider);
                 em.remove(serviceProvider);
                 em.flush();
             }
