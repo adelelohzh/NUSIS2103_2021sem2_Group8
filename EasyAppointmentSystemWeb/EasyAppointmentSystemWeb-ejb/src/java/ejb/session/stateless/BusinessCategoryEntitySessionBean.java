@@ -21,6 +21,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.BusinessCategoryExistException;
 import util.exception.BusinessCategoryNotFoundException;
+import util.exception.DeleteBusinessCategoryException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -133,21 +134,19 @@ public class BusinessCategoryEntitySessionBean implements BusinessCategoryEntity
     
 
     @Override
-    public void deleteBusinessCategory(String businessCategory) throws BusinessCategoryNotFoundException {
+    public void deleteBusinessCategory(String category) throws DeleteBusinessCategoryException, BusinessCategoryNotFoundException {
 
-        boolean exist = false;
-        List<BusinessCategoryEntity> businessCategoryEntities = retrieveAllBusinessCategories();
-        for (BusinessCategoryEntity currentBusinessCategoryEntity : businessCategoryEntities) {
-            if (currentBusinessCategoryEntity.getCategory().equals(businessCategory)) {
-                em.remove(businessCategory);
-                em.flush();
-                exist = true;
-                break;
-            }
+        BusinessCategoryEntity currentBusinessCategory = retrieveBusinessCategoriesByName(category);
+        if (currentBusinessCategory.getServiceProviderEntities().isEmpty())
+        {
+            em.remove(currentBusinessCategory);
+            em.flush();
         }
-        if (exist == false) {
-            throw new BusinessCategoryNotFoundException("Business Category not found!");
+        else
+        {
+            throw new DeleteBusinessCategoryException("Business Category Id " + category + " is associated with existing Service Providers record(s) and cannot be deleted!");
         }
+        
     }
     
          private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<BusinessCategoryEntity>>constraintViolations)

@@ -148,7 +148,15 @@ public class AdminEntitySessionBean implements AdminEntitySessionBeanRemote, Adm
         Query query = em.createQuery("SELECT a FROM AdminEntity a WHERE a.email = :inEmail");
         query.setParameter("inEmail", email);
         
-        return (AdminEntity)query.getSingleResult();
+        try
+        {
+            AdminEntity adminEntity = (AdminEntity)query.getSingleResult();
+            return adminEntity;
+        }
+        catch(NoResultException | NonUniqueResultException ex)
+        {
+            throw new AdminNotFoundException("Admin Email " + email + " does not exist!");
+        }
 
     }
     
