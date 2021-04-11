@@ -97,7 +97,7 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
     
     @Override
-    public ServiceProviderEntity doServiceProviderLogin(String email, String password) throws InvalidLoginCredentialException
+    public ServiceProviderEntity doServiceProviderLogin(String email, String password) throws InvalidLoginCredentialException, ServiceProviderBlockedException
     {
         try
         {
@@ -105,8 +105,15 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
             
             if(serviceProviderEntity.getPassword().equals(password))
             {
-                serviceProviderEntity.getAppointmentEntities().size();                
-                return serviceProviderEntity;
+                serviceProviderEntity.getAppointmentEntities().size();
+                if (serviceProviderEntity.getStatusEnum() == StatusEnum.Blocked)
+                {
+                    throw new ServiceProviderBlockedException("Service Provider has been blocked.");
+                }
+                else
+                {
+                    return serviceProviderEntity;
+                }
             }
             else
             {
