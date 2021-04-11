@@ -159,7 +159,7 @@ public class SystemAdministrationModule {
     public void addAppointment() throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, ServiceProviderNotFoundException {
 
         Scanner sc = new Scanner(System.in);
-        List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17.30", "18.30");
+        List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11.30", "12:30", "13.30", "14:30", "15:30", "16:30", "17:30", "18:30");
         System.out.println("*** Customer terminal :: Add Appointment ***\n");
         List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
         for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
@@ -319,8 +319,9 @@ public class SystemAdministrationModule {
                                     appointmentEntity.setServiceProviderEntity(serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId));
                                     appointmentEntity.setBusinessCategoryEntity(businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));
                                     appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
-                                    currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
-                                    serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
+                                    
+                                    //currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
+                                    //serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
 
                                     System.out.println("Appointment " + appointmentNumber + " added successfully!");
                                     
