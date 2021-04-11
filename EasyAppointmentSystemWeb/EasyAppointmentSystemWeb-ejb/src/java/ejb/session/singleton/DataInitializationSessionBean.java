@@ -135,13 +135,14 @@ public class DataInitializationSessionBean {
             LocalDate date = LocalDate.parse(currDate, formatter);
             LocalDate dateTwo = LocalDate.parse("2021-04-14", formatter);
 
+            //Long customerId, Long serviceProviderId, AppointmentEntity newAppointmentEntity
             appointmentEntitySessionBeanLocal.createNewAppointment(1L, 1L, new AppointmentEntity("104120830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntity, serviceProviderEntity, businessCategoryEntity));
             appointmentEntitySessionBeanLocal.createNewAppointment(1L, 1L, new AppointmentEntity("104140830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntity, serviceProviderEntity, businessCategoryEntity));
-            appointmentEntitySessionBeanLocal.createNewAppointment(1L, 2L, new AppointmentEntity("204121130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntity, serviceProviderEntityTwo, businessCategoryEntity));
-            appointmentEntitySessionBeanLocal.createNewAppointment(1L, 2L, new AppointmentEntity("204141130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntity, serviceProviderEntityTwo, businessCategoryEntity));
+            appointmentEntitySessionBeanLocal.createNewAppointment(1L, 2L, new AppointmentEntity("204121130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntity, serviceProviderEntityTwo, businessCategoryEntityTwo));
+            appointmentEntitySessionBeanLocal.createNewAppointment(1L, 2L, new AppointmentEntity("204141130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntity, serviceProviderEntityTwo, businessCategoryEntityTwo));
             
-            appointmentEntitySessionBeanLocal.createNewAppointment(2L, 1L, new AppointmentEntity("104121130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntityTwo, serviceProviderEntity, businessCategoryEntityTwo));
-            appointmentEntitySessionBeanLocal.createNewAppointment(2L, 1L, new AppointmentEntity("104141130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntityTwo, serviceProviderEntity, businessCategoryEntityTwo));
+            appointmentEntitySessionBeanLocal.createNewAppointment(2L, 1L, new AppointmentEntity("104121130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntityTwo, serviceProviderEntity, businessCategoryEntity));
+            appointmentEntitySessionBeanLocal.createNewAppointment(2L, 1L, new AppointmentEntity("104141130", LocalTime.parse("11:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntityTwo, serviceProviderEntity, businessCategoryEntity));
             appointmentEntitySessionBeanLocal.createNewAppointment(2L, 2L, new AppointmentEntity("204120830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), date, customerEntityTwo, serviceProviderEntityTwo, businessCategoryEntityTwo));
             appointmentEntitySessionBeanLocal.createNewAppointment(2L, 2L, new AppointmentEntity("204140830", LocalTime.parse("08:30", DateTimeFormatter.ofPattern("HH:mm")), dateTwo, customerEntityTwo, serviceProviderEntityTwo, businessCategoryEntityTwo));
             
