@@ -102,8 +102,6 @@ public class SystemAdministrationModule {
             System.out.printf("%-3s%-10s", businessCategory.getBusinessCategoryId(), businessCategory.getCategory() + " |");
         }
 
-        System.out.println("\n");
-        
         do {
             try {
                 System.out.print("Enter Business category> ");
@@ -114,14 +112,12 @@ public class SystemAdministrationModule {
 
                 System.out.print("Enter Date (YYYY-MM-DD)> ");
                 String currentDate = sc.nextLine().trim();
-                
-                System.out.println();
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = LocalDate.parse(currentDate, formatter);
 
-                System.out.printf("%-19s%-16s%-23s%-20s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating\n");
-                
+                System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
+
                 BusinessCategoryEntity businessCategory = businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(businessCategoryId);
 
                 List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory.getCategory(), city);
@@ -161,7 +157,7 @@ public class SystemAdministrationModule {
                             }*/
                         }
 
-                        System.out.printf("%-19s%-16s%-23s%-20s%-16s\n", s.getServiceProviderId(), "| " + s.getName(), "| " + firstAvailableTime, "| " + s.getBusinessAddress(), "| " + s.getRating());
+                        System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + s.getRating());
                     }
 
                 }
@@ -175,7 +171,6 @@ public class SystemAdministrationModule {
                 System.out.println("Please input a valid Business Category Id!\n");
             }
 
-            System.out.println();
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Exit> ");
             response = sc.nextLine().trim();
@@ -185,18 +180,18 @@ public class SystemAdministrationModule {
     public void addAppointment() throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, ServiceProviderNotFoundException {
 
         Scanner sc = new Scanner(System.in);
-        String response = "";
-        String firstAvailableTime = "";
         List<String> times = Arrays.asList("08:30", "09:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30", "17:30", "18:30");
         System.out.println("*** Customer terminal :: Add Appointment ***\n");
-        
+        List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
+        for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
+            System.out.printf("%-3s%-10s", businessCategory.getBusinessCategoryId(), businessCategory.getCategory() + " |");
+        }
+        System.out.println();
+        String response = "";
+        String firstAvailableTime = "";
+
         do {
             try {
-                List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
-                for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
-                    System.out.printf("%-3s%-10s", businessCategory.getBusinessCategoryId(), businessCategory.getCategory() + " |");
-                }
-                System.out.println("\n");
                 System.out.print("Enter Business category> ");
                 Long input = sc.nextLong(); //catch inputmismatch
                 sc.nextLine();
@@ -205,14 +200,12 @@ public class SystemAdministrationModule {
 
                 System.out.print("Enter Date (YYYY-MM-DD)> ");
                 String currentDate = sc.nextLine().trim();
-                
-                System.out.println();
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = LocalDate.parse(currentDate, formatter);
                 String day = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US);
 
-                System.out.printf("%-19s%-16s%-23s%-20s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating\n");
+                System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
 
                 if (!day.equals("Sunday")) { //insert invalid add appt
 
@@ -242,8 +235,12 @@ public class SystemAdministrationModule {
                             }
                         }
 
-                        System.out.printf("%-19s%-16s%-23s%-20s%-16s\n", s.getServiceProviderId(), "| " + s.getName(), "| " + firstAvailableTime, "| " + s.getBusinessAddress(), "| " + s.getRating());
-                        
+                        Double rating = s.getRating();
+                        if (rating == null) {
+                            System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| N.A");
+                        } else {
+                            System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + rating);
+                        }
                     }
 
                     System.out.println("Enter 0 to go back to the previous menu.");
@@ -314,12 +311,12 @@ public class SystemAdministrationModule {
                             }
 
                             boolean validTime = true;
-//                            System.out.println("Here now is it valid: " + validTime);
-//                            System.out.println("Appointment Entities got " + appointmentEntities.size());
+                            System.out.println("Here now is it valid: " + validTime);
+                            System.out.println("Appointment Entities got " + appointmentEntities.size());
 
                             if (!timeslots2.contains(time.toString())) { //means not available
-//                                System.out.println(timeslots2);
-//                                System.out.println("Is 09:30 taken? ");
+                                System.out.println(timeslots2);
+                                System.out.println("Is 09:30 taken? ");
                                 System.out.println("Time slot is already full!");
                                 validTime = false;
                             }
@@ -350,20 +347,23 @@ public class SystemAdministrationModule {
                                     System.out.println("Appointment " + appointmentEntity.getAppointmentNo() + " added successfully!");
 
                                 } catch (CustomerNotFoundException ex) {
-                                    System.out.println("Customer Id " + currentCustomerEntity.getCustomerId() + " not found!\n");
+                                    System.out.println("Customer with customer id " + currentCustomerEntity.getCustomerId() + " not found");
                                 } catch (ServiceProviderNotFoundException ex) {
-                                    System.out.println("Service provider id " + serviceProviderId + " not found!\n");
+                                    System.out.println("Service with service provider id " + serviceProviderId + " not found");
                                 } catch (ServiceProviderBlockedException ex) {
-                                    System.out.println("Service provider id " + serviceProviderId + " is blocked!\n");
+                                    System.out.println("Service with service provider id " + serviceProviderId + " is blocked!");
                                 } catch (AppointmentNotFoundException ex) {
-                                    System.out.println("Appointment not found!\n");
+                                    Logger.getLogger(SystemAdministrationModule.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                                 
                                 bookingSessionBeanRemote.clearAppointmentCart();
                             }
                             
                             // if timeslot exists, confirm appointment
-                            // System.out.println("The appointment with " + serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getName() + " at " + time + " on " + currentDate + " is confirmed.");                            
+                            // System.out.println("The appointment with " + serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getName() + " at " + time + " on " + currentDate + " is confirmed.");
+                            System.out.println("Enter 0 to go back to the previous menu.");
+                            System.out.print("Exit>");
+                            response = sc.nextLine().trim();
                         }
                     }
                 }
@@ -373,14 +373,10 @@ public class SystemAdministrationModule {
                 System.out.println("BusinessCategory cannot be found!");
             } catch (DateTimeParseException ex) {
                 System.out.println("Please input a valid date in YYYY-MM-DD, and a valid time in HH-MM.\n");
-            } catch (InputMismatchException | NumberFormatException ex) {
+            } catch (InputMismatchException ex) {
                 System.out.println("Please input a valid Business Category Id!\n");
                 sc.next();
             }
-            
-            System.out.println("Enter 0 to go back to the previous menu.");
-            System.out.print("Exit>");
-            response = sc.nextLine().trim();
         } while (!response.equals("0"));
     }
 
@@ -441,20 +437,20 @@ public class SystemAdministrationModule {
 
                     
                     LocalDate todayDate = LocalDate.now();
-//                    System.out.println("Today's date is " + todayDate.toString());
+                    System.out.println("Today's date is " + todayDate.toString());
                     LocalDate appointmentDate = appointmentEntity.getScheduledDate();
-//                    System.out.println("Appointment date is " + appointmentDate.toString());
+                    System.out.println("Appointment date is " + appointmentDate.toString());
 
                     DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
                     String currentTime = LocalTime.now().format(fmt);
                     LocalTime todayTime = LocalTime.parse(currentTime, fmt);
-//                    System.out.println("Today time is " + todayTime.toString());
+                    System.out.println("Today time is " + todayTime.toString());
                     LocalTime appointmentTime = appointmentEntity.getScheduledTime();
-//                    System.out.println("Appointment time is " + appointmentTime.toString());
+                    System.out.println("Appointment time is " + appointmentTime.toString());
 
                     int comparison = appointmentDate.compareTo(todayDate);
                     int compare = appointmentTime.compareTo(todayTime);
-//                    System.out.println("comparison: " + comparison);
+                    System.out.println("comparison: " + comparison);
                     if (comparison >= 1) { //different days for sure
                         int apptYear = appointmentDate.getYear();
                         int currYear = todayDate.getYear();
