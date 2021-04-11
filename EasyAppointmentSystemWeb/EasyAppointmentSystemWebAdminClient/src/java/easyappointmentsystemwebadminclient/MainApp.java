@@ -158,6 +158,7 @@ public class MainApp {
                 }
             } catch (InputMismatchException ex) {
                 System.out.println("Please enter valid values!");
+                scanner.next();
             }
         }
     }
