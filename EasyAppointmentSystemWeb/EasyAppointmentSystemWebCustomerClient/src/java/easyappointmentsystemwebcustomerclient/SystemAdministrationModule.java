@@ -141,7 +141,6 @@ public class SystemAdministrationModule {
 
                 }
             } catch (ServiceProviderNotFoundException ex) {
-
                 System.out.println("Service Provider cannot be found!\n");
             } catch (BusinessCategoryNotFoundException ex) {
                 System.out.println("Business Cateogry cannot be found!\n");
@@ -208,7 +207,7 @@ public class SystemAdministrationModule {
 
                                 int i = 0;
                                 for (AppointmentEntity appointment : appointmentEntities) {
-                                    if (!appointment.getScheduledTime().equals(timeSlots.get(i)) | (appointment.getIsCancelled().equals(Boolean.TRUE) && appointment.getScheduledTime().toString().equals(timeSlots.get(i)))) {
+                                    if (!appointment.getScheduledTime().toString().equals(timeSlots.get(i)) | (appointment.getIsCancelled().equals(Boolean.TRUE) && appointment.getScheduledTime().toString().equals(timeSlots.get(i)))) {
                                         firstAvailableTime = timeSlots.get(i);
                                         break; //found the index
                                     }
@@ -265,21 +264,30 @@ public class SystemAdministrationModule {
                         System.out.print("Enter Time> ");
                         response = sc.nextLine().trim();
 
-                        System.out.println(response);
+                        System.out.println("You have inputted " + response);
 
                         if (!response.equals("0")) {
-                            LocalTime time = LocalTime.parse(response, DateTimeFormatter.ofPattern("HH:mm"));
+                            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");          
+                            LocalTime time = LocalTime.parse(response, fmt);
+                            System.out.println("Formatted time is now " + time.toString());
 
                             // check whether at least 2 hours before appointment first
-                            LocalDate todayDate = LocalDate.now();
+                            String currDate = LocalDate.now().toString();
+                            LocalDate todayDate = LocalDate.parse(currDate, formatter);
+                            System.out.println("I think this is the error 1");
                             LocalDate appointmentDate = date;  //date of appointment to be scheduled
 
-                            LocalTime todayTime = LocalTime.now();
-                            todayTime.format(DateTimeFormatter.ofPattern("HH:mm"));
-                            LocalTime appointmentTime = time;
+                            System.out.println("Testing this now: ");
+                            String currentTime = LocalTime.now().format(fmt);
+                            System.out.println("Current time is " + currentTime);
+                            LocalTime todayTime = LocalTime.parse(currentTime, fmt);
+                            System.out.println("I think this is the error: " + todayTime.toString());
+                            LocalTime appointmentTime = time; //what they have inputted
 
                             int comparison = appointmentDate.compareTo(todayDate);
+                            System.out.println("Comparison for Date " + comparison);
                             int compare = appointmentTime.compareTo(todayTime);
+                            System.out.println("Comparison for Time " + comparison);
 
                             if (comparison == 0) { // same day
                                 if (compare < 2) { //cannot
@@ -294,16 +302,27 @@ public class SystemAdministrationModule {
                             }
 
                             boolean validTime = true;
-                            for (AppointmentEntity appointment : appointmentEntities) {
+                            System.out.println("Here now is it valid: " + validTime);
+                            System.out.println("Appointment Entities got " + appointmentEntities.size());
+                            
+                            if (!timeslots2.contains(time.toString())) { //means not available
+                                System.out.println(timeslots2);
+                                System.out.println("Is 09:30 taken? ");
+                                System.out.println("Time slot is already full!");
+                                validTime = false;
+                            }
+                            
+                            /* for (AppointmentEntity appointment : appointmentEntities) {
                                 LocalTime scheduledTime = appointment.getScheduledTime();
-                                if (appointment.getScheduledTime() == time) {
+                                if (appointment.getScheduledTime().toString().equals(time.toString())) {
                                     System.out.println("Time slot is already full!");
                                     validTime = false;
                                     break;
                                 }
-                            }
-
-                            if (validTime) {
+                            } */
+                            
+                            System.out.println("Here now is it valid: " + validTime);
+                            if (validTime == Boolean.TRUE) {
                                 try {
                                     AppointmentEntity appointmentEntity = new AppointmentEntity();
                                     String serviceProviderUIN = String.valueOf(serviceProviderId);
@@ -336,7 +355,7 @@ public class SystemAdministrationModule {
             } catch (BusinessCategoryNotFoundException ex) {
                 System.out.println("BusinessCategory cannot be found!");
             } catch (DateTimeParseException ex) {
-                System.out.println("Please input a valid date in YYYY-MM-DD.\n");
+                System.out.println("Please input a valid date in YYYY-MM-DD, and a valid time in HH-MM.\n");
             } catch (InputMismatchException ex) {
                 System.out.println("Please input a valid Business Category Id!\n");
             }
