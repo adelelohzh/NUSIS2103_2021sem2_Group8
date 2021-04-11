@@ -133,11 +133,13 @@ public class SystemAdministrationModule {
 
                             int i = 0;
                             for (AppointmentEntity appointment : appointmentEntities) {
-                                if (!appointment.getScheduledTime().toString().equals(timeSlots.get(i)) | (appointment.getIsCancelled().equals(Boolean.TRUE) && appointment.getScheduledTime().toString().equals(timeSlots.get(i)))) {
-                                    firstAvailableTime = timeSlots.get(i);
-                                    break; //found the index
+                                
+                                while (appointment.getScheduledTime().toString().equals(timeSlots.get(i)) | (appointment.getIsCancelled().equals(Boolean.TRUE) && !appointment.getScheduledTime().toString().equals(timeSlots.get(i)))) {
+                                    i++;
+                                //    break; //found the index
                                 }
-                                i++;
+                                firstAvailableTime = timeSlots.get(i);
+                            //    i++;
                             }
                         }
 
