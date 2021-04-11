@@ -43,5 +43,7 @@ public interface ServiceProviderEntitySessionBeanLocal
     public void approveServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException;
 
     public void blockServiceProvider(Long serviceProviderId) throws ServiceProviderNotFoundException, ServiceProviderBlockedException;
+
+    public ServiceProviderEntity retrieveServiceProviderEntityByEmailForLogin(String email) throws ServiceProviderNotFoundException;
     
 }

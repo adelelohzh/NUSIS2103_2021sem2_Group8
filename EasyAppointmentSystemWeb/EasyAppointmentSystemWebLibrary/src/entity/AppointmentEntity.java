@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 public class AppointmentEntity implements Serializable {
@@ -91,6 +92,7 @@ public class AppointmentEntity implements Serializable {
         this.scheduledDate = scheduledDate;
     }
 
+    @XmlTransient
     public CustomerEntity getCustomerEntity() {
         return customerEntity;
     }
@@ -112,6 +114,7 @@ public class AppointmentEntity implements Serializable {
         }
     }
 
+    @XmlTransient
     public ServiceProviderEntity getServiceProviderEntity() {
         return serviceProviderEntity;
     }
