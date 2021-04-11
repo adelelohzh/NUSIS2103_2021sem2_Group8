@@ -92,6 +92,11 @@ public class SystemAdministrationModule {
         String response = "";
         String firstAvailableTime = "";
 
+        List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
+        for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
+            System.out.printf("%-3s%-10s", businessCategory.getBusinessCategoryId(), businessCategory.getCategory() + " |");
+        }
+
         do {
             try {
                 System.out.print("Enter Business category> ");
@@ -163,7 +168,7 @@ public class SystemAdministrationModule {
         System.out.println("*** Customer terminal :: Add Appointment ***\n");
         List<BusinessCategoryEntity> businessCategoryEntities = businessCategoryEntitySessionBeanRemote.retrieveAllBusinessCategories();
         for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
-            System.out.printf("%-15s", businessCategory.getBusinessCategoryId() + businessCategory.getCategory() + " |");
+            System.out.printf("%-3s%-10s", businessCategory.getBusinessCategoryId(), businessCategory.getCategory() + " |");
         }
         System.out.println();
         String response = "";
@@ -199,30 +204,30 @@ public class SystemAdministrationModule {
                         } else {
                             if (appointmentEntities.size() == 0) {
                                 firstAvailableTime = "08:30";
-
                             } else {
-
                                 List<String> timeSlots = new ArrayList<>();
                                 timeSlots.addAll(times);
 
                                 int i = 0;
                                 for (AppointmentEntity appointment : appointmentEntities) {
-                                    if (!appointment.getScheduledTime().toString().equals(timeSlots.get(i)) | (appointment.getIsCancelled().equals(Boolean.TRUE) && appointment.getScheduledTime().toString().equals(timeSlots.get(i)))) {
-                                        firstAvailableTime = timeSlots.get(i);
-                                        break; //found the index
-                                    }
-                                    i++;
-                                }
-                            }
+                                    if (!appointment.getScheduledTime().toString().equals(timeSlots.get(i))) {
+                                        if (appointment.getIsCancelled().equals(Boolean.TRUE) && appointment.getScheduledTime().toString().equals(timeSlots.get(i))) {
 
-                            Double rating = s.getRating();
-                            if (rating == null) {
-                                System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| N.A");
-                            } else {
-                                System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + rating);
+                                            firstAvailableTime = timeSlots.get(i);
+                                            break; //found the index
+                                        }
+                                        i++;
+                                    }
+                                }
                             }
                         }
 
+                        Double rating = s.getRating();
+                        if (rating == null) {
+                            System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| N.A");
+                        } else {
+                            System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + rating);
+                        }
                     }
 
                     System.out.println("Enter 0 to go back to the previous menu.");
@@ -267,7 +272,7 @@ public class SystemAdministrationModule {
                         System.out.println("You have inputted " + response);
 
                         if (!response.equals("0")) {
-                            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");          
+                            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
                             LocalTime time = LocalTime.parse(response, fmt);
 
                             // check whether at least 2 hours before appointment first
@@ -282,7 +287,7 @@ public class SystemAdministrationModule {
                             int comparison = appointmentDate.compareTo(todayDate);
                             int compare = appointmentTime.compareTo(todayTime);
 
-                            if (comparison == 0) { 
+                            if (comparison == 0) {
                                 if (compare < 2) {
                                     System.out.println("Appointment cannot be made!");
                                     return;
@@ -297,14 +302,14 @@ public class SystemAdministrationModule {
                             boolean validTime = true;
                             System.out.println("Here now is it valid: " + validTime);
                             System.out.println("Appointment Entities got " + appointmentEntities.size());
-                            
+
                             if (!timeslots2.contains(time.toString())) { //means not available
                                 System.out.println(timeslots2);
                                 System.out.println("Is 09:30 taken? ");
                                 System.out.println("Time slot is already full!");
                                 validTime = false;
                             }
-                            
+
                             if (validTime == Boolean.TRUE) {
                                 try {
                                     AppointmentEntity appointmentEntity = new AppointmentEntity();
@@ -319,12 +324,11 @@ public class SystemAdministrationModule {
                                     appointmentEntity.setServiceProviderEntity(serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId));
                                     appointmentEntity.setBusinessCategoryEntity(businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));
                                     appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
-                                    
+
                                     //currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
                                     //serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
-
                                     System.out.println("Appointment " + appointmentNumber + " added successfully!");
-                                    
+
                                 } catch (CustomerNotFoundException ex) {
                                     System.out.println("Customer with customer id " + currentCustomerEntity.getCustomerId() + " not found");
                                 } catch (ServiceProviderNotFoundException ex) {
@@ -360,6 +364,7 @@ public class SystemAdministrationModule {
         String response = "";
 
         List<AppointmentEntity> appointments = currentCustomerEntity.getAppointmentEntities();
+        appointments.size();
 
         System.out.println("*** Customer terminal :: View Appointments ***\n");
         System.out.println("Appointments: ");
@@ -398,10 +403,11 @@ public class SystemAdministrationModule {
         System.out.print("Enter Appointment Id to cancel> ");
         response = sc.nextLine().trim();
         System.out.println();
-        String appointmentNo = response;
+        String appointmentNo = "";
 
         while (!response.equals("0")) {
             try {
+                appointmentNo = response;
                 AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentNumber(appointmentNo);
 
                 if (appointmentEntity.getIsCancelled() == false) {
@@ -423,8 +429,7 @@ public class SystemAdministrationModule {
                         if (compare >= 0) {
                             appointmentEntitySessionBeanRemote.cancelAppointment(appointmentNo);
                             System.out.println("Appointment successfully cancelled!\n");
-                        }
-                        else {
+                        } else {
                             System.out.println("Appointment cannot be cancelled!\n");
                         }
                     } else {
@@ -437,7 +442,7 @@ public class SystemAdministrationModule {
 
             } catch (AppointmentNotFoundException ex) {
                 System.out.println("Appointment with id: " + appointmentNo + " does not exist!\n");
-            } 
+            }
 
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter Appointment Id to cancel> ");

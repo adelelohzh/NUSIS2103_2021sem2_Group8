@@ -105,6 +105,7 @@ public class MainApp {
                 }
             } catch (InputMismatchException ex) {
                 System.out.println("Invalid option, please try again!\n");
+                scanner.next();
             }
         }
     }
@@ -178,6 +179,7 @@ public class MainApp {
                 System.out.println("parseException!");
             } catch (InputMismatchException ex) {
                 System.out.println("Invalid option, please try again!\n");
+                scanner.next();
             }
         }
     }
