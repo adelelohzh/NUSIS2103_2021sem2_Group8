@@ -83,13 +83,13 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     }
 
     @Override
-    public ServiceProviderEntity doServiceProviderLogin(String email, String password) throws InvalidLoginCredentialException, ServiceProviderBlockedException {
+    public ServiceProviderEntity doServiceProviderLogin(String email, String password) throws InvalidLoginCredentialException, ServiceProviderBlockedException{
         try {
-            ServiceProviderEntity serviceProviderEntity = retrieveServiceProviderEntityByEmail(email);
+            ServiceProviderEntity serviceProviderEntity = retrieveServiceProviderEntityByEmailForLogin(email);
 
             if (serviceProviderEntity.getPassword().equals(password)) {
                 serviceProviderEntity.getAppointmentEntities().size();
-                if (serviceProviderEntity.getStatusEnum() == StatusEnum.Blocked) {
+                if (serviceProviderEntity.getStatusEnum().equals(StatusEnum.Blocked)) {        
                     throw new ServiceProviderBlockedException("Service Provider has been blocked.");
                 } else {
                     return serviceProviderEntity;
@@ -112,6 +112,20 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     @Override
     public ServiceProviderEntity retrieveServiceProviderEntityByEmail(String email) throws ServiceProviderNotFoundException {
         Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.emailAddress = :inEmail and s.statusEnum = util.enumeration.StatusEnum.Approved");
+        query.setParameter("inEmail", email);
+
+        try {
+            ServiceProviderEntity serviceProviderEntity = (ServiceProviderEntity) query.getSingleResult();
+            serviceProviderEntity.getAppointmentEntities().size();
+            return serviceProviderEntity;
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new ServiceProviderNotFoundException("Service Provider Email " + email + " does not exist!");
+        }
+    }
+    
+    @Override
+    public ServiceProviderEntity retrieveServiceProviderEntityByEmailForLogin(String email) throws ServiceProviderNotFoundException {
+        Query query = em.createQuery("SELECT s FROM ServiceProviderEntity s WHERE s.emailAddress = :inEmail");
         query.setParameter("inEmail", email);
 
         try {
@@ -170,7 +184,8 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
     public void updateServiceProvider(ServiceProviderEntity serviceProviderEntity) throws ServiceProviderBlockedException, UpdateServiceProviderException, ServiceProviderNotFoundException, InputDataValidationException, ServiceProviderNotUniqueException, UnknownPersistenceException {
         String serviceProviderEmail = serviceProviderEntity.getEmailAddress();
         Long serviceProviderId = serviceProviderEntity.getServiceProviderId();
-
+        serviceProviderEntity.getAppointmentEntities().size();
+        
         try {
 
             if (serviceProviderEntity != null && serviceProviderEmail != null) {
@@ -180,26 +195,25 @@ public class ServiceProviderEntitySessionBean implements ServiceProviderEntitySe
                 if (constraintViolations.isEmpty()) {
                     ServiceProviderEntity serviceProviderToUpdate = retrieveServiceProviderEntityById(serviceProviderId);
 
-                    if (serviceProviderToUpdate.getServiceProviderId() != serviceProviderEntity.getServiceProviderId()) {
-                        serviceProviderToUpdate.setAppointmentEntities(serviceProviderEntity.getAppointmentEntities());
+                    if (serviceProviderToUpdate.getServiceProviderId().equals(serviceProviderEntity.getServiceProviderId())) {
                         serviceProviderToUpdate.setBusinessAddress(serviceProviderEntity.getBusinessAddress());
-                        serviceProviderToUpdate.setBusinessCategory(serviceProviderEntity.getBusinessCategory());
-                        serviceProviderToUpdate.setBusinessRegistrationNumber(serviceProviderEntity.getBusinessRegistrationNumber());
                         serviceProviderToUpdate.setCity(serviceProviderEntity.getCity());
-                        serviceProviderToUpdate.setEmailAddress(serviceProviderEntity.getEmailAddress());
-                        serviceProviderToUpdate.setName(serviceProviderEntity.getName());
+                        if (!serviceProviderEntity.getEmailAddress().equals(serviceProviderToUpdate.getEmailAddress()))
+                        {
+                            serviceProviderToUpdate.setEmailAddress(serviceProviderEntity.getEmailAddress());
+                        }
                         serviceProviderToUpdate.setPassword(serviceProviderEntity.getPassword());
-                        serviceProviderToUpdate.setPhoneNumber(serviceProviderEntity.getPhoneNumber());
-                        em.persist(serviceProviderToUpdate);
+                        serviceProviderToUpdate.setPhoneNumber(serviceProviderEntity.getPhoneNumber());   
+                        em.merge(serviceProviderToUpdate);
                         em.flush();
                     } else {
-                        throw new UpdateServiceProviderException("Service Provider ID does not match records!");
+                        throw new UpdateServiceProviderException("Service Provider ID does not match records!\n");
                     }
                 } else {
                     throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
                 }
             } else {
-                throw new ServiceProviderNotFoundException("Staff ID not provided for staff to be updated");
+                throw new ServiceProviderNotFoundException("Service Provider ID not found!\n");
             }
 
         } catch (PersistenceException ex) {

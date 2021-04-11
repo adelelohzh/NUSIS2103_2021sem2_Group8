@@ -253,9 +253,9 @@ public class MainMenu {
 
                 try {
                     appointmentNo = response;
-                    List<AppointmentEntity> appointmentEntities = currentServiceProviderEntity.getAppointmentEntities();
                     AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentNumber(appointmentNo);
 
+                    
                     LocalDate todayDate = LocalDate.now();
                     System.out.println("Today's date is " + todayDate.toString());
                     LocalDate appointmentDate = appointmentEntity.getScheduledDate();
@@ -295,9 +295,6 @@ public class MainMenu {
                         } else {
                             System.out.println("Appointment cannot be cancelled!\n");
                         }
-
-                    } else {
-                        System.out.println("Appointment is already cancelled!\n");
                     }
 
                 } catch (AppointmentNotFoundException ex) {
