@@ -368,12 +368,11 @@ public class SystemAdministrationModule {
             } catch (DeleteBusinessCategoryException ex) { 
                 System.out.println("Business Category with business category Id " + bizCategoryId + " cannot be deleted!\n");
             }
-            
-            //throw new BusinessCategoryNotFoundException("Business Category " + category + " does not exist!");
+                     
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print("Enter a business category to remove> ");
             bizCategoryId = sc.nextLong();
-            // method to be added into SessionBean
+            
         } 
         System.out.println();
     }
@@ -433,7 +432,7 @@ public class SystemAdministrationModule {
                     System.out.println("Current Appointment Entity is " + currentAppointment + "\n");
 
                     try {
-                        emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Valencia Teh<vtjw1000@gmail.com>", toEmailAddress);
+                        emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "EasyAppointmentSystem Web Admin <vtjw1000@gmail.com>", toEmailAddress);
                         System.out.println("An email is sent to " + currentCustomerEntity.getFullName() + " for the appointment " + currentAppointment.getAppointmentNo() + ".\n");
                     
                     }
