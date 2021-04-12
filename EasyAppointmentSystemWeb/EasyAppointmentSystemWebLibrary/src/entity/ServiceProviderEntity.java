@@ -118,7 +118,7 @@ public class ServiceProviderEntity implements Serializable {
         
         if(this.businessCategoryEntity != null)
         {
-            if(!this.businessCategoryEntity.getServiceProviderEntities().contains(this))
+            if(this.businessCategoryEntity.getServiceProviderEntities() != null && !this.businessCategoryEntity.getServiceProviderEntities().contains(this))
             {
                 this.businessCategoryEntity.getServiceProviderEntities().add(this);
             }

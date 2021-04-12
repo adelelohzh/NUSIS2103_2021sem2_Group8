@@ -13,6 +13,7 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import javax.persistence.EntityManager;
@@ -29,6 +30,7 @@ import util.exception.AppointmentNotFoundException;
 import util.exception.AppointmentNumberExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.InputInvalidValuesException;
 import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -266,99 +268,121 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
 
     @Override
-    public LocalTime convertTime(String time) {
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime currTime = LocalTime.parse(time, fmt);
-
-        return currTime;
+    public LocalTime convertTime(String time) throws InputInvalidValuesException{
+        
+        try 
+        {
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
+            LocalTime currTime = LocalTime.parse(time, fmt);
+            return currTime;
+        } catch (DateTimeParseException ex) {
+            throw new InputInvalidValuesException("Please input a correct date in the format yyyy-mm-dd");
+        }
     }
 
     @Override
-    public boolean ifAppointmentCanCancel(String appointmentNo) throws AppointmentNotFoundException {
+    public boolean ifAppointmentCanCancel(String appointmentNo) throws InputInvalidValuesException, AppointmentNotFoundException {
 
-        String date = retrieveAppointmentByAppointmentNumber(appointmentNo).getScheduledDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate appointmentDate = LocalDate.parse(date, formatter);
-        LocalDate todayDate = LocalDate.now();
+        try {
+            String date = retrieveAppointmentByAppointmentNumber(appointmentNo).getScheduledDate();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate appointmentDate = LocalDate.parse(date, formatter);
+            LocalDate todayDate = LocalDate.now();
 
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
-        String currentTime = LocalTime.now().format(fmt);
-        LocalTime todayTime = LocalTime.parse(currentTime, fmt);
-        
-        String time = retrieveAppointmentByAppointmentNumber(appointmentNo).getScheduledTime();
-        LocalTime appointmentTime = LocalTime.parse(time, fmt);
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
+            String currentTime = LocalTime.now().format(fmt);
+            LocalTime todayTime = LocalTime.parse(currentTime, fmt);
 
-        int comparison = appointmentDate.compareTo(todayDate);
-        int compare = appointmentTime.compareTo(todayTime);
+            String time = retrieveAppointmentByAppointmentNumber(appointmentNo).getScheduledTime();
+            LocalTime appointmentTime = LocalTime.parse(time, fmt);
 
-        if (comparison >= 1) {
-            int apptYear = appointmentDate.getYear();
-            int currYear = todayDate.getYear();
-            int apptMonth = appointmentDate.getMonthValue();
-            int currMonth = todayDate.getMonthValue();
-            int apptDay = appointmentDate.getDayOfMonth();
-            int currDay = todayDate.getDayOfMonth();
+            int comparison = appointmentDate.compareTo(todayDate);
+            int compare = appointmentTime.compareTo(todayTime);
 
-            if (apptYear > currYear || apptMonth > currMonth || apptDay - currDay > 1) {
-                AppointmentEntity toCancelAppointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
-                deleteAppointment(appointmentNo);
-                return true;
-            } else if (apptDay - currDay == 1) {
-                if (compare >= 0) {
+            if (comparison >= 1) {
+                int apptYear = appointmentDate.getYear();
+                int currYear = todayDate.getYear();
+                int apptMonth = appointmentDate.getMonthValue();
+                int currMonth = todayDate.getMonthValue();
+                int apptDay = appointmentDate.getDayOfMonth();
+                int currDay = todayDate.getDayOfMonth();
+
+                if (apptYear > currYear || apptMonth > currMonth || apptDay - currDay > 1) {
                     AppointmentEntity toCancelAppointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
                     deleteAppointment(appointmentNo);
                     return true;
+                } else if (apptDay - currDay == 1) {
+                    if (compare >= 0) {
+                        AppointmentEntity toCancelAppointmentEntity = retrieveAppointmentByAppointmentNumber(appointmentNo);
+                        deleteAppointment(appointmentNo);
+                        return true;
+                    } else {
+                        return false;
+                    }
                 } else {
                     return false;
                 }
             } else {
+
                 return false;
+
             }
-        } else {
-
-            return false;
-
-        }
+        } catch (DateTimeParseException ex) {
+            throw new InputInvalidValuesException("Please input a correct date in the format yyyy-mm-dd");
+        } 
 
     }
 
     @Override
-    public String calculateDayOfTheWeek(String givenDate) {
-        LocalDate date = convertDate(givenDate);
-        String day = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US);
-        return day;
+    public String calculateDayOfTheWeek(String givenDate) throws InputInvalidValuesException {
+        try
+        {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate currDate = LocalDate.parse(givenDate, formatter);
+
+            String day = currDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US);
+            return day;
+        } catch (DateTimeParseException ex) {
+            throw new InputInvalidValuesException("Please input a correct date in the format yyyy-mm-dd");
+        }
     }
 
-    public boolean ifAppointmentCanAdd(String givenTime, String givenDate) {
+    @Override
+    public boolean ifAppointmentCanAdd(String givenTime, String givenDate) throws InputInvalidValuesException {
 
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime time = LocalTime.parse(givenTime, fmt);
+        try
+        {
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
+            LocalTime time = LocalTime.parse(givenTime, fmt);
 
-        // check whether at least 2 hours before appointment first
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String currDate = LocalDate.now().toString();
-        LocalDate todayDate = LocalDate.parse(currDate, formatter);
-        LocalDate appointmentDate = LocalDate.parse(givenDate, formatter);  //date of appointment to be scheduled
+            // check whether at least 2 hours before appointment first
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String currDate = LocalDate.now().toString();
+            LocalDate todayDate = LocalDate.parse(currDate, formatter);
+            LocalDate appointmentDate = LocalDate.parse(givenDate, formatter);  //date of appointment to be scheduled
 
-        String currentTime = LocalTime.now().format(fmt);
-        LocalTime todayTime = LocalTime.parse(currentTime, fmt);
-        LocalTime appointmentTime = time; //what they have inputted
+            String currentTime = LocalTime.now().format(fmt);
+            LocalTime todayTime = LocalTime.parse(currentTime, fmt);
+            LocalTime appointmentTime = time; //what they have inputted
 
-        int comparison = appointmentDate.compareTo(todayDate);
-        int compare = appointmentTime.compareTo(todayTime);
+            int comparison = appointmentDate.compareTo(todayDate);
+            int compare = appointmentTime.compareTo(todayTime);
 
-        if (comparison == 0) {
-            if (compare < 2) {
+            if (comparison == 0) {
+                if (compare < 2) {
+                    return false;
+                }
+            }
+
+            if (comparison < 0) {
+                System.out.println("Appointment cannot be made!\n");
                 return false;
             }
-        }
 
-        if (comparison < 0) {
-            System.out.println("Appointment cannot be made!\n");
-            return false;
+            return true;
+        } catch (DateTimeParseException ex) {
+            throw new InputInvalidValuesException("Please input a correct date and/or time in the format yyyy-mm-dd and HH:mm!");
         }
-
-        return true;
     }
 
     @Override
@@ -426,11 +450,16 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
-    public boolean ifDateHasNotPassed(String date)
+    public boolean ifDateHasNotPassed(String date) throws InputInvalidValuesException
     {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate appointmentDate = LocalDate.parse(date, formatter);
-        return LocalDate.now().isBefore(appointmentDate);
+        try 
+        {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate appointmentDate = LocalDate.parse(date, formatter);
+            return LocalDate.now().isBefore(appointmentDate);
+        } catch (DateTimeParseException ex) {
+            throw new InputInvalidValuesException("Please input a correct date in the format yyyy-mm-dd");
+        }
     }
 
 }

@@ -11,6 +11,7 @@ import entity.AppointmentEntity;
 import entity.CustomerEntity;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.jws.WebService;
@@ -21,6 +22,7 @@ import util.exception.AppointmentNotFoundException;
 import util.exception.AppointmentNumberExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.InputInvalidValuesException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderNotFoundException;
@@ -186,7 +188,7 @@ public class AppointmentEntityWebService {
     @WebMethod(operationName = "ifAppointmentCanCancel")
     public boolean ifAppointmentCanCancel(@WebParam(name = "email") String emailAddr,
                                                 @WebParam(name = "password") String password,
-                                                @WebParam(name = "appointmentNo") String appointmentNo) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+                                                @WebParam(name = "appointmentNo") String appointmentNo) throws InputInvalidValuesException, InvalidLoginCredentialException, AppointmentNotFoundException {
         
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.ifAppointmentCanCancel(): Customer "
@@ -200,7 +202,7 @@ public class AppointmentEntityWebService {
     @WebMethod(operationName = "convertTime")
     public LocalTime convertTime(@WebParam(name = "email") String emailAddr,
                                  @WebParam(name = "password") String password,
-                                 @WebParam(name = "appointmentTime") String appointmentTime) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+                                 @WebParam(name = "appointmentTime") String appointmentTime) throws InputInvalidValuesException, InvalidLoginCredentialException, AppointmentNotFoundException {
         
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.convertTime(): Customer "
@@ -213,7 +215,7 @@ public class AppointmentEntityWebService {
     @WebMethod(operationName = "calculateDayOfTheWeek")
     public String calculateDayOfTheWeek(@WebParam(name = "email") String emailAddr,
                                         @WebParam(name = "password") String password,
-                                        @WebParam(name = "date") String date) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+                                        @WebParam(name = "date") String date) throws InvalidLoginCredentialException, AppointmentNotFoundException, InputInvalidValuesException {
         
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.calculateDayOfTheWeek(): Customer "
@@ -227,7 +229,7 @@ public class AppointmentEntityWebService {
     public boolean ifAppointmentCanAdd(@WebParam(name = "email") String emailAddr,
                                        @WebParam(name = "password") String password,
                                        @WebParam(name = "date") String date,
-                                       @WebParam(name = "time") String time) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+                                       @WebParam(name = "time") String time) throws InvalidLoginCredentialException, AppointmentNotFoundException, InputInvalidValuesException{
         
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.ifAppointmentCanAdd(): Customer "
@@ -310,7 +312,7 @@ public class AppointmentEntityWebService {
     public boolean ifDateHasNotPassed(@WebParam(name = "email") String emailAddr,
                                       @WebParam(name = "password") String password,
                                       @WebParam(name = "date") String date)
-                                      throws InvalidLoginCredentialException 
+                                      throws InvalidLoginCredentialException, InputInvalidValuesException
     {
         
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);

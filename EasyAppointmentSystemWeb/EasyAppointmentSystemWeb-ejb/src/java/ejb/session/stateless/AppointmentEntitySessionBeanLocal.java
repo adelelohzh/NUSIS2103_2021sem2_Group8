@@ -4,6 +4,7 @@ import entity.AppointmentEntity;
 import entity.ServiceProviderEntity;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.AppointmentNotFoundException;
@@ -11,6 +12,7 @@ import util.exception.AppointmentNumberExistsException;
 import util.exception.BusinessCategoryNotFoundException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.InputInvalidValuesException;
 import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderEmailExistException;
 import util.exception.ServiceProviderNotFoundException;
@@ -45,13 +47,13 @@ public interface AppointmentEntitySessionBeanLocal {
 
     public LocalDate convertDate(String date);
 
-    public boolean ifAppointmentCanCancel(String appointmentNo) throws AppointmentNotFoundException;
+    public boolean ifAppointmentCanCancel(String appointmentNo) throws AppointmentNotFoundException, InputInvalidValuesException;
 
-    public String calculateDayOfTheWeek(String givenDate);
+    public String calculateDayOfTheWeek(String givenDate) throws InputInvalidValuesException;
 
-    public LocalTime convertTime(String time);
+    public LocalTime convertTime(String time) throws InputInvalidValuesException;
 
-    public boolean ifAppointmentCanAdd(String givenTime, String givenDate);
+    public boolean ifAppointmentCanAdd(String givenTime, String givenDate) throws InputInvalidValuesException;
 
     public Long ifCanRate(List<AppointmentEntity> apptList, Long serviceProviderId);
 
@@ -61,6 +63,6 @@ public interface AppointmentEntitySessionBeanLocal {
 
     public List<String> findAvailableTimeSlot(List<AppointmentEntity> appointmentEntities, List<String> timeslots2);
 
-    public boolean ifDateHasNotPassed(String date);
+    public boolean ifDateHasNotPassed(String date) throws InputInvalidValuesException;
     
 }
