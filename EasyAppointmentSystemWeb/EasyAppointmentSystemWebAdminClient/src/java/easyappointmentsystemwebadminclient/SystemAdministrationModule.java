@@ -440,12 +440,18 @@ public class SystemAdministrationModule {
                     
                     int index = 0;
                     for (AppointmentEntity appointmentEntity : customerAppointmentEntities) {
-                        LocalDate appointmentDate = appointmentEntity.getScheduledDate();
+                        String date = appointmentEntity.getScheduledDate();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        LocalDate appointmentDate = LocalDate.parse(date, formatter);
+                        
                         if (appointmentDate.compareTo(todayDate) < 0) { //previous appointment
                             index++;
                             continue;
                         } else if (appointmentDate.compareTo(todayDate) == 0) {
-                            LocalTime appointmentTime = appointmentEntity.getScheduledTime();
+                            String apptTime = appointmentEntity.getScheduledTime();
+                            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
+                            LocalTime appointmentTime = LocalTime.parse(apptTime, fmt);
+                            
                             if (appointmentTime.compareTo(currTime) <= 0) {
                                 index++;
                                 continue;
