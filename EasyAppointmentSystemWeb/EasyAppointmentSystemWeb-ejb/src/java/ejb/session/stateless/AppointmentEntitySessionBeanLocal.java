@@ -26,20 +26,20 @@ public interface AppointmentEntitySessionBeanLocal {
 
     public AppointmentEntity retrieveAppointmentByAppointmentNumber(String appointmentNo) throws AppointmentNotFoundException;
 
-    public List<AppointmentEntity> retrieveAppointmentsByDate(LocalDate date, String serviceProviderName);
+    public List<AppointmentEntity> retrieveAppointmentsByDate(LocalDate date, String serviceProviderName) throws AppointmentNotFoundException ;
 
-    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId);
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) throws AppointmentNotFoundException ;
 
     public void deleteAppointment(String appointmentNo) throws AppointmentNotFoundException;
 
-    // public void cancelAppointment(String appointmentNo) throws AppointmentNotFoundException;
-
     public void updateAppointmentEntity(AppointmentEntity appointmentEntity);
 
-    public List<AppointmentEntity> retrieveAppointmentByCustomer(Long customerId, Long serviceProviderId);
+    public List<AppointmentEntity> retrieveAppointmentByCustomer(Long customerId, Long serviceProviderId) throws AppointmentNotFoundException ;
 
-    public List<AppointmentEntity> retrieveAppointmentsByServiceProviderId(Long serviceProviderId);
+    public List<AppointmentEntity> retrieveAppointmentsByServiceProviderId(Long serviceProviderId) throws AppointmentNotFoundException ;
 
-    public List<AppointmentEntity> retrieveAppointmentsByCustomerEntityId(Long customerId);
+    public List<AppointmentEntity> retrieveAppointmentsByCustomerEntityId(Long customerId) throws AppointmentNotFoundException ;
+
+    public void updateAppointmentEntityRating(Long appointmentId) throws AppointmentNotFoundException;
     
 }

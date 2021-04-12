@@ -159,7 +159,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     
     
     @Override
-    public List<AppointmentEntity> retrieveAppointmentsByDate(LocalDate date, String serviceProviderName)
+    public List<AppointmentEntity> retrieveAppointmentsByDate(LocalDate date, String serviceProviderName) throws AppointmentNotFoundException
     {
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.date = :inDate and a.serviceProviderEntity.name = :inServiceProviderName");
         query.setParameter("inDate", date);
@@ -176,7 +176,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
-    public List<AppointmentEntity> retrieveAppointmentsByCustomerEntityId(Long customerId)
+    public List<AppointmentEntity> retrieveAppointmentsByCustomerEntityId(Long customerId) throws AppointmentNotFoundException 
     {
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.customerEntity.customerId = :inCustomerId");
         query.setParameter("inCustomerId", customerId);
@@ -192,7 +192,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
-    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) 
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) throws AppointmentNotFoundException 
     {
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.scheduledDate = :inDate and a.serviceProviderEntity.serviceProviderId = :inServiceProviderId ORDER BY a.scheduledTime");
         query.setParameter("inDate", date);
@@ -209,7 +209,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
-    public List<AppointmentEntity> retrieveAppointmentsByServiceProviderId(Long serviceProviderId) 
+    public List<AppointmentEntity> retrieveAppointmentsByServiceProviderId(Long serviceProviderId) throws AppointmentNotFoundException 
     {
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.serviceProviderEntity.serviceProviderId = :inServiceProviderId ORDER BY a.scheduledDate");
         query.setParameter("inServiceProviderId", serviceProviderId);
@@ -225,7 +225,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
-    public List<AppointmentEntity> retrieveAppointmentByCustomer(Long customerId, Long serviceProviderId) 
+    public List<AppointmentEntity> retrieveAppointmentByCustomer(Long customerId, Long serviceProviderId) throws AppointmentNotFoundException 
     {
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.customerEntity.customerId = :inCustomerId and a.serviceProviderEntity.serviceProviderId = :inServiceProviderId ORDER BY a.scheduledDate");
         query.setParameter("inCustomerId", customerId);
@@ -255,6 +255,13 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         customerEntity.getAppointmentEntities().remove(appointmentEntity);
         em.flush();
         // are there any exception cases?
+    }
+    
+    @Override
+    public void updateAppointmentEntityRating(Long appointmentId) throws AppointmentNotFoundException
+    {
+        AppointmentEntity appt = retrieveAppointmentByAppointmentId(appointmentId);
+        appt.setHasRating(Boolean.TRUE);
     }
     
 //    @Override
