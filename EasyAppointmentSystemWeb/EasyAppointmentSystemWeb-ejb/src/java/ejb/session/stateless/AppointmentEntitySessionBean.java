@@ -176,6 +176,22 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
     
     @Override
+    public List<AppointmentEntity> retrieveAppointmentsByCustomerEntityId(Long customerId)
+    {
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.customerEntity.customerId = :inCustomerId");
+        query.setParameter("inCustomerId", customerId);
+        
+        List<AppointmentEntity> apptList = query.getResultList();
+        for (AppointmentEntity a : apptList)
+        {
+            a.getCustomerEntity();
+            a.getBusinessCategoryEntity();
+            a.getServiceProviderEntity();
+        }
+        return apptList;
+    }
+    
+    @Override
     public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) 
     {
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.scheduledDate = :inDate and a.serviceProviderEntity.serviceProviderId = :inServiceProviderId ORDER BY a.scheduledTime");

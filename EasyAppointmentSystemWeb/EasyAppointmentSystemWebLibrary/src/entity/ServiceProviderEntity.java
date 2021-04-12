@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotEmpty;
 import javax.xml.bind.annotation.XmlTransient;
 import util.enumeration.StatusEnum;
 
@@ -23,36 +24,46 @@ public class ServiceProviderEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long serviceProviderId;
     
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String name;
     
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String businessCategory;
     
+    @NotEmpty
     @Column(nullable = false, unique = true, length = 32)
     private String businessRegistrationNumber;
     
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String city;
     
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String businessAddress;
     
+    @NotEmpty
     @Column(nullable = false, unique = true, length = 32)
     private String emailAddress;
     
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String phoneNumber;
     
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String password;
     
     @Column(nullable = false)
     private Double rating = 0.0;
     
+
     @Column(nullable = false)
     private int numberOfRatings;
     
+
     @Column(nullable = false)
     private StatusEnum statusEnum;
     
