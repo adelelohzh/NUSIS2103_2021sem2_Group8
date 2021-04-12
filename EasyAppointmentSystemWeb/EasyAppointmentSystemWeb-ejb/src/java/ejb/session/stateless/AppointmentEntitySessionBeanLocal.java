@@ -53,12 +53,14 @@ public interface AppointmentEntitySessionBeanLocal {
 
     public boolean ifAppointmentCanAdd(String givenTime, String givenDate);
 
-    public Long ifCanRate(List<AppointmentEntity> apptList);
+    public Long ifCanRate(List<AppointmentEntity> apptList, Long serviceProviderId);
 
     public String getLocalTimeInString(LocalTime time);
 
     public String findFirstAvailableTime(List<AppointmentEntity> apptList, List<String> timeSlots);
 
     public List<String> findAvailableTimeSlot(List<AppointmentEntity> appointmentEntities, List<String> timeslots2);
+
+    public boolean ifDateHasNotPassed(String date);
     
 }

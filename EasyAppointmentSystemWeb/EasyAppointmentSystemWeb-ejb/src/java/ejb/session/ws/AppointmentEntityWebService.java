@@ -199,8 +199,8 @@ public class AppointmentEntityWebService {
     
     @WebMethod(operationName = "convertTime")
     public LocalTime convertTime(@WebParam(name = "email") String emailAddr,
-                                                @WebParam(name = "password") String password,
-                                                @WebParam(name = "appointmentTime") String appointmentTime) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+                                 @WebParam(name = "password") String password,
+                                 @WebParam(name = "appointmentTime") String appointmentTime) throws InvalidLoginCredentialException, AppointmentNotFoundException {
         
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.convertTime(): Customer "
@@ -212,8 +212,8 @@ public class AppointmentEntityWebService {
     
     @WebMethod(operationName = "calculateDayOfTheWeek")
     public String calculateDayOfTheWeek(@WebParam(name = "email") String emailAddr,
-                                                @WebParam(name = "password") String password,
-                                                @WebParam(name = "date") String date) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+                                        @WebParam(name = "password") String password,
+                                        @WebParam(name = "date") String date) throws InvalidLoginCredentialException, AppointmentNotFoundException {
         
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.calculateDayOfTheWeek(): Customer "
@@ -225,9 +225,9 @@ public class AppointmentEntityWebService {
     
     @WebMethod(operationName = "ifAppointmentCanAdd")
     public boolean ifAppointmentCanAdd(@WebParam(name = "email") String emailAddr,
-                                                @WebParam(name = "password") String password,
-                                                @WebParam(name = "date") String date,
-                                                @WebParam(name = "time") String time) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+                                       @WebParam(name = "password") String password,
+                                       @WebParam(name = "date") String date,
+                                       @WebParam(name = "time") String time) throws InvalidLoginCredentialException, AppointmentNotFoundException {
         
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.ifAppointmentCanAdd(): Customer "
@@ -237,17 +237,19 @@ public class AppointmentEntityWebService {
         return appointmentEntitySessionBeanLocal.ifAppointmentCanAdd(date, time);
     }
     
-    @WebMethod(operationName = "ifCanRate")
+    @WebMethod(operationName = "ifCanRate") 
     public Long ifCanRate(@WebParam(name = "email") String emailAddr,
                                                 @WebParam(name = "password") String password,
-                                                @WebParam(name = "apptList") List<AppointmentEntity> apptList) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+                                                @WebParam(name = "apptList") List<AppointmentEntity> apptList,
+                                                @WebParam(name = "serviceProviderId") Long serviceProviderId)
+            throws InvalidLoginCredentialException, AppointmentNotFoundException {
         
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
         System.out.println("********** EasyAppointmentSystem.ifCanRate(): Customer "
                 + customerEntity.getEmailAddress()
                 + " login remotely via web service");
         
-        return appointmentEntitySessionBeanLocal.ifCanRate(apptList);
+        return appointmentEntitySessionBeanLocal.ifCanRate(apptList, serviceProviderId);
     }
     
     @WebMethod(operationName = "updateAppointmentEntityRating")
@@ -304,13 +306,21 @@ public class AppointmentEntityWebService {
         return appointmentEntitySessionBeanLocal.findAvailableTimeSlot(appointmentList, timeSlots);
     }
     
-    
+    @WebMethod(operationName = "ifDateHasNotPassed")
+    public boolean ifDateHasNotPassed(@WebParam(name = "email") String emailAddr,
+                                      @WebParam(name = "password") String password,
+                                      @WebParam(name = "date") String date)
+                                      throws InvalidLoginCredentialException 
+    {
+        
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.ifDateHasNotPassed(): Customer "
+                + customerEntity.getEmailAddress()
+                + " login remotely via web service");
+        
+        return appointmentEntitySessionBeanLocal.ifDateHasNotPassed(date);
 
-    
-    
-    
-
-
+    }
 
     
 }
