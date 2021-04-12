@@ -127,9 +127,9 @@ public class SystemAdministrationModule {
                 List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory.getCategory(), city);
 
                 for (ServiceProviderEntity s : serviceProviders) {
-                    //each service provider, retrieve their appointment entities for a particular date, sorted by time
+                  
                     List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date.toString(), s.getServiceProviderId());
-                    if (appointmentEntities.size() == 11) { //full slots
+                    if (appointmentEntities.size() == 11) { 
                         continue;
                     } else {
                         if (appointmentEntities.size() == 0) {
@@ -190,7 +190,7 @@ public class SystemAdministrationModule {
         do {
             try {
                 System.out.print("Enter Business category> ");
-                Long input = sc.nextLong(); //catch inputmismatch
+                Long input = sc.nextLong(); 
                 sc.nextLine();
                 System.out.print("Enter City> ");
                 String city = sc.nextLine().trim();
@@ -367,8 +367,6 @@ public class SystemAdministrationModule {
                                     bookingSessionBeanRemote.clearAppointmentCart();
                                 }
 
-                                // if timeslot exists, confirm appointment
-                                // System.out.println("The appointment with " + serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getName() + " at " + time + " on " + currentDate + " is confirmed.");
                                 System.out.println("Enter 0 to go back to the previous menu.");
                                 System.out.print("Exit> ");
                                 response = sc.nextLine().trim();
