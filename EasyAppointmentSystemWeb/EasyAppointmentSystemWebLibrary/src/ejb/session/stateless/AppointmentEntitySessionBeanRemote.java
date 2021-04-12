@@ -50,7 +50,7 @@ public interface AppointmentEntitySessionBeanRemote
 
     public boolean ifAppointmentCanAdd(String givenTime, String givenDate);
     
-    public Long ifCanRate(List<AppointmentEntity> apptList);
+    public Long ifCanRate(List<AppointmentEntity> apptList, Long serviceProviderId);
 
     public String getLocalTimeInString(LocalTime time);
     
@@ -58,4 +58,5 @@ public interface AppointmentEntitySessionBeanRemote
 
     public List<String> findAvailableTimeSlot(List<AppointmentEntity> appointmentEntities, List<String> timeslots2);
 
+    public boolean ifDateHasNotPassed(String date);
 }
