@@ -88,10 +88,8 @@ public class SystemAdministrationModule {
             try {
                 Long customerId = Long.parseLong(response);
                 CustomerEntity customerEntity = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(customerId);
-                //retrieve appointments
 
                 List<AppointmentEntity> appointmentEntities = customerEntity.getAppointmentEntities();
-                //print appointments
 
                 if (appointmentEntities.size() != 0) {
                     System.out.println("Appointments: \n");
@@ -380,34 +378,6 @@ public class SystemAdministrationModule {
         System.out.println();
     }
 
-    private void sendJMSMessageToQueueCheckoutNotification(Long appointmentEntityId, String fromEmailAddress, String toEmailAddress) throws JMSException {
-        Connection connection = null;
-        Session session = null;
-        try {
-            connection = queueCheckoutNotificationFactory.createConnection();
-            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-
-            MapMessage mapMessage = session.createMapMessage();
-            mapMessage.setString("fromEmailAddress", fromEmailAddress);
-            mapMessage.setString("toEmailAddress", toEmailAddress);
-            mapMessage.setLong("appointmentEntityId", appointmentEntityId);
-            MessageProducer messageProducer = session.createProducer(queueCheckoutNotification);
-            messageProducer.send(mapMessage);
-        } finally {
-            if (session != null) {
-                try {
-                    session.close();
-                } catch (JMSException ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-            if (connection != null) {
-                connection.close();
-            }
-        }
-    }
-
     public void sendReminderEmail() {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Admin terminal :: Send reminder email ***\n");
@@ -423,7 +393,6 @@ public class SystemAdministrationModule {
             try {
                 CustomerEntity currentCustomerEntity = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(customerId);
                 List<AppointmentEntity> customerAppointmentEntities = currentCustomerEntity.getAppointmentEntities();
-                //the above list will retrieve all the previous and upcoming
 
                 LocalDate todayDate = LocalDate.now();
 
@@ -436,7 +405,6 @@ public class SystemAdministrationModule {
                 } else {
 
                     String toEmailAddress = currentCustomerEntity.getEmailAddress();
-                    //get the upcoming one
                     
                     int index = 0;
                     for (AppointmentEntity appointmentEntity : customerAppointmentEntities) {
@@ -444,7 +412,7 @@ public class SystemAdministrationModule {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                         LocalDate appointmentDate = LocalDate.parse(date, formatter);
                         
-                        if (appointmentDate.compareTo(todayDate) < 0) { //previous appointment
+                        if (appointmentDate.compareTo(todayDate) < 0) {
                             index++;
                             continue;
                         } else if (appointmentDate.compareTo(todayDate) == 0) {
@@ -463,19 +431,9 @@ public class SystemAdministrationModule {
                     }
                     AppointmentEntity currentAppointment = customerAppointmentEntities.get(index);
                     System.out.println("Current Appointment Entity is " + currentAppointment + "\n");
-                    //}
-                    // 01 - Synchronous Session Bean Invocation
-                    String sendTo = "valencia.teh00@gmail.com";
+
                     try {
-                        emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Valencia Teh<vtjw1000@gmail.com>", sendTo); //testing with my email first
-                    
-                    
-                    // 02 - Asynchronous Session Bean Invocation
-                    //Future<Boolean> asyncResult = emailSessionBeanRemote.emailCheckoutNotificationAsync(customerAppointmentEntities, "Name <name@comp.nus.edu.sg>", toEmailAddress);
-                    //RunnableNotification runnableNotification = new RunnableNotification(asyncResult);
-                    //runnableNotification.start();
-                    // 03 - JMS Messaging with Message Driven Bean
-                        //sendJMSMessageToQueueCheckoutNotification(currentAppointment.getAppointmentId(), "Valencia Teh<vtjw1000@gmail.com>", toEmailAddress);
+                        emailSessionBeanRemote.emailCheckoutNotificationSync(currentAppointment, "Valencia Teh<vtjw1000@gmail.com>", toEmailAddress);
                         System.out.println("An email is sent to " + currentCustomerEntity.getFullName() + " for the appointment " + currentAppointment.getAppointmentNo() + ".\n");
                     
                     }
