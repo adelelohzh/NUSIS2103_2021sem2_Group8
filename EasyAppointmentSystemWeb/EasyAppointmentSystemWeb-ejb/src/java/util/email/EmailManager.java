@@ -47,7 +47,8 @@ public class EmailManager
         emailBody += "Appointment Time: " + appointmentEntity.getScheduledTime() + "\n";
         emailBody += "Service Provider Name: " + appointmentEntity.getServiceProviderEntity().getName() + "\n";
         emailBody += "Business Category: " + appointmentEntity.getBusinessCategoryEntity().getCategory() + "\n";
-        emailBody += "City: " + appointmentEntity.getServiceProviderEntity().getCity() + "\n\n";
+        emailBody += "City: " + appointmentEntity.getServiceProviderEntity().getCity() + "\n";
+        emailBody += "Business Address: " + appointmentEntity.getServiceProviderEntity().getBusinessAddress() + "\n\n";
         
         emailBody += "If you are unable to make it for the appointment, you are advised to cancel the appointment and make a new one. The new appointment must be made 2 hours in advance prior to the actual appointment. Thank you.\n\n";
         emailBody += "Regards, \n";
