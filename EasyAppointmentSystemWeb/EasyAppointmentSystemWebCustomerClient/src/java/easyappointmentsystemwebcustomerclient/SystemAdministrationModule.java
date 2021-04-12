@@ -101,6 +101,8 @@ public class SystemAdministrationModule {
         for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
             System.out.printf("%-3s%-10s", businessCategory.getBusinessCategoryId(), businessCategory.getCategory() + " |");
         }
+        
+        System.out.println("\n");
 
         do {
             try {
@@ -115,8 +117,10 @@ public class SystemAdministrationModule {
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = LocalDate.parse(currentDate, formatter);
+                
+                System.out.println();
 
-                System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
+                System.out.printf("%-19s%-18s%-24s%-23s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating\n");
 
                 BusinessCategoryEntity businessCategory = businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(businessCategoryId);
 
@@ -157,8 +161,10 @@ public class SystemAdministrationModule {
                             }*/
                         }
 
-                        System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + s.getRating());
+                        System.out.printf("%-19s%-18s%-24s%-23s%-16s\n", s.getServiceProviderId() , "| " + s.getName() , "| " + firstAvailableTime , "| " + s.getBusinessAddress() , "| " + s.getRating());
                     }
+                    
+                    System.out.println("\n");
 
                 }
             } catch (ServiceProviderNotFoundException ex) {
@@ -169,6 +175,8 @@ public class SystemAdministrationModule {
                 System.out.println("Please input a valid date in YYYY-MM-DD.\n");
             } catch (InputMismatchException | NumberFormatException ex) {
                 System.out.println("Please input a valid Business Category Id!\n");
+            } catch (AppointmentNotFoundException ex) {
+                System.out.println("There are no appointments on this date!\n");
             }
 
             System.out.println("Enter 0 to go back to the previous menu.");
@@ -186,7 +194,7 @@ public class SystemAdministrationModule {
         for (BusinessCategoryEntity businessCategory : businessCategoryEntities) {
             System.out.printf("%-3s%-10s", businessCategory.getBusinessCategoryId(), businessCategory.getCategory() + " |");
         }
-        System.out.println();
+        System.out.println("\n");
         String response = "";
         String firstAvailableTime = "";
 
@@ -200,14 +208,16 @@ public class SystemAdministrationModule {
 
                 System.out.print("Enter Date (YYYY-MM-DD)> ");
                 String currentDate = sc.nextLine().trim();
+                
+                System.out.println();
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = LocalDate.parse(currentDate, formatter);
                 String day = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US);
 
-                System.out.printf("%-19s%-6s%-22s%-9s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating");
-
-                if (!day.equals("Sunday")) { //insert invalid add appt
+                System.out.printf("%-19s%-18s%-24s%-23s%-16s\n", "Service Provider Id", "| Name", "| First available Time", "| Address", "| Overall rating\n");
+                
+                if (!day.equals("Sunday") && LocalDate.now().isBefore(date)) { //insert invalid add appt
 
                     BusinessCategoryEntity businessCategory = businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input);
 
@@ -234,19 +244,20 @@ public class SystemAdministrationModule {
                                 firstAvailableTime = timeSlots.get(0);
                             }
                         }
-
-                        Double rating = s.getRating();
-                        if (rating == null) {
-                            System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| N.A");
-                        } else {
-                            System.out.println(s.getServiceProviderId() + "| " + s.getName() + "| " + firstAvailableTime + "| " + s.getBusinessAddress() + "| " + rating);
+                        
+                        System.out.printf("%-19s%-18s%-24s%-23s%-16s\n", s.getServiceProviderId() , "| " + s.getName() , "| " + firstAvailableTime , "| " + s.getBusinessAddress() , "| " + s.getRating());
                         }
+                    
+                    System.out.println();
+                    
                     }
 
                     System.out.println("Enter 0 to go back to the previous menu.");
                     System.out.print("Service provider Id> ");
                     response = sc.nextLine().trim();
 
+                    System.out.println();
+                    
                     if (!response.equals("0")) {
                         Long serviceProviderId = Long.parseLong(response);
 
@@ -263,12 +274,13 @@ public class SystemAdministrationModule {
                             String scheduledTime = a.getScheduledTime().toString();
                             if (timeslots2.contains(scheduledTime) && !timeslots2.isEmpty()) {
                                 index = timeslots2.indexOf(scheduledTime);
-                                System.out.println("Index is " + index + " Timing is " + scheduledTime);
+//                                System.out.println("Index is " + index + " Timing is " + scheduledTime);
                                 timeslots2.remove(index);
                             }
                         }
 
                         System.out.println("Available Appointment Slots:");
+                        System.out.println();
 
                         for (String timings : timeslots2) {
                             System.out.print(timings + " | ");
@@ -279,8 +291,9 @@ public class SystemAdministrationModule {
                         System.out.println("Enter 0 to go back to the previous menu.");
                         System.out.print("Enter Time> ");
                         response = sc.nextLine().trim();
+                        System.out.println();
 
-                        System.out.println("You have inputted " + response);
+//                        System.out.println("You have inputted " + response);
 
                         if (!response.equals("0")) {
                             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
@@ -300,71 +313,106 @@ public class SystemAdministrationModule {
 
                             if (comparison == 0) {
                                 if (compare < 2) {
-                                    System.out.println("Appointment cannot be made!");
+                                    System.out.println("Appointment cannot be made!\n");
                                     return;
                                 }
                             }
 
                             if (comparison < 0) {
-                                System.out.println("Appointment cannot be made!");
+                                System.out.println("Appointment cannot be made!\n");
                                 return;
                             }
-
-                            boolean validTime = true;
-                            System.out.println("Here now is it valid: " + validTime);
-                            System.out.println("Appointment Entities got " + appointmentEntities.size());
-
-                            if (!timeslots2.contains(time.toString())) { //means not available
-                                System.out.println(timeslots2);
-                                System.out.println("Is 09:30 taken? ");
-                                System.out.println("Time slot is already full!");
-                                validTime = false;
-                            }
-
-                            if (validTime == Boolean.TRUE) {
-
-                                try {
-                                    AppointmentEntity appointmentEntity = new AppointmentEntity();
-                                    String serviceProviderUIN = serviceProviderId.toString();
-                                    String chosenDate = appointmentDate.toString();
-                                    String appointmentNumber = serviceProviderUIN + chosenDate.substring(5, 7) + chosenDate.substring(8, 10);
-                                    appointmentNumber += appointmentTime.toString().substring(0, 2) + appointmentTime.toString().substring(3, 5);
-                                    // bookingSessionBean 
-                                    bookingSessionBeanRemote.addAppointment(appointmentNumber, appointmentTime, appointmentDate, currentCustomerEntity, serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId), businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));
-
-                                    Long newAppointmentEntityId = bookingSessionBeanRemote.doBooking(currentCustomerEntity.getCustomerId(), serviceProviderId);
-                                    appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentId(newAppointmentEntityId);
-//                                    appointmentEntity.setAppointmentNo(appointmentNumber);
-//                                    appointmentEntity.setScheduledTime(appointmentTime);
-//                                    appointmentEntity.setScheduledDate(appointmentDate);
-//                                    appointmentEntity.setCustomerEntity(currentCustomerEntity);
-//                                    appointmentEntity.setServiceProviderEntity(serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId));
-//                                    appointmentEntity.setBusinessCategoryEntity(businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));    
-//                                    appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
-
-                                    //currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
-                                    //serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
-                                    System.out.println("Appointment " + appointmentEntity.getAppointmentNo() + " added successfully!");
-
-                                } catch (CustomerNotFoundException ex) {
-                                    System.out.println("Customer with customer id " + currentCustomerEntity.getCustomerId() + " not found");
-                                } catch (ServiceProviderNotFoundException ex) {
-                                    System.out.println("Service with service provider id " + serviceProviderId + " not found");
-                                } catch (ServiceProviderBlockedException ex) {
-                                    System.out.println("Service with service provider id " + serviceProviderId + " is blocked!");
-                                } catch (AppointmentNotFoundException ex) {
-                                    Logger.getLogger(SystemAdministrationModule.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                                
-                                bookingSessionBeanRemote.clearAppointmentCart();
-                            }
                             
-                            // if timeslot exists, confirm appointment
-                            // System.out.println("The appointment with " + serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getName() + " at " + time + " on " + currentDate + " is confirmed.");
-                            System.out.println("Enter 0 to go back to the previous menu.");
-                            System.out.print("Exit>");
-                            response = sc.nextLine().trim();
+                            boolean hasAnotherAppt = false;
+                            
+                            List<AppointmentEntity> apptList = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(currentCustomerEntity.getCustomerId()).getAppointmentEntities();
+                            apptList.size(); 
+                            
+                            for (AppointmentEntity a: apptList)
+                            {
+                                if (a.getScheduledDate().toString().equals(appointmentDate.toString())) 
+                                {
+                                 
+                                    if (a.getScheduledTime().toString().equals(appointmentTime.toString()))
+                                    {
+                                        System.out.println("You have another appointment scheduled at " + appointmentDate + " on " + appointmentTime + "!\n");
+                                        hasAnotherAppt = true;
+                                        break;
+                                    }
+                                }
+                            }
+                                    
+                            
+                            if (hasAnotherAppt == false)
+                            {
+                                boolean validTime = true;
+    //                            System.out.println("Here now is it valid: " + validTime);
+    //                            System.out.println("Appointment Entities got " + appointmentEntities.size());
+
+                                if (!timeslots2.contains(time.toString())) { //means not available
+                                    System.out.println(timeslots2);
+    //                                System.out.println("Is 09:30 taken? ");
+                                    System.out.println("Time slot is already full!");
+                                    validTime = false;
+                                }
+
+
+                                if (validTime == Boolean.TRUE) {
+
+                                    try {
+                                        AppointmentEntity appointmentEntity = new AppointmentEntity();
+                                        String serviceProviderUIN = serviceProviderId.toString();
+                                        String chosenDate = appointmentDate.toString();
+                                        String appointmentNumber = serviceProviderUIN + chosenDate.substring(5, 7) + chosenDate.substring(8, 10);
+                                        appointmentNumber += appointmentTime.toString().substring(0, 2) + appointmentTime.toString().substring(3, 5);
+                                        // bookingSessionBean 
+                                        bookingSessionBeanRemote.addAppointment(appointmentNumber, appointmentTime, appointmentDate, currentCustomerEntity, serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId), businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));
+
+                                        Long newAppointmentEntityId = bookingSessionBeanRemote.doBooking(currentCustomerEntity.getCustomerId(), serviceProviderId);
+                                        appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentId(newAppointmentEntityId);
+    //                                    appointmentEntity.setAppointmentNo(appointmentNumber);
+    //                                    appointmentEntity.setScheduledTime(appointmentTime);
+    //                                    appointmentEntity.setScheduledDate(appointmentDate);
+    //                                    appointmentEntity.setCustomerEntity(currentCustomerEntity);
+    //                                    appointmentEntity.setServiceProviderEntity(serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId));
+    //                                    appointmentEntity.setBusinessCategoryEntity(businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));    
+    //                                    appointmentEntitySessionBeanRemote.createNewAppointment(currentCustomerEntity.getCustomerId(), serviceProviderId, appointmentEntity);
+
+                                        //currentCustomerEntity.getAppointmentEntities().add(appointmentEntity);
+                                        //serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getAppointmentEntities().add(appointmentEntity);
+                                        System.out.println("Appointment " + appointmentEntity.getAppointmentNo() + " added successfully!\n");
+
+                                    } catch (CustomerNotFoundException ex) {
+                                        System.out.println("Customer with customer id " + currentCustomerEntity.getCustomerId() + " not found!\n");
+                                    } catch (ServiceProviderNotFoundException ex) {
+                                        System.out.println("Service with service provider id " + serviceProviderId + " not found!\n");
+                                    } catch (ServiceProviderBlockedException ex) {
+                                        System.out.println("Service with service provider id " + serviceProviderId + " is blocked!\n");
+                                    } catch (AppointmentNotFoundException ex) {
+                                        System.out.println("Appointment cannot be not found!\n");
+                                    }
+
+                                    bookingSessionBeanRemote.clearAppointmentCart();
+                                }
+
+                                // if timeslot exists, confirm appointment
+                                // System.out.println("The appointment with " + serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId).getName() + " at " + time + " on " + currentDate + " is confirmed.");
+                                System.out.println("Enter 0 to go back to the previous menu.");
+                                System.out.print("Exit> ");
+                                response = sc.nextLine().trim();
+                            }
                         }
+                    
+                } else {
+                    if (day.equals("Sunday"))
+                    {
+                        System.out.println();
+                        System.out.println("There are Service Provider available on Sunday!");
+                    } 
+                    else
+                    {
+                        System.out.println();
+                        System.out.println("The date chosen has already passed, please choose another date!");
                     }
                 }
             } catch (ServiceProviderNotFoundException ex) {
@@ -376,21 +424,26 @@ public class SystemAdministrationModule {
             } catch (InputMismatchException ex) {
                 System.out.println("Please input a valid Business Category Id!\n");
                 sc.next();
+            } catch (AppointmentNotFoundException ex) {
+                System.out.println("Appointment cannot be found!\n");
+            } catch (CustomerNotFoundException ex) {
+                System.out.println("Customer cannot be found!\n");
             }
         } while (!response.equals("0"));
+        
+        System.out.println();
     }
 
     public void viewAppointments() {
+        
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** Customer terminal :: View Appointments ***\n");
+        String response = "";
 
         try {
-            Scanner sc = new Scanner(System.in);
-            System.out.println("*** Customer terminal :: View Appointments ***\n");
-            String response = "";
-
             List<AppointmentEntity> appointments = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(currentCustomerEntity.getCustomerId()).getAppointmentEntities();
             appointments.size();
 
-            System.out.println("*** Customer terminal :: View Appointments ***\n");
             System.out.println("Appointments: ");
             System.out.printf("%-15s%-13s%-8s%-15s\n", "Name", "| Date", "| Time", "| Appointment No.");
 
@@ -404,7 +457,7 @@ public class SystemAdministrationModule {
                 response = sc.nextLine().trim();
             }
         } catch (CustomerNotFoundException ex) {
-            Logger.getLogger(SystemAdministrationModule.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Customer not found!");
         }
     }
 
@@ -437,20 +490,21 @@ public class SystemAdministrationModule {
 
                     
                     LocalDate todayDate = LocalDate.now();
-                    System.out.println("Today's date is " + todayDate.toString());
+//                    System.out.println("Today's date is " + todayDate.toString());
                     LocalDate appointmentDate = appointmentEntity.getScheduledDate();
-                    System.out.println("Appointment date is " + appointmentDate.toString());
+//                    System.out.println("Appointment date is " + appointmentDate.toString());
 
                     DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
                     String currentTime = LocalTime.now().format(fmt);
                     LocalTime todayTime = LocalTime.parse(currentTime, fmt);
-                    System.out.println("Today time is " + todayTime.toString());
+//                    System.out.println("Today time is " + todayTime.toString());
                     LocalTime appointmentTime = appointmentEntity.getScheduledTime();
-                    System.out.println("Appointment time is " + appointmentTime.toString());
+//                    System.out.println("Appointment time is " + appointmentTime.toString());
 
                     int comparison = appointmentDate.compareTo(todayDate);
                     int compare = appointmentTime.compareTo(todayTime);
-                    System.out.println("comparison: " + comparison);
+//                    System.out.println("comparison: " + comparison);
+//                    System.out.println("Compare: " + compare);
                     if (comparison >= 1) { //different days for sure
                         int apptYear = appointmentDate.getYear();
                         int currYear = todayDate.getYear();
@@ -475,6 +529,10 @@ public class SystemAdministrationModule {
                         } else {
                             System.out.println("Appointment cannot be cancelled!\n");
                         }
+                    } else {
+ 
+                        System.out.println("Appointment cannot be cancelled!\n");
+
                     }
 
                     /*if (comparison > 1) { //appointmentDate is more than one day from now
@@ -517,29 +575,52 @@ public class SystemAdministrationModule {
 
         do {
 
-            System.out.print("Enter Service Provider Name> ");
-            String name = sc.nextLine().trim();
+            System.out.print("Enter Service Provider Id> ");
+            String input = sc.nextLine().trim();
 
             try {
-                ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityByName(name);
-                System.out.println("You are rating " + name + ".\n");
+                Long serviceProviderId = Long.parseLong(input);
+                ServiceProviderEntity serviceProvider = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId);
+                System.out.println("You are rating " + serviceProvider.getName() + ".\n");
                 List<AppointmentEntity> apptList = appointmentEntitySessionBeanRemote.retrieveAppointmentByCustomer(currentCustomerEntity.getCustomerId(), serviceProvider.getServiceProviderId());
+                
+                boolean hasUnratedAppt = false;
+                Long ratedApptId = 0l;
+                
+                for (AppointmentEntity a : apptList)
+                {
+                    if (a.getScheduledDate().compareTo(LocalDate.now()) <= 0) 
+                    {
+                        System.out.println("Date compareTo: " + a.getScheduledDate().compareTo(LocalDate.now()));
+                        if (a.getScheduledTime().compareTo(LocalTime.now()) <= 0)
+                        {
+                            System.out.println("Time compareTo: " + a.getScheduledTime().compareTo(LocalTime.now()));
+                            if (a.getHasRating() == false)
+                            {
+                                hasUnratedAppt = true;
+                                ratedApptId = a.getAppointmentId();
+                                break;
+                            }
+                        }
+                    }
+                }
 
                 if (apptList.isEmpty()) {
-                    System.out.println("You do not have any appointment under " + name + "\n");
-                } else if (apptList.get(0).getScheduledDate().compareTo(LocalDate.now()) > 0) {
-                    System.out.println("You do not have any completed appointments under " + name + "\n");
+                    System.out.println("You do not have any appointment under " + serviceProvider.getName() + "\n");
+                } else if (hasUnratedAppt == false) {
+                    System.out.println("You do not have any completed appointments under " + serviceProvider.getName() + " that has not been rated!\n");
                 } else {
                     System.out.println("Enter 0 to go back to the previous menu.");
                     if (!response.equals("0")) {
                         System.out.print("Enter rating> ");
                         double rating = sc.nextDouble();
                         sc.nextLine();
-                        if (rating != 0) {
+                        if (rating != 0.0) {
                             if (rating > 5.0 | rating < 0.0) {
                                 System.out.println("Please enter a number between 0.0 to 5.0!\n");
                             } else {
                                 serviceProviderEntitySessionBeanRemote.updateRating(rating, serviceProvider.getServiceProviderId());
+                                appointmentEntitySessionBeanRemote.updateAppointmentEntityRating(ratedApptId);
                                 System.out.println("Rating successfully submitted!\n");
                             }
                         }
@@ -549,12 +630,14 @@ public class SystemAdministrationModule {
                 }
             } catch (ServiceProviderNotFoundException ex) {
                 System.out.println("Service Provider does not exist!\n");
-            } catch (InputMismatchException ex) {
+            } catch (InputMismatchException | NumberFormatException ex) {
                 System.out.println("Please enter a number between 0.0 to 5.0!\n");
             } catch (ServiceProviderBlockedException ex) {
                 System.out.println("Service Provider is blocked!\n");
+            } catch (AppointmentNotFoundException ex) {
+                System.out.println("Appointment not found!\n");;
             }
-
+ 
             System.out.println("Enter 0 to go back to the previous menu.");
             System.out.print(">");
             response = sc.nextLine().trim();
