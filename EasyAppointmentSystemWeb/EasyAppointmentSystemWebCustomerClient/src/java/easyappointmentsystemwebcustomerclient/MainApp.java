@@ -23,6 +23,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.AppointmentNumberExistsException;
 import util.exception.CustomerEmailExistsException;
+import util.exception.CustomerNotUniqueException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderNotFoundException;
 import util.exception.UnknownPersistenceException;
@@ -124,9 +125,12 @@ public class MainApp {
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
 
-        if (username.length() > 0 && password.length() > 0) {
+        
+        if (username.length() > 0 && password.length() > 0) 
+        {
             currentCustomerEntity = customerEntitySessionBeanRemote.customerLogin(username, password);
             return currentCustomerEntity;
+            
         } else {
             throw new InvalidLoginCredentialException("Missing login credential!");
         }
@@ -208,7 +212,8 @@ public class MainApp {
             System.out.print("Enter Gender> ");
             String gender = scanner.nextLine().trim();
 
-            while (!gender.equals('M') && !gender.equals('F') && !gender.equals('m') && !gender.equals('f')) {
+            while (!gender.toLowerCase().equals("F") && !gender.toLowerCase().equals("m") && !gender.toLowerCase().equals("male") && !gender.toLowerCase().equals("female")) 
+            {
                 System.out.print("Enter Gender> ");
                 gender = scanner.nextLine().trim();
             }
@@ -248,15 +253,12 @@ public class MainApp {
             } else {
                 showInputDataValidationErrorsForCustomerEntity(constraintViolations);
             }
-        } catch (CustomerEmailExistsException ex) {
-            System.out.println("An error has occurred while creating the new customer!: The username already exists\n");
+        } catch (CustomerNotUniqueException ex) {
+            System.out.println("An error has occurred while creating the new customer!: Email or Identification Number already registered!\n");
         } catch (UnknownPersistenceException ex) {
             System.out.println("An unknown error has occurred while creating the new customer!: " + ex.getMessage() + "\n");
         } catch (InputDataValidationException ex) {
             System.out.println(ex.getMessage() + "\n");
-
-        } catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException ex) {
-            System.out.println("Character fields cannot be empty!");
 
         } catch (InputMismatchException ex) {
             System.out.println("Please enter a valid age value!");
