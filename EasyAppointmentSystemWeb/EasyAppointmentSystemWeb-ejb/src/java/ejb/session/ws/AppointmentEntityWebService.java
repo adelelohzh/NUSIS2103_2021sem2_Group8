@@ -98,7 +98,7 @@ public class AppointmentEntityWebService {
         return appointmentEntitySessionBeanLocal.retrieveAppointmentsByDate(date, serviceProviderName);
     }
     
-    @WebMethod(operationName = "retrievSortedeAppointmentsByDate")
+    @WebMethod(operationName = "retrieveSortedAppointmentsByDate")
     public List<AppointmentEntity> retrieveSortedAppointmentsByDate(@WebParam(name = "email") String emailAddr,
             @WebParam(name = "password") String password,
             @WebParam(name = "date") LocalDate date,
