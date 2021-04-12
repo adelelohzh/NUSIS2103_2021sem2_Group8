@@ -10,6 +10,7 @@ import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import entity.AppointmentEntity;
 import entity.CustomerEntity;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.jws.WebService;
@@ -87,7 +88,7 @@ public class AppointmentEntityWebService {
     @WebMethod(operationName = "retrieveAppointmentsByDate")
     public List<AppointmentEntity> retrieveAppointmentsByDate(@WebParam(name = "email") String emailAddr,
             @WebParam(name = "password") String password,
-            @WebParam(name = "date") LocalDate date,
+            @WebParam(name = "date") String date,
             @WebParam(name = "serviceProviderName") String serviceProviderName) throws InvalidLoginCredentialException, AppointmentNotFoundException {
 
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
@@ -101,7 +102,7 @@ public class AppointmentEntityWebService {
     @WebMethod(operationName = "retrieveSortedAppointmentsByDate")
     public List<AppointmentEntity> retrieveSortedAppointmentsByDate(@WebParam(name = "email") String emailAddr,
             @WebParam(name = "password") String password,
-            @WebParam(name = "date") LocalDate date,
+            @WebParam(name = "date") String date,
             @WebParam(name = "serviceProviderId") Long serviceProviderId) throws InvalidLoginCredentialException, AppointmentNotFoundException {
 
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
@@ -167,6 +168,147 @@ public class AppointmentEntityWebService {
         return appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentNumber(appointmentNo);
         
     }
+    
+    @WebMethod(operationName = "convertDate")
+    public LocalDate convertDate(@WebParam(name = "email") String emailAddr,
+            @WebParam(name = "password") String password,
+            @WebParam(name = "date") String date) throws InvalidLoginCredentialException {
+        
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.convertDate(): Customer "
+                + customerEntity.getEmailAddress()
+                + " login remotely via web service");
+        
+        return appointmentEntitySessionBeanLocal.convertDate(date);
+        
+    }
+    
+    @WebMethod(operationName = "ifAppointmentCanCancel")
+    public boolean ifAppointmentCanCancel(@WebParam(name = "email") String emailAddr,
+                                                @WebParam(name = "password") String password,
+                                                @WebParam(name = "appointmentNo") String appointmentNo) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+        
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.ifAppointmentCanCancel(): Customer "
+                + customerEntity.getEmailAddress()
+                + " login remotely via web service");
+        
+        return appointmentEntitySessionBeanLocal.ifAppointmentCanCancel(appointmentNo);
+        
+    }
+    
+    @WebMethod(operationName = "convertTime")
+    public LocalTime convertTime(@WebParam(name = "email") String emailAddr,
+                                                @WebParam(name = "password") String password,
+                                                @WebParam(name = "appointmentTime") String appointmentTime) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+        
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.convertTime(): Customer "
+                + customerEntity.getEmailAddress()
+                + " login remotely via web service");
+        
+        return appointmentEntitySessionBeanLocal.convertTime(appointmentTime);
+    }
+    
+    @WebMethod(operationName = "calculateDayOfTheWeek")
+    public String calculateDayOfTheWeek(@WebParam(name = "email") String emailAddr,
+                                                @WebParam(name = "password") String password,
+                                                @WebParam(name = "date") String date) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+        
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.calculateDayOfTheWeek(): Customer "
+                + customerEntity.getEmailAddress()
+                + " login remotely via web service");
+        
+        return appointmentEntitySessionBeanLocal.calculateDayOfTheWeek(date);
+    }
+    
+    @WebMethod(operationName = "ifAppointmentCanAdd")
+    public boolean ifAppointmentCanAdd(@WebParam(name = "email") String emailAddr,
+                                                @WebParam(name = "password") String password,
+                                                @WebParam(name = "date") String date,
+                                                @WebParam(name = "time") String time) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+        
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.ifAppointmentCanAdd(): Customer "
+                + customerEntity.getEmailAddress()
+                + " login remotely via web service");
+        
+        return appointmentEntitySessionBeanLocal.ifAppointmentCanAdd(date, time);
+    }
+    
+    @WebMethod(operationName = "ifCanRate")
+    public Long ifCanRate(@WebParam(name = "email") String emailAddr,
+                                                @WebParam(name = "password") String password,
+                                                @WebParam(name = "apptList") List<AppointmentEntity> apptList) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+        
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.ifCanRate(): Customer "
+                + customerEntity.getEmailAddress()
+                + " login remotely via web service");
+        
+        return appointmentEntitySessionBeanLocal.ifCanRate(apptList);
+    }
+    
+    @WebMethod(operationName = "updateAppointmentEntityRating")
+    public void updateAppointmentEntityRating(@WebParam(name = "email") String emailAddr,
+                                                @WebParam(name = "password") String password,
+                                                @WebParam(name = "appointmentId") Long appointmentId) throws InvalidLoginCredentialException, AppointmentNotFoundException {
+        
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.updateAppointmentEntityRating(): Customer "
+                + customerEntity.getEmailAddress()
+                + " login remotely via web service");
+        
+        appointmentEntitySessionBeanLocal.updateAppointmentEntityRating(appointmentId);
+    }
+    
+    @WebMethod(operationName = "getLocalTimeInString")
+    public String getLocalTimeInString(@WebParam(name = "email") String emailAddr,
+                                                @WebParam(name = "password") String password,
+                                                @WebParam(name = "time") LocalTime time) throws InvalidLoginCredentialException {
+        
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.getLocalTimeInString(): Customer "
+                + customerEntity.getEmailAddress()
+                + " login remotely via web service");
+        
+        return appointmentEntitySessionBeanLocal.getLocalTimeInString(time);
+    }
+    
+    @WebMethod(operationName = "findFirstAvailableTime")
+    public String findFirstAvailableTime(@WebParam(name = "email") String emailAddr,
+                                                @WebParam(name = "password") String password,
+                                                @WebParam(name = "appointmentList") List<AppointmentEntity> appointmentList,
+                                                @WebParam(name = "timeSlots") List<String> timeSlots) throws InvalidLoginCredentialException {
+        
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.findFirstAvailableTime(): Customer "
+                + customerEntity.getEmailAddress()
+                + " login remotely via web service");
+        
+        return appointmentEntitySessionBeanLocal.findFirstAvailableTime(appointmentList, timeSlots);
+    }
+    
+    @WebMethod(operationName = "findAvailableTimeSlot")
+    public List<String> findAvailableTimeSlot(@WebParam(name = "email") String emailAddr,
+                                                @WebParam(name = "password") String password,
+                                                @WebParam(name = "appointmentList") List<AppointmentEntity> appointmentList,
+                                                @WebParam(name = "timeSlots") List<String> timeSlots) throws InvalidLoginCredentialException {
+        
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
+        System.out.println("********** EasyAppointmentSystem.findAvailableTimeSlot(): Customer "
+                + customerEntity.getEmailAddress()
+                + " login remotely via web service");
+        
+        return appointmentEntitySessionBeanLocal.findAvailableTimeSlot(appointmentList, timeSlots);
+    }
+    
+    
+
+    
+    
+    
 
 
 

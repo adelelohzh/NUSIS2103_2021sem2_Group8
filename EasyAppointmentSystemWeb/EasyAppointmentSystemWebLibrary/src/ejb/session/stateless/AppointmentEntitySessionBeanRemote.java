@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.AppointmentEntity;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.AppointmentNotFoundException;
@@ -23,9 +24,9 @@ public interface AppointmentEntitySessionBeanRemote
 
     public AppointmentEntity retrieveAppointmentByAppointmentNumber(String appointmentNo) throws AppointmentNotFoundException;
 
-    public List<AppointmentEntity> retrieveAppointmentsByDate(LocalDate date, String serviceProviderName) throws AppointmentNotFoundException ;
+    public List<AppointmentEntity> retrieveAppointmentsByDate(String date, String serviceProviderName) throws AppointmentNotFoundException ;
 
-    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(LocalDate date, Long serviceProviderId) throws AppointmentNotFoundException ;
+    public List<AppointmentEntity> retrieveSortedAppointmentsByDate(String date, Long serviceProviderId) throws AppointmentNotFoundException ;
 
     public void deleteAppointment(String appointmentNo) throws AppointmentNotFoundException;
 
@@ -38,5 +39,23 @@ public interface AppointmentEntitySessionBeanRemote
     public List<AppointmentEntity> retrieveAppointmentsByCustomerEntityId(Long customerId) throws AppointmentNotFoundException ;
 
     public void updateAppointmentEntityRating(Long appointmentId) throws AppointmentNotFoundException;
+
+    public LocalDate convertDate(String date);
+    
+    public boolean ifAppointmentCanCancel(String appointmentNo) throws AppointmentNotFoundException;
+    
+    public String calculateDayOfTheWeek(String givenDate);
+
+    public LocalTime convertTime(String time);
+
+    public boolean ifAppointmentCanAdd(String givenTime, String givenDate);
+    
+    public Long ifCanRate(List<AppointmentEntity> apptList);
+
+    public String getLocalTimeInString(LocalTime time);
+    
+    public String findFirstAvailableTime(List<AppointmentEntity> apptList, List<String> timeSlots);
+
+    public List<String> findAvailableTimeSlot(List<AppointmentEntity> appointmentEntities, List<String> timeslots2);
 
 }

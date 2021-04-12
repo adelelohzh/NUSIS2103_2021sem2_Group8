@@ -91,7 +91,7 @@ public class ServiceProviderWebService
     @WebMethod(operationName = "retrieveServiceProviderEntityBySearch")
     public List<ServiceProviderEntity> retrieveServiceProviderEntityBySearch(@WebParam(name = "email") String emailAddr,
                                                                              @WebParam(name = "password") String password,
-                                                                             @WebParam(name = "business category") String businessCategory,
+                                                                             @WebParam(name = "businessCategory") String businessCategory,
                                                                              @WebParam(name = "city") String city) 
                                 throws InvalidLoginCredentialException, ServiceProviderNotFoundException
     {
@@ -106,7 +106,7 @@ public class ServiceProviderWebService
     @WebMethod(operationName = "updateRating")
     public void updateRating(@WebParam(name = "email") String emailAddr,
                                                         @WebParam(name = "password") String password,
-                                                        @WebParam(name = "rating") Long rating,
+                                                        @WebParam(name = "rating") Double rating,
                                                         @WebParam(name = "serviceProviderId") Long serviceProviderId) 
                                 throws InvalidLoginCredentialException, ServiceProviderNotFoundException, ServiceProviderBlockedException
     {

@@ -128,7 +128,7 @@ public class SystemAdministrationModule {
 
                 for (ServiceProviderEntity s : serviceProviders) {
                     //each service provider, retrieve their appointment entities for a particular date, sorted by time
-                    List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, s.getServiceProviderId());
+                    List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date.toString(), s.getServiceProviderId());
                     if (appointmentEntities.size() == 11) { //full slots
                         continue;
                     } else {
@@ -224,7 +224,7 @@ public class SystemAdministrationModule {
                     List<ServiceProviderEntity> serviceProviders = serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityBySearch(businessCategory.getCategory(), city);
 
                     for (ServiceProviderEntity s : serviceProviders) {
-                        List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, s.getServiceProviderId());
+                        List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date.toString(), s.getServiceProviderId());
                         if (appointmentEntities.size() == 11) {
                             continue;
                         } else {
@@ -261,7 +261,7 @@ public class SystemAdministrationModule {
                     if (!response.equals("0")) {
                         Long serviceProviderId = Long.parseLong(response);
 
-                        List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date, serviceProviderId);
+                        List<AppointmentEntity> appointmentEntities = appointmentEntitySessionBeanRemote.retrieveSortedAppointmentsByDate(date.toString(), serviceProviderId);
                         List<String> availableTimings = new ArrayList<String>();
 
                         //want to find out when he is not available
