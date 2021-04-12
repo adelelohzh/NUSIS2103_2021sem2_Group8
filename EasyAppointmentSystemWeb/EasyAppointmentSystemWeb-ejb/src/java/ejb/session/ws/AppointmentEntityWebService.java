@@ -64,7 +64,7 @@ public class AppointmentEntityWebService {
             @WebParam(name = "serviceProviderId") Long serviceProviderId) throws InvalidLoginCredentialException {
 
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
-        System.out.println("********** EasyAppointmentSystem.retrieveAppointmentByCustomer(): Customer "
+        System.out.println("********** EasyAppointmentSystem.retrieveAppointmentsByCustomer(): Customer "
                 + customerEntity.getEmailAddress()
                 + " login remotely via web service");
 
@@ -105,7 +105,7 @@ public class AppointmentEntityWebService {
             @WebParam(name = "serviceProviderId") Long serviceProviderId) throws InvalidLoginCredentialException {
 
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
-        System.out.println("********** EasyAppointmentSystem.retrieveAppointmentByDate(): Customer "
+        System.out.println("********** EasyAppointmentSystem.retrieveSortedAppointmentsByDate(): Customer "
                 + customerEntity.getEmailAddress()
                 + " login remotely via web service");
 
@@ -146,7 +146,7 @@ public class AppointmentEntityWebService {
             @WebParam(name = "appointmentNumber") String appointmentNo) throws AppointmentNotFoundException, InvalidLoginCredentialException {
 
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
-        System.out.println("********** EasyAppointmentSystem.retrieveAppointmentByAppointmentNumber(): Customer "
+        System.out.println("********** EasyAppointmentSystem.deleteAppointment(): Customer "
                 + customerEntity.getEmailAddress()
                 + " login remotely via web service");
         
