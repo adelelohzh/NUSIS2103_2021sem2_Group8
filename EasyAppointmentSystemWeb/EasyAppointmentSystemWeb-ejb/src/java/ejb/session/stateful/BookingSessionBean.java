@@ -8,6 +8,7 @@ import entity.ServiceProviderEntity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -33,8 +34,8 @@ public class BookingSessionBean implements BookingSessionBeanRemote, BookingSess
     private AppointmentEntitySessionBeanLocal appointmentEntitySessionBeanLocal;
     
     private String appointmentNo;
-    private LocalTime scheduledTime;
-    private LocalDate scheduledDate;
+    private String scheduledTime;
+    private String scheduledDate;
     private CustomerEntity customerEntity;
     private ServiceProviderEntity serviceProviderEntity;
     private BusinessCategoryEntity businessCategoryEntity;
@@ -46,7 +47,7 @@ public class BookingSessionBean implements BookingSessionBeanRemote, BookingSess
     }
     
     @Override
-    public void addAppointment(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity)
+    public void addAppointment(String appointmentNo, String scheduledTime, String scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity)
     {
         this.appointmentNo = appointmentNo;
         this.scheduledTime = scheduledTime;
@@ -66,8 +67,8 @@ public class BookingSessionBean implements BookingSessionBeanRemote, BookingSess
     private void initialiseState()
     {
         this.appointmentNo = "";
-        this.scheduledTime = null;
-        this.scheduledDate = null;
+        this.scheduledTime = "";
+        this.scheduledDate = "";
         this.customerEntity = new CustomerEntity();
         this.serviceProviderEntity = new ServiceProviderEntity();
         this.businessCategoryEntity = new BusinessCategoryEntity();
@@ -106,23 +107,25 @@ public class BookingSessionBean implements BookingSessionBeanRemote, BookingSess
     }
 
     @Override
-    public LocalTime getScheduledTime() {
+    public String getScheduledTime() {
         return scheduledTime;
     }
 
-    @Override
-    public void setScheduledTime(LocalTime scheduledTime) {
-        this.scheduledTime = scheduledTime;
+    public void setScheduledTime(String scheduledTime) 
+    {
+        LocalTime time = LocalTime.parse(scheduledTime.toString(), DateTimeFormatter.ofPattern("HH:mm"));
+        this.scheduledTime = time.toString();
     }
 
     @Override
-    public LocalDate getScheduledDate() {
+    public String getScheduledDate() {
         return scheduledDate;
     }
 
-    @Override
-    public void setScheduledDate(LocalDate scheduledDate) {
-        this.scheduledDate = scheduledDate;
+    public void setScheduledDate(String scheduledDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(scheduledDate, formatter);
+        this.scheduledDate = date.toString();
     }
 
     @Override

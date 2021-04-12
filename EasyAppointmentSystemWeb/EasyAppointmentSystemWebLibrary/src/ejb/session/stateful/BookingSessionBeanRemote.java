@@ -17,20 +17,20 @@ import util.exception.UnknownPersistenceException;
 public interface BookingSessionBeanRemote {
     
     public Long doBooking(Long customerId, Long serviceProviderId) throws UnknownPersistenceException, InputDataValidationException, AppointmentNumberExistsException, CustomerNotFoundException, ServiceProviderNotFoundException, ServiceProviderBlockedException;
-    
+
     public void clearAppointmentCart();
 
     public String getAppointmentNo();
 
     public void setAppointmentNo(String appointmentNo);
 
-    public LocalTime getScheduledTime();
+    public String getScheduledTime();
 
-    public void setScheduledTime(LocalTime scheduledTime);
+    public void setScheduledTime(String scheduledTime);
 
-    public LocalDate getScheduledDate();
+    public String getScheduledDate();
 
-    public void setScheduledDate(LocalDate scheduledDate);
+    public void setScheduledDate(String scheduledDate);
 
     public CustomerEntity getCustomerEntity();
 
@@ -43,8 +43,8 @@ public interface BookingSessionBeanRemote {
     public BusinessCategoryEntity getBusinessCategoryEntity();
 
     public void setBusinessCategoryEntity(BusinessCategoryEntity businessCategoryEntity);
-    
-    public void addAppointment(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity);
+
+    public void addAppointment(String appointmentNo, String scheduledTime, String scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity);
     
     
 }

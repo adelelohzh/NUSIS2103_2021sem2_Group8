@@ -167,11 +167,9 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
 
     @Override
     public List<AppointmentEntity> retrieveSortedAppointmentsByDate(String date, Long serviceProviderId) throws AppointmentNotFoundException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate currDate = LocalDate.parse(date, formatter);
 
         Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.scheduledDate = :inCurrDate and a.serviceProviderEntity.serviceProviderId = :inServiceProviderId ORDER BY a.scheduledTime");
-        query.setParameter("inCurrDate", currDate);
+        query.setParameter("inCurrDate", date);
         query.setParameter("inServiceProviderId", serviceProviderId);
 
         List<AppointmentEntity> apptList = query.getResultList();
@@ -278,13 +276,17 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     @Override
     public boolean ifAppointmentCanCancel(String appointmentNo) throws AppointmentNotFoundException {
 
-        LocalDate appointmentDate = retrieveAppointmentByAppointmentNumber(appointmentNo).getScheduledDate();
+        String date = retrieveAppointmentByAppointmentNumber(appointmentNo).getScheduledDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate appointmentDate = LocalDate.parse(date, formatter);
         LocalDate todayDate = LocalDate.now();
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
         String currentTime = LocalTime.now().format(fmt);
         LocalTime todayTime = LocalTime.parse(currentTime, fmt);
-        LocalTime appointmentTime = retrieveAppointmentByAppointmentNumber(appointmentNo).getScheduledTime();
+        
+        String time = retrieveAppointmentByAppointmentNumber(appointmentNo).getScheduledTime();
+        LocalTime appointmentTime = LocalTime.parse(time, fmt);
 
         int comparison = appointmentDate.compareTo(todayDate);
         int compare = appointmentTime.compareTo(todayTime);
@@ -362,12 +364,22 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     @Override
     public Long ifCanRate(List<AppointmentEntity> apptList) {
         Long ratedApptId = 0l;
+        
+        
 
         for (AppointmentEntity a : apptList) {
-            if (a.getScheduledDate().compareTo(LocalDate.now()) <= 0) {
-                System.out.println("Date compareTo: " + a.getScheduledDate().compareTo(LocalDate.now()));
-                if (a.getScheduledTime().compareTo(LocalTime.now()) <= 0) {
-                    System.out.println("Time compareTo: " + a.getScheduledTime().compareTo(LocalTime.now()));
+            String date = a.getScheduledDate();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate appointmentDate = LocalDate.parse(date, formatter);
+            
+            String time = a.getScheduledTime();
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
+            LocalTime appointmentTime = LocalTime.parse(time, fmt);
+            
+            if (appointmentDate.compareTo(LocalDate.now()) <= 0) {
+                System.out.println("Date compareTo: " + appointmentDate.compareTo(LocalDate.now()));
+                if (appointmentTime.compareTo(LocalTime.now()) <= 0) {
+                    System.out.println("Time compareTo: " + appointmentTime.compareTo(LocalTime.now()));
                     if (a.getHasRating() == false) {
                         ratedApptId = a.getAppointmentId();
                         break;
@@ -411,6 +423,13 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         }
         
         return timeslots2;
+    }
+    
+    public boolean ifDateHasNotPassed(String date)
+    {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate appointmentDate = LocalDate.parse(date, formatter);
+        return LocalDate.now().isBefore(appointmentDate);
     }
 
 }
