@@ -141,8 +141,8 @@ public class SystemAdministrationModule {
                             timeSlots.addAll(times);
 
                             for (AppointmentEntity appointment : appointmentEntities) {
-                                if (timeSlots.contains(appointment.getScheduledTime().toString())) {
-                                    timeSlots.remove(appointment.getScheduledTime().toString());
+                                if (timeSlots.contains(appointment.getScheduledTime())) {
+                                    timeSlots.remove(appointment.getScheduledTime());
                                 }
                             }
 
@@ -366,7 +366,7 @@ public class SystemAdministrationModule {
                                         String appointmentNumber = serviceProviderUIN + chosenDate.substring(5, 7) + chosenDate.substring(8, 10);
                                         appointmentNumber += appointmentTime.toString().substring(0, 2) + appointmentTime.toString().substring(3, 5);
                                         // bookingSessionBean 
-                                        bookingSessionBeanRemote.addAppointment(appointmentNumber, appointmentTime, appointmentDate, currentCustomerEntity, serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId), businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));
+                                        bookingSessionBeanRemote.addAppointment(appointmentNumber, appointmentTime.toString(), appointmentDate.toString(), currentCustomerEntity, serviceProviderEntitySessionBeanRemote.retrieveServiceProviderEntityById(serviceProviderId), businessCategoryEntitySessionBeanRemote.retrieveBusinessCategoriesById(input));
 
                                         Long newAppointmentEntityId = bookingSessionBeanRemote.doBooking(currentCustomerEntity.getCustomerId(), serviceProviderId);
                                         appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentId(newAppointmentEntityId);
@@ -421,7 +421,7 @@ public class SystemAdministrationModule {
                 System.out.println("BusinessCategory cannot be found!");
             } catch (DateTimeParseException ex) {
                 System.out.println("Please input a valid date in YYYY-MM-DD, and a valid time in HH-MM.\n");
-            } catch (InputMismatchException ex) {
+            } catch (InputMismatchException | NumberFormatException ex) {
                 System.out.println("Please input a valid Business Category Id!\n");
                 sc.next();
             } catch (AppointmentNotFoundException ex) {
@@ -490,15 +490,18 @@ public class SystemAdministrationModule {
 
                     
                     LocalDate todayDate = LocalDate.now();
-//                    System.out.println("Today's date is " + todayDate.toString());
-                    LocalDate appointmentDate = appointmentEntity.getScheduledDate();
-//                    System.out.println("Appointment date is " + appointmentDate.toString());
-
+                    
+                    String date = appointmentEntity.getScheduledDate();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate appointmentDate = LocalDate.parse(date, formatter);
+            
+                    String time = appointmentEntity.getScheduledTime();
                     DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
+                    LocalTime appointmentTime = LocalTime.parse(time, fmt);
+
                     String currentTime = LocalTime.now().format(fmt);
                     LocalTime todayTime = LocalTime.parse(currentTime, fmt);
 //                    System.out.println("Today time is " + todayTime.toString());
-                    LocalTime appointmentTime = appointmentEntity.getScheduledTime();
 //                    System.out.println("Appointment time is " + appointmentTime.toString());
 
                     int comparison = appointmentDate.compareTo(todayDate);
@@ -589,13 +592,19 @@ public class SystemAdministrationModule {
                 
                 for (AppointmentEntity a : apptList)
                 {
-                    if (a.getScheduledDate().compareTo(LocalDate.now()) <= 0) 
+                    String date = a.getScheduledDate();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate appointmentDate = LocalDate.parse(date, formatter);
+            
+                    String time = a.getScheduledTime();
+                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
+                    LocalTime appointmentTime = LocalTime.parse(time, fmt);
+                    
+                    if (appointmentDate.compareTo(LocalDate.now()) <= 0) 
                     {
-                        System.out.println("Date compareTo: " + a.getScheduledDate().compareTo(LocalDate.now()));
-                        if (a.getScheduledTime().compareTo(LocalTime.now()) <= 0)
+                        if (appointmentTime.compareTo(LocalTime.now()) <= 0)
                         {
-                            System.out.println("Time compareTo: " + a.getScheduledTime().compareTo(LocalTime.now()));
-                            if (a.getHasRating() == false)
+                            if (a.getHasRating() == false && a.getServiceProviderEntity().getServiceProviderId().equals(serviceProviderId))
                             {
                                 hasUnratedAppt = true;
                                 ratedApptId = a.getAppointmentId();
