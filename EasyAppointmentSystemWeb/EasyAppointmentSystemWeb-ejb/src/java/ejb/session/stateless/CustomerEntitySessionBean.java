@@ -19,6 +19,7 @@ import javax.validation.ValidatorFactory;
 import util.exception.CustomerDeletionException;
 import util.exception.CustomerNotFoundException;
 import util.exception.CustomerEmailExistsException;
+import util.exception.CustomerNotUniqueException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
@@ -42,7 +43,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
     }
     
     @Override
-    public Long createNewCustomer(CustomerEntity newCustomerEntity) throws CustomerEmailExistsException, UnknownPersistenceException, InputDataValidationException
+    public Long createNewCustomer(CustomerEntity newCustomerEntity) throws CustomerNotUniqueException, UnknownPersistenceException, InputDataValidationException
     {
         try
         {
@@ -66,7 +67,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
             {
                 if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
                 {
-                    throw new CustomerEmailExistsException();
+                    throw new CustomerNotUniqueException("Customer not unique : Email Address or Identification Number already exists!\n");
                 }
                 else
                 {

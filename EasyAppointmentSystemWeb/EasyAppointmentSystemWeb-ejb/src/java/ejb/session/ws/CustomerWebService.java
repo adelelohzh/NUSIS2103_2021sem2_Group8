@@ -14,7 +14,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import util.exception.CustomerDeletionException;
-import util.exception.CustomerEmailExistsException;
+import util.exception.CustomerNotUniqueException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
@@ -33,7 +33,7 @@ public class CustomerWebService {
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
 
     @WebMethod(operationName = "createNewCustomer")
-    public Long createNewCustomer(@WebParam(name = "customerEntity") CustomerEntity newCustomerEntity) throws CustomerEmailExistsException, UnknownPersistenceException, InputDataValidationException {
+    public Long createNewCustomer(@WebParam(name = "customerEntity") CustomerEntity newCustomerEntity) throws CustomerNotUniqueException, UnknownPersistenceException, InputDataValidationException {
 
         System.out.println("********** EasyAppointmentSystem.CustomerEntitySessionBeanLocal(): Customer "
                 

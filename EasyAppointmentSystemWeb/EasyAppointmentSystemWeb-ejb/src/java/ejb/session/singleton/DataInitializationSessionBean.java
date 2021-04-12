@@ -32,6 +32,7 @@ import util.exception.BusinessCategoryExistException;
 import util.exception.BusinessCategoryNotFoundException;
 import util.exception.CustomerEmailExistsException;
 import util.exception.CustomerNotFoundException;
+import util.exception.CustomerNotUniqueException;
 import util.exception.InputDataValidationException;
 import util.exception.ServiceProviderBlockedException;
 import util.exception.ServiceProviderEmailExistException;
@@ -188,7 +189,7 @@ public class DataInitializationSessionBean {
 
             
         }
-        catch(AdminUsernameExistException |  CustomerEmailExistsException | BusinessCategoryExistException | UnknownPersistenceException | InputDataValidationException | CustomerNotFoundException | AppointmentNumberExistsException ex)
+        catch(AdminUsernameExistException |  CustomerNotUniqueException | BusinessCategoryExistException | UnknownPersistenceException | InputDataValidationException | CustomerNotFoundException | AppointmentNumberExistsException ex)
         {
             ex.printStackTrace();
         } catch (ServiceProviderNotFoundException ex) {

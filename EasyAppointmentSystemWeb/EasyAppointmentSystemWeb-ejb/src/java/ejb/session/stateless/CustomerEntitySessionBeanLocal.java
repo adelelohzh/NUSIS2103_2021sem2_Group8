@@ -9,13 +9,14 @@ import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateCustomerException;
+import util.exception.CustomerNotUniqueException;
 
 
 public interface CustomerEntitySessionBeanLocal {
 
     public CustomerEntity retrieveCustomerEntityByCustomerId(Long customerId) throws CustomerNotFoundException;
 
-    public Long createNewCustomer(CustomerEntity newCustomerEntity) throws CustomerEmailExistsException, UnknownPersistenceException, InputDataValidationException;
+    public Long createNewCustomer(CustomerEntity newCustomerEntity) throws CustomerNotUniqueException, UnknownPersistenceException, InputDataValidationException;
     
     public CustomerEntity retrieveCustomerByEmail(String email) throws CustomerNotFoundException;
 
