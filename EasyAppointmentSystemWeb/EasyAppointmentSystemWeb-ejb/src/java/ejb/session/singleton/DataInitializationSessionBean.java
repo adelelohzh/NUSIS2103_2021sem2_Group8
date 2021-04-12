@@ -86,8 +86,8 @@ public class DataInitializationSessionBean {
         try
         {
             adminEntitySessionBeanLocal.createNewAdmin(new AdminEntity("Admin01", "admin01@gmail.com", "password"));
-            customerEntitySessionBeanLocal.createNewCustomer(new CustomerEntity("T020202F", "password", "Jack", "Son", 'M', 19, "03399393", "Jurong East 992", "Singapore", "jackson99@hotmail.com"));
-            customerEntitySessionBeanLocal.createNewCustomer(new CustomerEntity("S9876223A", "password", "Adele", "Loh", 'F', 21, "99836123", "9 Sentosa Cove", "Singapore", "adelelohzh@gmail.com"));
+            customerEntitySessionBeanLocal.createNewCustomer(new CustomerEntity("T020202F", "password", "Jack", "Son", "M", 19, "03399393", "Jurong East 992", "Singapore", "jackson99@hotmail.com"));
+            customerEntitySessionBeanLocal.createNewCustomer(new CustomerEntity("S9876223A", "password", "Adele", "Loh", "F", 21, "99836123", "9 Sentosa Cove", "Singapore", "adelelohzh@gmail.com"));
             businessCategoryEntitySessionBeanLocal.createNewBusinessCategoryEntity(new BusinessCategoryEntity("Health"));
             businessCategoryEntitySessionBeanLocal.createNewBusinessCategoryEntity(new BusinessCategoryEntity("Education"));
             businessCategoryEntitySessionBeanLocal.createNewBusinessCategoryEntity(new BusinessCategoryEntity("Fashion"));
