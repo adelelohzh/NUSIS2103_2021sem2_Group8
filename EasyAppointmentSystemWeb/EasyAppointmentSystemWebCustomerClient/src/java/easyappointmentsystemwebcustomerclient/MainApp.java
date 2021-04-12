@@ -206,11 +206,11 @@ public class MainApp {
             String lastName = scanner.nextLine().trim();
 
             System.out.print("Enter Gender> ");
-            Character gender = scanner.nextLine().trim().charAt(0);
+            String gender = scanner.nextLine().trim();
 
             while (!gender.equals('M') && !gender.equals('F') && !gender.equals('m') && !gender.equals('f')) {
                 System.out.print("Enter Gender> ");
-                gender = scanner.nextLine().trim().charAt(0);
+                gender = scanner.nextLine().trim();
             }
 
             System.out.print("Enter Age> ");
