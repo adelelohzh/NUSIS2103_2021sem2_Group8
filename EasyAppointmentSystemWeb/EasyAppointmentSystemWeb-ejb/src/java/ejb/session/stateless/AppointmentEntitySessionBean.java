@@ -362,33 +362,33 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     }
 
     @Override
-    public Long ifCanRate(List<AppointmentEntity> apptList) {
+    public Long ifCanRate(List<AppointmentEntity> apptList, Long serviceProviderId) {
         Long ratedApptId = 0l;
         
-        
-
-        for (AppointmentEntity a : apptList) {
-            String date = a.getScheduledDate();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate appointmentDate = LocalDate.parse(date, formatter);
+        for (AppointmentEntity a : apptList)
+                {
+                    String date = a.getScheduledDate();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate appointmentDate = LocalDate.parse(date, formatter);
             
-            String time = a.getScheduledTime();
-            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
-            LocalTime appointmentTime = LocalTime.parse(time, fmt);
-            
-            if (appointmentDate.compareTo(LocalDate.now()) <= 0) {
-                System.out.println("Date compareTo: " + appointmentDate.compareTo(LocalDate.now()));
-                if (appointmentTime.compareTo(LocalTime.now()) <= 0) {
-                    System.out.println("Time compareTo: " + appointmentTime.compareTo(LocalTime.now()));
-                    if (a.getHasRating() == false) {
-                        ratedApptId = a.getAppointmentId();
-                        break;
+                    String time = a.getScheduledTime();
+                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
+                    LocalTime appointmentTime = LocalTime.parse(time, fmt);
+                    
+                    if (appointmentDate.compareTo(LocalDate.now()) <= 0) 
+                    {
+                        if (appointmentTime.compareTo(LocalTime.now()) <= 0)
+                        {
+                            if (a.getHasRating() == false && a.getServiceProviderEntity().getServiceProviderId().equals(serviceProviderId))
+                            {
+                                ratedApptId = a.getAppointmentId();
+                                break;
+                            }
+                        }
                     }
                 }
-            }
-        }
-
         return ratedApptId;
+
     }
 
     @Override
@@ -425,6 +425,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         return timeslots2;
     }
     
+    @Override
     public boolean ifDateHasNotPassed(String date)
     {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
