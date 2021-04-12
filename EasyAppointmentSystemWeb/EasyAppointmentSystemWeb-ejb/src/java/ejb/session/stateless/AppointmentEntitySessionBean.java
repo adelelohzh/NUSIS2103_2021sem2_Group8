@@ -161,7 +161,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     @Override
     public List<AppointmentEntity> retrieveAppointmentsByDate(LocalDate date, String serviceProviderName) throws AppointmentNotFoundException
     {
-        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.date = :inDate and a.serviceProviderEntity.name = :inServiceProviderName");
+        Query query = em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.scheduledDate = :inDate and a.serviceProviderEntity.name = :inServiceProviderName");
         query.setParameter("inDate", date);
         query.setParameter("inServiceProviderName", serviceProviderName);
         
