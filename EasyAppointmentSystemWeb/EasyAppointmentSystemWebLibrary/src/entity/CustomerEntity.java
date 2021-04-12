@@ -23,7 +23,7 @@ public class CustomerEntity implements Serializable {
     private Long customerId;
     
     @NotNull
-    @Column(nullable = false, length = 32)
+    @Column(nullable = false, unique = true, length = 32)
     private String identityNumber;
     
     @NotNull
