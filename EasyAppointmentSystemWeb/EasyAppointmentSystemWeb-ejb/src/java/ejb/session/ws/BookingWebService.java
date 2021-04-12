@@ -41,8 +41,8 @@ public class BookingWebService
     public void addAppointment(@WebParam(name = "email") String emailAddr,
                                @WebParam(name = "password") String password,
                                @WebParam(name = "appointmentNo")String appointmentNo,
-                               @WebParam(name = "scheduledTime") LocalTime scheduledTime,
-                               @WebParam(name = "scheduledDate") LocalDate scheduledDate,
+                               @WebParam(name = "scheduledTime") String scheduledTime,
+                               @WebParam(name = "scheduledDate") String scheduledDate,
                                @WebParam(name = "customerEntity") CustomerEntity currentCustomerEntity,
                                @WebParam(name = "serviceProviderEntity") ServiceProviderEntity serviceProviderEntity,
                                @WebParam(name = "businessCategoryEntity")BusinessCategoryEntity businessCategoryEntity)
@@ -112,7 +112,7 @@ public class BookingWebService
     }
     
     @WebMethod(operationName = "getScheduledTime")
-    public LocalTime getScheduledTime(@WebParam(name = "email") String emailAddr,
+    public String getScheduledTime(@WebParam(name = "email") String emailAddr,
                                  @WebParam(name = "password") String password)
                            throws InvalidLoginCredentialException
     {
@@ -127,7 +127,7 @@ public class BookingWebService
     @WebMethod(operationName = "setScheduledTime")
     public void setScheduledTime(@WebParam(name = "email") String emailAddr,
                                  @WebParam(name = "password") String password,
-                                 @WebParam(name = "scheduledTime") LocalTime scheduledTime)
+                                 @WebParam(name = "scheduledTime") String scheduledTime)
                            throws InvalidLoginCredentialException
     {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
@@ -140,7 +140,7 @@ public class BookingWebService
     
     
     @WebMethod(operationName = "getScheduledDate")
-    public LocalDate getScheduledDate(@WebParam(name = "email") String emailAddr,
+    public String getScheduledDate(@WebParam(name = "email") String emailAddr,
                                       @WebParam(name = "password") String password)
                            throws InvalidLoginCredentialException
     {
@@ -157,7 +157,7 @@ public class BookingWebService
     @WebMethod(operationName = "setScheduledDate")
     public void setScheduledDate(@WebParam(name = "email") String emailAddr,
                                  @WebParam(name = "password") String password,
-                                 @WebParam(name = "setScheduledDate") LocalDate setScheduledDate)
+                                 @WebParam(name = "setScheduledDate") String setScheduledDate)
                            throws InvalidLoginCredentialException
     {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);

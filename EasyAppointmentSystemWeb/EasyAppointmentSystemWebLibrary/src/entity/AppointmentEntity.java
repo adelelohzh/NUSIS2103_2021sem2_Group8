@@ -28,10 +28,10 @@ public class AppointmentEntity implements Serializable {
     private String appointmentNo;
     
     @Column(nullable = false)
-    private LocalTime scheduledTime;
+    private String scheduledTime;
     
     @Column(nullable = false)
-    private LocalDate scheduledDate;
+    private String scheduledDate;
     
     @Column(nullable = false)
     private Boolean hasRating = Boolean.FALSE;
@@ -52,14 +52,14 @@ public class AppointmentEntity implements Serializable {
     {
     }
 
-    public AppointmentEntity(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate) {
+    public AppointmentEntity(String appointmentNo, String scheduledTime, String scheduledDate) {
         //LocalTime time = LocalTime.parse(scheduledTime.toString(), DateTimeFormatter.ofPattern("HH:mm"));
         this.scheduledDate = scheduledDate;
         this.scheduledTime = scheduledTime;
         this.appointmentNo = appointmentNo;
     }
 
-    public AppointmentEntity(String appointmentNo, LocalTime scheduledTime, LocalDate scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity) {
+    public AppointmentEntity(String appointmentNo, String scheduledTime, String scheduledDate, CustomerEntity customerEntity, ServiceProviderEntity serviceProviderEntity, BusinessCategoryEntity businessCategoryEntity) {
         this.appointmentNo = appointmentNo;
         this.scheduledTime = scheduledTime;
         this.scheduledDate = scheduledDate;
@@ -76,23 +76,24 @@ public class AppointmentEntity implements Serializable {
         this.appointmentId = appointmentId;
     }
 
-    public LocalTime getScheduledTime() {
+    public String getScheduledTime() {
         return scheduledTime;
     }
 
-    public void setScheduledTime(LocalTime scheduledTime) {
-        LocalTime time=LocalTime.parse(scheduledTime.toString(), DateTimeFormatter.ofPattern("HH:mm"));
-        this.scheduledTime = scheduledTime;
+    public void setScheduledTime(String scheduledTime) 
+    {
+        LocalTime time = LocalTime.parse(scheduledTime.toString(), DateTimeFormatter.ofPattern("HH:mm"));
+        this.scheduledTime = time.toString();
     }
 
-    public LocalDate getScheduledDate() {
+    public String getScheduledDate() {
         return scheduledDate;
     }
 
-    public void setScheduledDate(LocalDate scheduledDate) {
+    public void setScheduledDate(String scheduledDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(scheduledDate.toString(), formatter);
-        this.scheduledDate = scheduledDate;
+        LocalDate date = LocalDate.parse(scheduledDate, formatter);
+        this.scheduledDate = date.toString();
     }
 
     @XmlTransient

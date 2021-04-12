@@ -258,14 +258,21 @@ public class MainMenu {
                     
                     LocalDate todayDate = LocalDate.now();
                     System.out.println("Today's date is " + todayDate.toString());
-                    LocalDate appointmentDate = appointmentEntity.getScheduledDate();
+                    
+                    String date = appointmentEntity.getScheduledDate();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate appointmentDate = LocalDate.parse(date, formatter);
+                        
+                    
                     System.out.println("Appointment date is " + appointmentDate.toString());
-
+                    
+                    String apptTime = appointmentEntity.getScheduledTime();
                     DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
+                    LocalTime appointmentTime = LocalTime.parse(apptTime, fmt);
+
                     String currentTime = LocalTime.now().format(fmt);
                     LocalTime todayTime = LocalTime.parse(currentTime, fmt);
                     System.out.println("Today time is " + todayTime.toString());
-                    LocalTime appointmentTime = appointmentEntity.getScheduledTime();
                     System.out.println("Appointment time is " + appointmentTime.toString());
 
                     int comparison = appointmentDate.compareTo(todayDate);
