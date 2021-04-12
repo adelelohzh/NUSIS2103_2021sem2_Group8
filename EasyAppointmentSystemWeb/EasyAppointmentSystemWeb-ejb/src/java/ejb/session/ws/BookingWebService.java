@@ -43,6 +43,7 @@ public class BookingWebService
                                @WebParam(name = "appointmentNo")String appointmentNo,
                                @WebParam(name = "scheduledTime") LocalTime scheduledTime,
                                @WebParam(name = "scheduledDate") LocalDate scheduledDate,
+                               @WebParam(name = "customerEntity") CustomerEntity currentCustomerEntity,
                                @WebParam(name = "serviceProviderEntity") ServiceProviderEntity serviceProviderEntity,
                                @WebParam(name = "businessCategoryEntity")BusinessCategoryEntity businessCategoryEntity)
                         throws InvalidLoginCredentialException, ServiceProviderNotFoundException
