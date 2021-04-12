@@ -84,7 +84,7 @@ public class BusinessCategoryEntityWebService {
             @WebParam(name = "businessCategoryEntity") BusinessCategoryEntity newBusinessCategoryEntity) throws BusinessCategoryExistException, UnknownPersistenceException, InputDataValidationException, InvalidLoginCredentialException {
         
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
-        System.out.println("********** EasyAppointmentSystem.deleteBusinessCategory(): Customer "
+        System.out.println("********** EasyAppointmentSystem.createNewBusinessCategoryEntity(): Customer "
                 + customerEntity.getEmailAddress()
                 + " login remotely via web service");
 
