@@ -33,17 +33,15 @@ public class CustomerWebService {
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
 
     @WebMethod(operationName = "createNewCustomer")
-    public Long createNewCustomer(@WebParam(name = "email") String emailAddr,
-                                  @WebParam(name = "password") String password,
-                                  @WebParam(name = "customerEntity") CustomerEntity newCustomerEntity) throws CustomerEmailExistsException, UnknownPersistenceException, InputDataValidationException, InvalidLoginCredentialException {
+    public Long createNewCustomer(@WebParam(name = "customerEntity") CustomerEntity newCustomerEntity) throws CustomerEmailExistsException, UnknownPersistenceException, InputDataValidationException {
 
-        CustomerEntity customerEntity = customerEntitySessionBeanLocal.customerLogin(emailAddr, password);
-        System.out.println("********** EasyAppointmentSystem.emailCheckoutNotificationSync(): Customer "
-                + customerEntity.getEmailAddress()
-                + " login remotely via web service");
+        System.out.println("********** EasyAppointmentSystem.CustomerEntitySessionBeanLocal(): Customer "
+                
+                + " doing registering remotely via web service");
 
         return customerEntitySessionBeanLocal.createNewCustomer(newCustomerEntity);
     }
+    
     
     @WebMethod(operationName = "retrieveCustomerEntityByCustomerId")
     public CustomerEntity retrieveCustomerEntityByCustomerId(@WebParam(name = "email") String emailAddr,
