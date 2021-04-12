@@ -42,7 +42,7 @@ public class CustomerEntity implements Serializable {
     private String fullName;
     
     @Column(nullable = false, length = 32)
-    private Character gender;
+    private String gender;
     
     @Column(nullable = false, length = 32)
     private Integer age;
@@ -72,7 +72,7 @@ public class CustomerEntity implements Serializable {
         appointmentEntities = new ArrayList<>();
     }
 
-    public CustomerEntity(String identityNumber, String password, String firstName, String lastName, Character gender, Integer age, String phoneNumber, String address, String city, String emailAddress) 
+    public CustomerEntity(String identityNumber, String password, String firstName, String lastName, String gender, Integer age, String phoneNumber, String address, String city, String emailAddress) 
     {
         this();
         this.identityNumber = identityNumber;
@@ -164,14 +164,14 @@ public class CustomerEntity implements Serializable {
     /**
      * @return the gender
      */
-    public Character getGender() {
+    public String getGender() {
         return gender;
     }
 
     /**
      * @param gender the gender to set
      */
-    public void setGender(Character gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
