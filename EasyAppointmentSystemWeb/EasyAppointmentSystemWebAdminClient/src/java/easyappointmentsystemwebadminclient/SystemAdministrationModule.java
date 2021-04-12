@@ -385,7 +385,7 @@ public class SystemAdministrationModule {
         System.out.print("Enter customer Id> ");
         customerId = sc.nextLong();
 
-        while (customerId.equals(0l)) {
+        while (!customerId.equals(0l)) {
             
             System.out.println();
             try {
